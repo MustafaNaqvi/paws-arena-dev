@@ -1010,7 +1010,7 @@ public class MainDataTypes
 
         public Dictionary<string, TokenConfig> configs; //canisterId -> config
 
-        public AllTokenConfigs() { }
+        public AllTokenConfigs() { configs = new(); }
 
         public AllTokenConfigs(Dictionary<string, TokenConfig> configs)
         {
@@ -1046,7 +1046,7 @@ public class MainDataTypes
 
         public Dictionary<string, NftConfig> configs; //canisterId -> config
 
-        public AllNftCollectionConfig() { }
+        public AllNftCollectionConfig() { configs = new(); }
 
         public AllNftCollectionConfig(Dictionary<string, NftConfig> configs)
         {

@@ -74,6 +74,8 @@ namespace Candid
 
         private void Awake()
         {
+            BroadcastState.Invoke(new WaitingForResponse(true));
+
             IAgent CreateAgentWithRandomIdentity(bool useLocalHost = false)
             {
                 IAgent randomAgent = null;
@@ -147,16 +149,18 @@ namespace Candid
             }
         }
 
+        int frameCount;
         private void Update()
         {
-            if(BoomDaoGameType == GameType.Multiplayer)
+            ++frameCount;
+            if (BoomDaoGameType == GameType.Multiplayer)
             {
                 nextUpdateIn = (lastClientUpdate - MainUtil.Now()) / 1000f;
                 if (lastClientUpdate <= MainUtil.Now())
                 {
                     lastClientUpdate = MainUtil.Now() + (long)(secondsToUpdateClient * 1000);
 
-                    FetchRoomData();
+                    if(frameCount > 0) FetchRoomData();
                 }
 
             }
@@ -250,6 +254,15 @@ namespace Candid
             //Check if anon setup is required
             if (asAnon)
             {
+                if (UserUtil.IsUserLoggedIn() && frameCount > 0)
+                {
+                    //Clean up logged in user data
+                    UserUtil.ClearData<DataTypes.Token>();
+                    UserUtil.ClearData<DataTypes.Entity>();
+                    UserUtil.ClearData<DataTypes.ActionState>();
+                    UserUtil.ClearData<DataTypes.NftCollection>();
+                }
+
                 //If anon Agent is cached then set it up
                 if (cachedAnonAgent.IsInit)
                 {
@@ -276,12 +289,6 @@ namespace Candid
 
                 //Set Login Data
                 UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, true));
-
-                //Clean up logged in user data
-                UserUtil.ClearData<DataTypes.Token>();
-                UserUtil.ClearData<DataTypes.Entity>();
-                UserUtil.ClearData<DataTypes.ActionState>();
-                UserUtil.ClearData<DataTypes.NftCollection>();
             }
             else
             {
@@ -340,7 +347,7 @@ namespace Candid
                     return e.canisterId;
                 });
 
-                UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftsToFetchIds.ToArray()));
+               UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftsToFetchIds.ToArray()));
 
                 //WEBSOCKET
                 if (BoomDaoGameType == CandidApiManager.GameType.WebsocketMultiplayer)
@@ -348,8 +355,6 @@ namespace Candid
                     //TODO: CONNECT WEBSOCKET
                 }
             }
-
-
 
             //INIT CONFIGS
             if (!configsRequested)
@@ -362,58 +367,67 @@ namespace Candid
 
         private async UniTask FetchConfigs()
         {
-            //HERE: You can specify all World's Ids you want to fetch entity configs from
-            string[] worlds = new string[] { WORLD_CANISTER_ID };
-
-
-            //Set Configs
-            var configsResult =
-                await FetchUtil.ProcessWorldCall<Dictionary<string, MainDataTypes.AllConfigs.Config>>(
-                    async (worldInterface, wid) =>
-                    {
-                        var stableConfigs = await worldInterface.GetAllConfigs();
-
-                        return stableConfigs.Map(e => new MainDataTypes.AllConfigs.Config(e)).ToDictionary(e=>e.cid);
-                    },
-                    worlds
-                );
-
-            if (configsResult.IsOk)
+            try
             {
-                var asOk = configsResult.AsOk();
+                //HERE: You can specify all World's Ids you want to fetch entity configs from
+                string[] worlds = new string[] { WORLD_CANISTER_ID };
 
-                UserUtil.UpdateMainData(new MainDataTypes.AllConfigs(asOk));
+
+                //Set Configs
+                var configsResult =
+                    await FetchUtil.ProcessWorldCall<Dictionary<string, MainDataTypes.AllConfigs.Config>>(
+                        async (worldInterface, wid) =>
+                        {
+                            var stableConfigs = await worldInterface.GetAllConfigs();
+
+                            return stableConfigs.Map(e => new MainDataTypes.AllConfigs.Config(e)).ToDictionary(e => e.cid);
+                        },
+                        worlds
+                    );
+
+                if (configsResult.IsOk)
+                {
+                    var asOk = configsResult.AsOk();
+
+                    UserUtil.UpdateMainData(new MainDataTypes.AllConfigs(asOk));
+                }
+                else
+                {
+                    throw new(configsResult.AsErr());
+                }
+
+                //Set Tokens & Nft Configs
+                FetchTokenConfig().Forget();
+                FetchNftConfig().Forget();
+
+                //Set Actions
+                var actionsResult =
+                    await FetchUtil.ProcessWorldCall<Dictionary<string, MainDataTypes.AllAction.Action>>(
+                        async (worldInterface, wid) =>
+                        {
+                            var stableConfigs = await worldInterface.GetAllActions();
+
+                            return stableConfigs.Map(e => new MainDataTypes.AllAction.Action(e)).ToDictionary(e => e.aid);
+                        },
+                        worlds
+                    );
+
+                if (actionsResult.IsOk)
+                {
+                    var asOk = actionsResult.AsOk();
+
+                    UserUtil.UpdateMainData(new MainDataTypes.AllAction(asOk));
+                }
+                else
+                {
+                    throw new(configsResult.AsErr());
+                }
+
+                BroadcastState.Invoke(new WaitingForResponse(false));
             }
-            else
+            catch (Exception ex)
             {
-                throw new(configsResult.AsErr());
-            }
-
-            //Set Tokens & Nft Configs
-            FetchTokenConfig().Forget();
-            FetchNftConfig().Forget();
-
-            //Set Actions
-            var actionsResult =
-                await FetchUtil.ProcessWorldCall<Dictionary<string, MainDataTypes.AllAction.Action>>(
-                    async (worldInterface, wid) =>
-                    {
-                        var stableConfigs = await worldInterface.GetAllActions();
-
-                        return stableConfigs.Map(e => new MainDataTypes.AllAction.Action(e)).ToDictionary(e => e.aid);
-                    },
-                    worlds
-                );
-
-            if (actionsResult.IsOk)
-            {
-                var asOk = actionsResult.AsOk();
-
-                UserUtil.UpdateMainData(new MainDataTypes.AllAction(asOk));
-            }
-            else
-            {
-                throw new(configsResult.AsErr());
+                Debug.LogError(ex.Message);
             }
         }
 
@@ -548,7 +562,6 @@ namespace Candid
             }
 
             //
-
             var result = await FetchUtil.GetAllNfts(arg.canisterIds, uids);
 
             if (result.IsOk)
@@ -645,6 +658,8 @@ namespace Candid
                 else "No Token Config found in World Config".Warning(nameof(CandidApiManager));
 
                 if(tokens.Count > 0) UserUtil.UpdateMainData(new MainDataTypes.AllTokenConfigs(tokens.ToArray().ToDictionary(e => e.canisterId)));
+                else UserUtil.UpdateMainData(new MainDataTypes.AllTokenConfigs());
+
             }
             catch (Exception e)
             {
@@ -662,6 +677,7 @@ namespace Candid
 
                 if (ConfigUtil.QueryConfigsByTag(WORLD_CANISTER_ID, "nft", out var nftConfigs))
                 {
+                    Debug.Log($"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}");
                     nftConfigs.Iterate(e =>
                     {
                         if (!e.GetConfigFieldAs<string>("name", out var collectionName))
@@ -696,7 +712,11 @@ namespace Candid
                 }
                 else "No Nft Config found in World Config".Warning(nameof(CandidApiManager));
 
-                if (collections.Count > 0) UserUtil.UpdateMainData(new MainDataTypes.AllNftCollectionConfig(collections.ToArray().ToDictionary(e => e.canisterId)));
+                if (collections.Count > 0)
+                {
+                    UserUtil.UpdateMainData(new MainDataTypes.AllNftCollectionConfig(collections.ToArray().ToDictionary(e => e.canisterId)));
+                }
+                else UserUtil.UpdateMainData(new MainDataTypes.AllNftCollectionConfig());
             }
             catch (Exception e)
             {
@@ -731,15 +751,9 @@ namespace Candid
 
             UserUtil.UpdateMainData(new MainDataTypes.AllListings(listing.ToArray().ToDictionary(e => e.index)));
         }
-        bool postFirtsFrame;
+
         private void FetchRoomData()
         {
-            if (postFirtsFrame == false)
-            {
-                postFirtsFrame = false;
-                return;
-            }
-
             if (UserUtil.IsUserLoggedIn(out var loginData) == false)
             {
                 return;
