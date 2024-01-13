@@ -517,7 +517,7 @@ public static class UserUtil
         return IsDataValid<T>("self");
     }
 
-    public static bool IsFetchingData<T>(params string[] uids) where T : DataTypes.Base
+    public static bool IsDataLoading<T>(params string[] uids) where T : DataTypes.Base
     {
         if (IsUserLoggedIn(out var loginData) == false)
         {
@@ -561,7 +561,7 @@ public static class UserUtil
 
     public static bool IsDataLoadingSelf<T>() where T : DataTypes.Base
     {
-        return IsFetchingData<T>("self");
+        return IsDataLoading<T>("self");
     }
 
     //
