@@ -79,7 +79,7 @@ public class LoginWindow : Window
 
     private void UpdateWindow(Data<DataTypes.Entity> state)
     {
-        if (!UserUtil.IsFetchingData<DataTypes.Entity>() && typesToLoad.Count > 0)
+        if (!UserUtil.IsDataLoadingSelf<DataTypes.Entity>() && typesToLoad.Count > 0)
         {
             if (typesToLoad.Contains(typeof(DataTypes.Entity)))
             {
@@ -92,7 +92,7 @@ public class LoginWindow : Window
     }
     private void UpdateWindow(Data<DataTypes.ActionState> state)
     {
-        if (!UserUtil.IsFetchingData<DataTypes.ActionState>() && typesToLoad.Count > 0)
+        if (!UserUtil.IsDataLoadingSelf<DataTypes.ActionState>() && typesToLoad.Count > 0)
         {
             if (typesToLoad.Contains(typeof(DataTypes.ActionState)))
             {
