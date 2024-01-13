@@ -44,7 +44,12 @@ public class LuckyWheelRewardSO : ScriptableObject
         LoadAllRewards();
         return allRewards.First(element => element.Id == _id);
     }
-
+    
+    public static LuckyWheelRewardSO Get(string _name)
+    {
+        LoadAllRewards();
+        return allRewards.First(element => element.Name == _name);
+    }
     private static void LoadAllRewards()
     {
         if (allRewards != null)
