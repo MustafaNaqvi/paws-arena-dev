@@ -73,7 +73,7 @@ public class GameMatchingScreen : MonoBehaviour
             }
         }
 
-        StartCoroutine(BringBotAfterSeconds(UnityEngine.Random.Range(10, 20)));
+        StartCoroutine(BringBotAfterSeconds(5));
     }
 
     public void SetSeats()

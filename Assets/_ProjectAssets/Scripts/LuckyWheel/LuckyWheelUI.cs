@@ -16,7 +16,7 @@ public class LuckyWheelUI : MonoBehaviour
     [SerializeField] private GameObject playerPlatform;
     [SerializeField] private LuckyWheel luckyWheel;
     [SerializeField] private LuckyWheelClaimDisplay rewardDisplay;
-    [SerializeField] private Button respinButton;
+    // [SerializeField] private Button respinButton;
     [SerializeField] private Button claimButton;
     [SerializeField] private GameObject insuficiantSnacksForRespin;
     [SerializeField] private TextMeshProUGUI insuficiantSnacksText;
@@ -201,7 +201,7 @@ public class LuckyWheelUI : MonoBehaviour
         }
         gameObject.SetActive(true);
 
-        respinButton.gameObject.SetActive(false);
+        // respinButton.gameObject.SetActive(false);
         claimButton.gameObject.SetActive(false);
         
         currentRespinPrice = DataManager.Instance.GameData.RespinPrice;
@@ -211,13 +211,13 @@ public class LuckyWheelUI : MonoBehaviour
     private void OnEnable()
     {
         claimButton.onClick.AddListener(ClaimReward);
-        respinButton.onClick.AddListener(Respin);
+        // respinButton.onClick.AddListener(Respin);
     }
 
     private void OnDisable()
     {
         claimButton.onClick.RemoveListener(ClaimReward);
-        respinButton.onClick.RemoveListener(Respin);
+        // respinButton.onClick.RemoveListener(Respin);
     }
 
     private void ClaimReward()
@@ -274,7 +274,7 @@ public class LuckyWheelUI : MonoBehaviour
         }
 
         DataManager.Instance.PlayerData.Snacks -= currentRespinPrice;
-        respinButton.gameObject.SetActive(false);
+        // respinButton.gameObject.SetActive(false);
         claimButton.gameObject.SetActive(false);
         choosenReward = null;
         currentRespinPrice *= 2;
@@ -295,7 +295,7 @@ public class LuckyWheelUI : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         claimButton.gameObject.SetActive(true);
-        respinButton.gameObject.SetActive(true);
+        // respinButton.gameObject.SetActive(true);
     }
 
     public void Close()
