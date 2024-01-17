@@ -2,6 +2,7 @@ using Anura.Templates.MonoSingleton;
 using UnityEngine;
 using System;
 using Anura.ConfigurationModule.Managers;
+using NaughtyAttributes;
 using Photon.Pun;
 
 public class PlayerManager : MonoSingleton<PlayerManager>
@@ -63,6 +64,19 @@ public class PlayerManager : MonoSingleton<PlayerManager>
         //     KittyImageUrl = GameState.selectedNFT.imageUrl
         // };
         // DataManager.Instance.PlayerData.AddRecoveringKittie(_recoveryEntry);
+    }
+
+    [Button("Suicide")]
+    private void Suicide()
+    {
+        OnDamageTaken(100);
+    }
+
+    [Button("Kill opponent")]
+    private void KillOpponent()
+    {
+        BasePlayerComponent _bot = FindObjectOfType<BotPlayerComponent>().GetComponent<BasePlayerComponent>();
+        _bot.GiveDamage(100);
     }
 
     [ContextMenu("Test_Take50Damage")]
