@@ -282,15 +282,8 @@ internal static class EntityUtil
         {
             case EntityFieldEdit.Numeric e:
 
-                switch (e.Value)
-                {
-                    case EntityFieldEdit.Numeric.ValueType.Number n:
-                        returnValue = n.Value;
-                        return true;
-                    default:
-                        Debug.LogError($"Error on \"value\" type, current type: numeric formula, desired type is: number for field: {fieldName}");
-                        return false;
-                }
+                returnValue = e.Value;
+                return true;
             default:
                 Debug.LogError($"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}");
                 return false;
@@ -348,117 +341,61 @@ internal static class EntityUtil
     //
     private static readonly FormulaEvaluation formulaEvaluation = new();
 
-    public static void RefineActionOutcomes(this ProcessedActionResponse processedActionResponse, IEnumerable<Field> args)
+    public static (IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs) GetFormulaDependencies(ActionReturn actionReturn)
     {
-        IEnumerable<MainDataTypes.AllConfigs.Config> configs;
-
-        IEnumerable<DataTypes.Entity> callerEntities;
-        IEnumerable<DataTypes.Entity> targetEntities;
-        IEnumerable<DataTypes.Entity> worldEntities;
-
+        (IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs) formulaEvaluationDependencies = new();
         //CONFIG
         var configDataTypeResult = UserUtil.GetMainData<MainDataTypes.AllConfigs>();
 
-        if (configDataTypeResult.IsErr)
+        if (configDataTypeResult.IsOk)
         {
-            Debug.LogError(configDataTypeResult.AsErr());
-            return;
-        }
-
-        if (configDataTypeResult.AsOk().configs.TryGetValue(CandidApiManager.Instance.WORLD_CANISTER_ID, out var worldConfig) == false)
-        {
-            Debug.LogError("Could not find config for world of id: " + CandidApiManager.Instance.WORLD_CANISTER_ID);
-            return;
-        }
-
-        configs = worldConfig.Map(e => e.Value);
-
-        //CALLER
-        if (processedActionResponse.callerOutcomes != null)
-        {
-            var entityDataTypeResult = UserUtil.GetDataSelf<DataTypes.Entity>();
-
-            if (entityDataTypeResult.IsErr)
+            if (configDataTypeResult.AsOk().configs.TryGetValue(CandidApiManager.Instance.WORLD_CANISTER_ID, out var worldConfig) == false)
             {
-                Debug.LogError(entityDataTypeResult.AsErr());
-                return;
+                formulaEvaluationDependencies.configs = worldConfig.Map(e => e.Value);
             }
-
-            callerEntities = entityDataTypeResult.AsOk().elements.Map(e => e.Value);
         }
-        else callerEntities = new DataTypes.Entity[0];
-
-
-        //TARGET
-        if (processedActionResponse.targetOutcomes != null)
-        {
-            var entityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(processedActionResponse.targetOutcomes.uid);
-
-            if (entityDataTypeResult.IsErr)
-            {
-                Debug.LogError(entityDataTypeResult.AsErr());
-                return;
-            }
-
-            targetEntities = entityDataTypeResult.AsOk().elements.Map(e => e.Value);
-        }
-        else targetEntities = new DataTypes.Entity[0];
-
 
         //WORLD
-        if (processedActionResponse.worldOutcomes != null)
-        {
-            var entityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(processedActionResponse.worldOutcomes.uid);
+        var worldEntityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(actionReturn.WorldPrincipalId);
 
-            if (entityDataTypeResult.IsErr)
+        if (worldEntityDataTypeResult.IsOk)
+        {
+            formulaEvaluationDependencies.worldEntities = worldEntityDataTypeResult.AsOk().elements.Map(e => e.Value);
+        }
+        else
+        {
+            formulaEvaluationDependencies.worldEntities = new DataTypes.Entity[0];
+            Debug.LogWarning("Could not find world's entities");
+        }
+
+        //CALLER
+        var callerEntityDataTypeResult = UserUtil.GetDataSelf<DataTypes.Entity>();
+
+        if (callerEntityDataTypeResult.IsErr)
+        {
+            formulaEvaluationDependencies.callerEntities = callerEntityDataTypeResult.AsOk().elements.Map(e => e.Value);
+        }
+        else
+        {
+            formulaEvaluationDependencies.callerEntities = new DataTypes.Entity[0];
+            Debug.LogWarning("Could not find client's entities");
+        }
+
+        //TARGET
+        if (actionReturn.TargetPrincipalId.HasValue)
+        {
+            var targetEntityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(actionReturn.TargetPrincipalId.ValueOrDefault);
+
+            if (targetEntityDataTypeResult.IsOk)
             {
-                Debug.LogError(entityDataTypeResult.AsErr());
-                return;
+                formulaEvaluationDependencies.targetEntities = targetEntityDataTypeResult.AsOk().elements.Map(e => e.Value);
             }
-
-            worldEntities = entityDataTypeResult.AsOk().elements.Map(e => e.Value);
+            else formulaEvaluationDependencies.targetEntities = new DataTypes.Entity[0];
         }
-        else worldEntities = new DataTypes.Entity[0];
+        else formulaEvaluationDependencies.targetEntities = new DataTypes.Entity[0];
 
 
-        if (processedActionResponse.callerOutcomes != null) {
-            var entityEdits = processedActionResponse.callerOutcomes.entityEdits.Map(e => e.Value);
-            foreach (var e in entityEdits)
-                e.RefineEntityEdits(worldEntities, callerEntities, targetEntities, configs, args);
-        }
-        if (processedActionResponse.targetOutcomes != null)
-        {
-            var entityEdits = processedActionResponse.targetOutcomes.entityEdits.Map(e => e.Value);
-            foreach (var e in entityEdits)
-                e.RefineEntityEdits(worldEntities, callerEntities, targetEntities, configs, args);
-        }
-        if (processedActionResponse.worldOutcomes != null)
-        {
-            var entityEdits = processedActionResponse.worldOutcomes.entityEdits.Map(e => e.Value);
-            foreach (var e in entityEdits)
-                e.RefineEntityEdits(worldEntities, callerEntities, targetEntities, configs, args);
-        }
-    }
-    public static void RefineEntityEdits(this NewEntityEdits newEntityValues, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
-    {
-        var fields = newEntityValues.fields;
-        if (string.IsNullOrEmpty(newEntityValues.wid)) newEntityValues.wid = CandidApiManager.Instance.WORLD_CANISTER_ID;
-
-        foreach (var pair in fields)
-        {
-            if(pair.Value is EntityFieldEdit.Numeric numeric)
-            {
-                if (numeric.Value is EntityFieldEdit.Numeric.ValueType.Formula formula)
-                {
-                    var formulaNonWhiteSpaces = formula.Value.Replace(" ", "");
-                    
-                    var formulaOutcome = EvaluateFormula(formulaNonWhiteSpaces, worldEntities, callerEntities, targetEntities, configs, args);
-                    numeric.Value = new EntityFieldEdit.Numeric.ValueType.Number(formulaOutcome);
-
-                    fields[pair.Key] = numeric;
-                }
-            }
-        }
+        return formulaEvaluationDependencies;
     }
 
     private static string ReplaceVariables(string formula, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
@@ -549,7 +486,7 @@ internal static class EntityUtil
                             return "Could not find arg value of field name: "+ actionArgFieldName;
                         }
 
-                        returnValue = returnValue.Replace("{" + $"{variable}" + "}", $"{argValue}");
+                        returnValue = returnValue.Replace("{" + $"{variable}" + "}", $"{argValue.FieldValue}");
                     }
                 }
             }
@@ -560,9 +497,12 @@ internal static class EntityUtil
 
         return returnValue;
     }
-    private static double EvaluateFormula(string formula, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
+    public static double EvaluateFormula(string formula, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
     {
         var formulaWithVariableReplaced = ReplaceVariables(formula, worldEntities, callerEntities, targetEntities, configs, args);
+
+        Debug.Log("Evaluate expression: " + formulaWithVariableReplaced);
+
         return formulaEvaluation.Evaluate(formulaWithVariableReplaced);
     }
 
@@ -608,53 +548,25 @@ internal static class EntityUtil
                         break;
                     case EntityFieldEdit.IncrementNumber e:
 
-                        switch (e.Value)
-                        {
-                            case EntityFieldEdit.Numeric.ValueType.Number ne:
-                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
-                                numberAsText.TryParseValue(out double currentNumericValue);
+                        if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
+                        numberAsText.TryParseValue(out double currentNumericValue);
 
-                                currentEntityFields[fieldId] = (currentNumericValue + ne.Value).ToString();
-
-                                break;
-                            default:
-                                Debug.LogError($"Cannot apply formula to entity of id: {eid} and field of id: {fieldId}");
-                                break;
-                        }
+                        currentEntityFields[fieldId] = (currentNumericValue + e.Value).ToString();
 
                         break;
 
                     case EntityFieldEdit.DecrementNumber e:
 
-                        switch (e.Value)
-                        {
-                            case EntityFieldEdit.Numeric.ValueType.Number ne:
-                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
-                                numberAsText.TryParseValue(out double currentNumericValue);
+                        if (currentEntityFields.TryGetValue(fieldId, out numberAsText) == false) numberAsText = "0";
+                        numberAsText.TryParseValue(out currentNumericValue);
 
-                                currentEntityFields[fieldId] = (currentNumericValue - ne.Value).ToString();
-
-                                break;
-                            default:
-                                Debug.LogError($"Cannot apply formula to entity of id: {eid} and field of id: {fieldId}");
-                                break;
-                        }
+                        currentEntityFields[fieldId] = (currentNumericValue - e.Value).ToString();
 
                         break;
 
                     case EntityFieldEdit.RenewTimestamp e:
 
-                        switch (e.Value)
-                        {
-                            case EntityFieldEdit.Numeric.ValueType.Number ne:
-
-                                currentEntityFields[fieldId] = ne.Value.ToString();
-
-                                break;
-                            default:
-                                Debug.LogError($"Cannot apply formula to entity of id: {eid} and field of id: {fieldId}");
-                                break;
-                        }
+                        currentEntityFields[fieldId] = (MainUtil.Now().MilliToNano() + e.Value).ToString();
 
                         break;
                 }
@@ -723,7 +635,8 @@ public class FormulaEvaluation
             }
             else
             {
-                operandStack.Push(double.Parse(token));
+                if(double.TryParse(token, out var tokenParsedValue)) operandStack.Push(tokenParsedValue);
+                else Debug.LogError("Issue parsing: " + token);
             }
             //
             tokenIndex += 1;

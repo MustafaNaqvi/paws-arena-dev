@@ -148,13 +148,8 @@ public class LuckyWheelUI : MonoBehaviour
                             throw new();
                         }
 
-                        if (amountIncrementEdit.Value is not EntityFieldEdit.IncrementNumber.ValueType.Number rewardAmountObj)
-                        {
-                            $"Issue casting value".Warning(typeof(LuckyWheelUI).Name);
-                            throw new();
-                        }
-                        
-                        rewardAmount = rewardAmountObj.Value;
+                        rewardAmount = amountIncrementEdit.Value;
+
                         goto breakPossibleOutcomesLoop;
                     }
                 }

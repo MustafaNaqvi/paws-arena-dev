@@ -146,9 +146,9 @@ public class ProcessedActionResponse
         public List<MintNft> nfts;
         public List<TransferIcrc> tokens;
 
-        public Outcomes(string uid, List<ActionOutcomeOption> outcomes)
+        public Outcomes(string callerPrincipalId, string optionalTargetPrincipalId, List<ActionOutcomeOption> outcomes, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
         {
-            this.uid = uid;
+            this.uid = callerPrincipalId;
             this.entityEdits = new();
             this.nfts = new();
             this.tokens = new();
@@ -165,9 +165,41 @@ public class ProcessedActionResponse
                         Dictionary<string, EntityFieldEdit.Base> allFieldsToEdit;
 
                         var updateEntity = e.Option.AsUpdateEntity();
+                        eid = updateEntity.Eid;
+
+                        if (eid.Contains("$caller"))
+                        {
+                            eid = callerPrincipalId;
+                        }
+                        else if (eid.Contains("$target"))
+                        {
+                            eid = optionalTargetPrincipalId;
+                        }
+                        else if (eid.Contains("$args"))
+                        {
+                            var splitedUid = eid.Split('.');
+
+                            if(splitedUid.Length != 2)
+                            {
+                                Debug.LogError("Issue assigning an argument as an entity id");
+                                return;
+                            }
+
+                            var argFieldName = splitedUid[1];
+
+                            foreach(var arg in args)
+                            {
+                                if(arg.FieldName == argFieldName)
+                                {
+                                    eid = arg.FieldValue;
+                                    break;
+                                }
+                            }
+                        }
+
+
 
                         if (!string.IsNullOrEmpty(updateEntity.Wid.ValueOrDefault)) wid = updateEntity.Wid.ValueOrDefault;
-                        eid = updateEntity.Eid;
 
                         var entityKey = $"{wid}{eid}";
 
@@ -219,7 +251,7 @@ public class ProcessedActionResponse
                                     {
                                         if (fieldValue2.Tag == Candid.World.Models.SetNumber.FieldValueInfoTag.Number)
                                         {
-                                            var v = new EntityFieldEdit.SetNumber(new EntityFieldEdit.Numeric.ValueType.Number(fieldValue2.AsNumber()));
+                                            var v = new EntityFieldEdit.SetNumber(fieldValue2.AsNumber());
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 allFieldsToEdit[fieldName] = v;
@@ -227,7 +259,10 @@ public class ProcessedActionResponse
                                         }
                                         else
                                         {
-                                            var v = new EntityFieldEdit.SetNumber(new EntityFieldEdit.Numeric.ValueType.Formula(fieldValue2.AsFormula()));
+                                            var formula = fieldValue2.AsFormula();
+                                            //TODO: Parse formula
+                                            var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                            var v = new EntityFieldEdit.SetNumber(formulaResult);
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 allFieldsToEdit[fieldName] = v;
@@ -255,17 +290,20 @@ public class ProcessedActionResponse
                                     {
                                         if (fieldValue3.Tag == Candid.World.Models.IncrementNumber.FieldValueInfoTag.Number)
                                         {
-                                            var v = new EntityFieldEdit.IncrementNumber(new EntityFieldEdit.Numeric.ValueType.Number(fieldValue3.AsNumber()));
+                                            var v = new EntityFieldEdit.IncrementNumber(fieldValue3.AsNumber());
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 var currentValue = allFieldsToEdit[fieldName];
 
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.SetNumber(new EntityFieldEdit.Numeric.ValueType.Number((v.Value as EntityFieldEdit.Numeric.ValueType.Number).Value + ((currentValue as EntityFieldEdit.Numeric).Value as EntityFieldEdit.Numeric.ValueType.Number).Value));
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.IncrementNumber(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
                                             }
                                         }
                                         else
                                         {
-                                            var v = new EntityFieldEdit.IncrementNumber(new EntityFieldEdit.Numeric.ValueType.Formula(fieldValue3.AsFormula()));
+                                            var formula = fieldValue3.AsFormula();
+                                            //TODO: Parse formula
+                                            var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                            var v = new EntityFieldEdit.IncrementNumber(formulaResult);
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 allFieldsToEdit[fieldName] = v;
@@ -293,17 +331,20 @@ public class ProcessedActionResponse
                                     {
                                         if (fieldValue4.Tag == Candid.World.Models.DecrementNumber.FieldValueInfoTag.Number)
                                         {
-                                            var v = new EntityFieldEdit.DecrementNumber(new EntityFieldEdit.Numeric.ValueType.Number(fieldValue4.AsNumber()));
+                                            var v = new EntityFieldEdit.DecrementNumber(fieldValue4.AsNumber());
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 var currentValue = allFieldsToEdit[fieldName];
 
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.SetNumber(new EntityFieldEdit.Numeric.ValueType.Number((v.Value as EntityFieldEdit.Numeric.ValueType.Number).Value + ((currentValue as EntityFieldEdit.Numeric).Value as EntityFieldEdit.Numeric.ValueType.Number).Value));
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.DecrementNumber(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
                                             }
                                         }
                                         else
                                         {
-                                            var v = new EntityFieldEdit.DecrementNumber(new EntityFieldEdit.Numeric.ValueType.Formula(fieldValue4.AsFormula()));
+                                            var formula = fieldValue4.AsFormula();
+                                            //TODO: Parse formula
+                                            var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                            var v = new EntityFieldEdit.DecrementNumber(formulaResult);
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 allFieldsToEdit[fieldName] = v;
@@ -331,17 +372,21 @@ public class ProcessedActionResponse
                                     {
                                         if (fieldValue5.Tag == Candid.World.Models.RenewTimestamp.FieldValueInfoTag.Number)
                                         {
-                                            var v = new EntityFieldEdit.RenewTimestamp(new EntityFieldEdit.Numeric.ValueType.Number(fieldValue5.AsNumber()));
+                                            var v = new EntityFieldEdit.RenewTimestamp(fieldValue5.AsNumber());
+
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 var currentValue = allFieldsToEdit[fieldName];
 
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.SetNumber(new EntityFieldEdit.Numeric.ValueType.Number((v.Value as EntityFieldEdit.Numeric.ValueType.Number).Value + ((currentValue as EntityFieldEdit.Numeric).Value as EntityFieldEdit.Numeric.ValueType.Number).Value));
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.RenewTimestamp(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
                                             }
                                         }
                                         else
                                         {
-                                            var v = new EntityFieldEdit.RenewTimestamp(new EntityFieldEdit.Numeric.ValueType.Formula(fieldValue5.AsFormula()));
+                                            var formula = fieldValue5.AsFormula();
+                                            //TODO: Parse formula
+                                            var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                            var v = new EntityFieldEdit.RenewTimestamp(formulaResult);
                                             if (!allFieldsToEdit.TryAdd(fieldName, v))
                                             {
                                                 allFieldsToEdit[fieldName] = v;
@@ -382,7 +427,7 @@ public class ProcessedActionResponse
     public Outcomes targetOutcomes;
     public Outcomes worldOutcomes;
 
-    public ProcessedActionResponse(ActionReturn actionReturn)
+    public ProcessedActionResponse(ActionReturn actionReturn, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
     {
         var callerOutcomeResult = actionReturn.CallerOutcomes;
         var targetOutcomeResult = actionReturn.TargetOutcomes;
@@ -390,15 +435,15 @@ public class ProcessedActionResponse
 
         if (callerOutcomeResult.HasValue)
         {
-            callerOutcomes = new(actionReturn.CallerPrincipalId, callerOutcomeResult.ValueOrDefault);
+            callerOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, callerOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
         }
         if (targetOutcomeResult.HasValue)
         {
-            targetOutcomes = new(actionReturn.TargetPrincipalId.ValueOrDefault, targetOutcomeResult.ValueOrDefault);
+            targetOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, targetOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
         }
         if (worldOutcomeResult.HasValue)
         {
-            worldOutcomes = new(actionReturn.WorldPrincipalId, worldOutcomeResult.ValueOrDefault);
+            worldOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, worldOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
         }
     }
 }
@@ -518,11 +563,9 @@ public static class ActionUtil
 
         var okVal = actionResponse.AsOk();
 
-        ProcessedActionResponse processedActionResponse = new(okVal);
+        var formulaDep = EntityUtil.GetFormulaDependencies(okVal);
 
-        //REFINE OUTCOMES
-        processedActionResponse.RefineActionOutcomes(args);
-
+        ProcessedActionResponse processedActionResponse = new(okVal, formulaDep.worldEntities, formulaDep.callerEntities, formulaDep.targetEntities, formulaDep.configs, args);
 
         if(CandidApiManager.Instance.BoomDaoGameType == CandidApiManager.GameType.SinglePlayer)
         {

@@ -570,19 +570,14 @@ public static class UserUtil
     {
         if (IsUserLoggedIn(out var loginData) == false)
         {
-            return new("Issue getting loginData!");
-        }
-
-        if (loginData.asAnon)
-        {
-            return new("You cannot fetch your own shared data as an anon user!");
+            return new("You must log in!");
         }
 
         if (uid == loginData.principal) uid = "self";
 
         if (BroadcastState.TryRead<Data<T>>(out var val, uid) == false)
         {
-            return new($"Data could not be found for DataType: {typeof(T).Name}");
+            return new($"Data could not be found for DataType: {typeof(T).Name}, uid: {uid.SimplifyAddress()}");
         }
 
         return new(val);

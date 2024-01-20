@@ -629,7 +629,7 @@ public static class EntityFieldEdit
 
 
     public abstract class Numeric : Base
-    { 
+    {
         public static class ValueType
         {
             public abstract class Base { }
