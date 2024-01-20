@@ -3166,6 +3166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b8413e79c449b4ebac10dc18d08e6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MovingDistance: 5
   gameConfig: {fileID: 11400000, guid: e07ae8e0e69fba14b9d47dd0a0cddf51, type: 2}
   config: {fileID: 11400000, guid: b3cd1c3a7c91b3d479f1d2d0785356ca, type: 2}
   sfx: {fileID: 0}
