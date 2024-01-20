@@ -365,20 +365,20 @@ internal static class EntityUtil
         else
         {
             formulaEvaluationDependencies.worldEntities = new DataTypes.Entity[0];
-            Debug.LogWarning("Could not find world's entities");
+            Debug.LogWarning(worldEntityDataTypeResult.AsErr());
         }
 
         //CALLER
         var callerEntityDataTypeResult = UserUtil.GetDataSelf<DataTypes.Entity>();
 
-        if (callerEntityDataTypeResult.IsErr)
+        if (callerEntityDataTypeResult.IsOk)
         {
             formulaEvaluationDependencies.callerEntities = callerEntityDataTypeResult.AsOk().elements.Map(e => e.Value);
         }
         else
         {
             formulaEvaluationDependencies.callerEntities = new DataTypes.Entity[0];
-            Debug.LogWarning("Could not find client's entities");
+            Debug.LogWarning(callerEntityDataTypeResult.AsErr());
         }
 
         //TARGET
@@ -390,7 +390,11 @@ internal static class EntityUtil
             {
                 formulaEvaluationDependencies.targetEntities = targetEntityDataTypeResult.AsOk().elements.Map(e => e.Value);
             }
-            else formulaEvaluationDependencies.targetEntities = new DataTypes.Entity[0];
+            else
+            {
+                formulaEvaluationDependencies.targetEntities = new DataTypes.Entity[0];
+                Debug.LogWarning(targetEntityDataTypeResult.AsErr());
+            }
         }
         else formulaEvaluationDependencies.targetEntities = new DataTypes.Entity[0];
 
@@ -435,7 +439,7 @@ internal static class EntityUtil
 
                 var variableFieldNameElements = variable.Split('.');
 
-                if(variableFieldNameElements.Length == 3)
+                if (variableFieldNameElements.Length == 3)
                 {
                     var source = variableFieldNameElements[0];
                     var key = variableFieldNameElements[1];
@@ -467,7 +471,7 @@ internal static class EntityUtil
 
                     if (entities.TryLocate(e => e.eid == key, out var entity))
                     {
-                        if (! entity.fields.TryGetValue(fieldName, out feildValue))
+                        if (!entity.fields.TryGetValue(fieldName, out feildValue))
                         {
                             Debug.LogError($"Formula error, variable's value of id: {variable} could not be found");
                             feildValue = "Nan";
@@ -477,13 +481,13 @@ internal static class EntityUtil
                 }
                 else if (variableFieldNameElements.Length == 2)
                 {
-                    if(variableFieldNameElements[0] == "$args")
+                    if (variableFieldNameElements[0] == "$args")
                     {
                         var actionArgFieldName = variableFieldNameElements[1];
 
-                        if(args.TryLocate(e => e.FieldName == actionArgFieldName, out var argValue) == false)
+                        if (args.TryLocate(e => e.FieldName == actionArgFieldName, out var argValue) == false)
                         {
-                            return "Could not find arg value of field name: "+ actionArgFieldName;
+                            return "Could not find arg value of field name: " + actionArgFieldName;
                         }
 
                         returnValue = returnValue.Replace("{" + $"{variable}" + "}", $"{argValue.FieldValue}");
@@ -501,8 +505,6 @@ internal static class EntityUtil
     {
         var formulaWithVariableReplaced = ReplaceVariables(formula, worldEntities, callerEntities, targetEntities, configs, args);
 
-        Debug.Log("Evaluate expression: " + formulaWithVariableReplaced);
-
         return formulaEvaluation.Evaluate(formulaWithVariableReplaced);
     }
 
@@ -514,7 +516,7 @@ internal static class EntityUtil
         Dictionary<string, DataTypes.Entity> editedEntities = new();
 
 
-        foreach(var entity in entityEdits)
+        foreach (var entity in entityEdits)
         {
             var eid = entity.Value.eid;
             var wid = entity.Value.wid;
@@ -529,7 +531,7 @@ internal static class EntityUtil
 
 
 
-            foreach ( var edit in fieldsEdits) 
+            foreach (var edit in fieldsEdits)
             {
                 var fieldId = edit.Key;
 
@@ -577,7 +579,7 @@ internal static class EntityUtil
             editedEntities[eid] = newEditedEntity;
         }
 
-        if(editedEntities.Count > 0) UserUtil.UpdateData<DataTypes.Entity>(uid, editedEntities.ToArray().Map(e => e.Value).ToArray());
+        if (editedEntities.Count > 0) UserUtil.UpdateData<DataTypes.Entity>(uid, editedEntities.ToArray().Map(e => e.Value).ToArray());
     }
 }
 
@@ -598,7 +600,7 @@ public class FormulaEvaluation
 
     public double Evaluate(string expression)
     {
-        List<string> tokens = getTokens(expression);
+        List<string> tokens = GetTokens(expression);
         Stack<double> operandStack = new Stack<double>();
         Stack<string> operatorStack = new Stack<string>();
         int tokenIndex = 0;
@@ -635,8 +637,7 @@ public class FormulaEvaluation
             }
             else
             {
-                if(double.TryParse(token, out var tokenParsedValue)) operandStack.Push(tokenParsedValue);
-                else Debug.LogError("Issue parsing: " + token);
+                operandStack.Push(double.Parse(token));
             }
             //
             tokenIndex += 1;
@@ -686,7 +687,7 @@ public class FormulaEvaluation
         return subExpr.ToString();
     }
 
-    private List<string> getTokens(string expression)
+    private List<string> GetTokens(string expression)
     {
 
         List<string> tokens = new List<string>();

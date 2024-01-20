@@ -62,7 +62,7 @@ public class LuckyWheelUI : MonoBehaviour
 
             //Try get Action Config
 
-            if(ConfigUtil.TryGetAction(CandidApiManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig) == false)
+            if (ConfigUtil.TryGetAction(CandidApiManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig) == false)
             {
                 $"Action of Id: {actionId} could not be found".Error(typeof(LuckyWheelUI).Name);
                 throw new();
@@ -70,7 +70,7 @@ public class LuckyWheelUI : MonoBehaviour
 
             var callerActionConfig = actionConfig.callerAction;
 
-            if(callerActionConfig == null)
+            if (callerActionConfig == null)
             {
                 $"callerAction is null".Warning(typeof(LuckyWheelUI).Name);
                 throw new();
@@ -78,14 +78,13 @@ public class LuckyWheelUI : MonoBehaviour
 
             var callerOutcomesConfig = callerActionConfig.Outcomes;
 
-            if (callerOutcomesConfig.Count < 2)
+            if (callerOutcomesConfig.Count < 3)
             {
                 $"Action is missing Wheel of Fortune's Outcome".Warning(typeof(LuckyWheelUI).Name);
                 throw new();
             }
 
-            var possibleWheelOfFortuneOutcomesConfig = callerOutcomesConfig[1];
-
+            var possibleWheelOfFortuneOutcomesConfig = callerOutcomesConfig[2];
 
             //ACtion Arguments Setup
 
@@ -93,12 +92,12 @@ public class LuckyWheelUI : MonoBehaviour
             var currentKityHealth = 40;
             var totalBattleXp = 120;
 
-            List<Field> args = new() 
-            {
-                 new Field("kitty_id", currentKittyId),
-                  new Field("new_health", $"{currentKityHealth}"),
-                   new Field("total_battle_xp", $"{totalBattleXp}"),
-            };
+            List<Field> args = new()
+        {
+              new Field("kitty_id", currentKittyId),
+              new Field("new_health", $"{currentKityHealth}"),
+              new Field("total_battle_xp", $"{totalBattleXp}"),
+        };
 
             //Process Action
 
@@ -106,13 +105,15 @@ public class LuckyWheelUI : MonoBehaviour
 
             if (actionResult.IsErr)
             {
-                $"{actionResult.AsErr()}".Warning(typeof(LuckyWheelUI).Name);
+                $"{actionResult.AsErr().content}".Warning(typeof(LuckyWheelUI).Name);
                 throw new();
             }
 
             var actionResultAsOk = actionResult.AsOk();
 
             var callerActionOutcome = actionResultAsOk.callerOutcomes;
+            Debug.Log($"Configs Rewards, {JsonConvert.SerializeObject(possibleWheelOfFortuneOutcomesConfig)}");
+            Debug.Log($"Rewards, {JsonConvert.SerializeObject(callerActionOutcome.entityEdits)}");
 
             var rewardName = "";
             var rewardAmount = 0.0;
@@ -121,8 +122,9 @@ public class LuckyWheelUI : MonoBehaviour
 
             foreach (var posibleOutcome in possibleWheelOfFortuneOutcomesConfig.PossibleOutcomes)
             {
+
                 //If update is not of type entity then skip
-                if(posibleOutcome.Option.Tag != ActionOutcomeOption.OptionInfoTag.UpdateEntity)
+                if (posibleOutcome.Option.Tag != ActionOutcomeOption.OptionInfoTag.UpdateEntity)
                 {
                     continue;
                 }
@@ -132,17 +134,17 @@ public class LuckyWheelUI : MonoBehaviour
                 foreach (var actionCallerEntityOutcome in callerActionOutcome.entityEdits)
                 {
                     //If one of the expected Wheel of Fortune outcomes is found on the applied outcomes then pick the one that matches
-                    if(outcomeEntityConfig.Eid == actionCallerEntityOutcome.Value.eid)
+                    if (outcomeEntityConfig.Eid == actionCallerEntityOutcome.Value.eid)
                     {
                         rewardName = actionCallerEntityOutcome.Value.eid;
 
-                        if(actionCallerEntityOutcome.Value.fields.TryGetValue("amount", out EntityFieldEdit.Base amountEdit) == false)
+                        if (actionCallerEntityOutcome.Value.fields.TryGetValue("amount", out EntityFieldEdit.Base amountEdit) == false)
                         {
                             $"Entity of id: {rewardName} doesn't has field of id: amount".Warning(typeof(LuckyWheelUI).Name);
                             throw new();
                         }
 
-                        if(amountEdit is not EntityFieldEdit.IncrementNumber amountIncrementEdit)
+                        if (amountEdit is not EntityFieldEdit.IncrementNumber amountIncrementEdit)
                         {
                             $"Issue casting value".Warning(typeof(LuckyWheelUI).Name);
                             throw new();
@@ -153,15 +155,12 @@ public class LuckyWheelUI : MonoBehaviour
                         goto breakPossibleOutcomesLoop;
                     }
                 }
-
-                breakPossibleOutcomesLoop : 
-                {
-                    break;
-                }
             }
 
+            breakPossibleOutcomesLoop: { }
 
             //Get reward by name
+            Debug.Log($"Generated Reward: {rewardName}");
             choosenReward = LuckyWheelRewardSO.Get(rewardName);
 
         }

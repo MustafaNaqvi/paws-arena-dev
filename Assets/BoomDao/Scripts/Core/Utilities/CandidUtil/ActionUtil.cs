@@ -179,7 +179,7 @@ public class ProcessedActionResponse
                         {
                             var splitedUid = eid.Split('.');
 
-                            if(splitedUid.Length != 2)
+                            if (splitedUid.Length != 2)
                             {
                                 Debug.LogError("Issue assigning an argument as an entity id");
                                 return;
@@ -187,9 +187,9 @@ public class ProcessedActionResponse
 
                             var argFieldName = splitedUid[1];
 
-                            foreach(var arg in args)
+                            foreach (var arg in args)
                             {
-                                if(arg.FieldName == argFieldName)
+                                if (arg.FieldName == argFieldName)
                                 {
                                     eid = arg.FieldValue;
                                     break;
@@ -446,8 +446,7 @@ public class ProcessedActionResponse
             worldOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, worldOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
         }
     }
-}
-//UTILS
+}//UTILS
 public static class ActionUtil
 {
 
@@ -567,7 +566,7 @@ public static class ActionUtil
 
         ProcessedActionResponse processedActionResponse = new(okVal, formulaDep.worldEntities, formulaDep.callerEntities, formulaDep.targetEntities, formulaDep.configs, args);
 
-        if(CandidApiManager.Instance.BoomDaoGameType == CandidApiManager.GameType.SinglePlayer)
+        if (CandidApiManager.Instance.BoomDaoGameType == CandidApiManager.GameType.SinglePlayer)
         {
             List<string> outcomeUids = new();
 
@@ -654,7 +653,7 @@ public static class ActionUtil
             {
                 CoroutineManagerUtil.DelayAction(() =>
                 {
-                     UserUtil.RequestData(new DataTypeRequestArgs.Entity(outcomeUids.ToArray()));
+                    UserUtil.RequestData(new DataTypeRequestArgs.Entity(outcomeUids.ToArray()));
                 }, 20f, CandidApiManager.Instance.transform);
             }
         }
@@ -874,12 +873,12 @@ public static class ActionUtil
 
             var getLoginTypeResult = UserUtil.GetLoginType();
 
-            if (getLoginTypeResult.Tag == UResultTag.Err)
+            if (getLoginTypeResult == UserUtil.LoginType.None)
             {
-                return new(new TransferErrType.LogIn(getLoginTypeResult.AsErr()));
+                return new(new TransferErrType.LogIn("You must log in"));
             }
 
-            if (getLoginTypeResult.AsOk() == UserUtil.LoginType.Anon)
+            if (getLoginTypeResult == UserUtil.LoginType.Anon)
             {
                 return new(new TransferErrType.LogIn("You cannot execute this function as anon"));
             }

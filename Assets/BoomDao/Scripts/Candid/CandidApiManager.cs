@@ -22,6 +22,7 @@ namespace Candid
     using Boom;
     using EdjCase.ICP.BLS;
     using Newtonsoft.Json;
+    using static UserUtil;
 
     public class CandidApiManager : MonoBehaviour
     {
@@ -44,6 +45,7 @@ namespace Candid
         public WorldHubApiClient WorldHub { get; private set; }
 
         [SerializeField, ShowOnly] string principal;
+        [SerializeField, ShowOnly] bool isLoginIn;
 
         [SerializeField, ShowOnly] float nextUpdateIn;
         [SerializeField] float secondsToUpdateClient = 2;
@@ -59,18 +61,6 @@ namespace Candid
         [SerializeField] bool multPlayerCollectionFetch;
 
         bool configsRequested;
-        public bool CanLogIn
-        {
-            get
-            {
-                bool isLoading = UserUtil.IsLoginIn() == false;
-                bool isAnonLoggedIn = UserUtil.IsAnonLoggedIn();
-                bool isConfigReady = UserUtil.IsMainDataValid<MainDataTypes.AllConfigs>();
-                bool areActionsReady = UserUtil.IsMainDataValid<MainDataTypes.AllAction>();
-
-                return isConfigReady && areActionsReady && isLoading && isAnonLoggedIn;
-            }
-        }
 
         private void Awake()
         {
@@ -116,11 +106,6 @@ namespace Candid
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.Token>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.NftCollection>(FetchHandler);
 
-            UserUtil.AddListenerMainDataChange<MainDataTypes.AllConfigs>(CanLogingEventHandler);
-            UserUtil.AddListenerMainDataChange<MainDataTypes.AllAction>(CanLogingEventHandler);
-
-            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(CanLogingEventHandler);
-
             InitializeCandidApis(CreateAgentWithRandomIdentity(), true).Forget();
         }
 
@@ -136,11 +121,6 @@ namespace Candid
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.ActionState>(FetchHandler);
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.Token>(FetchHandler);
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.NftCollection>(FetchHandler);
-
-            UserUtil.RemoveListenerMainDataChange<MainDataTypes.AllConfigs>(CanLogingEventHandler);
-            UserUtil.RemoveListenerMainDataChange<MainDataTypes.AllAction>(CanLogingEventHandler);
-
-            UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(CanLogingEventHandler);
 
             //WEBSOCKET
             if (BoomDaoGameType == CandidApiManager.GameType.WebsocketMultiplayer)
@@ -169,31 +149,19 @@ namespace Candid
             }
         }
         //
-        private void CanLogingEventHandler(MainDataTypes.LoginData state)
-        {
-            BroadcastState.Invoke(new CanLogin(CanLogIn));
-        }
-        private void CanLogingEventHandler(MainDataTypes.AllConfigs state)
-        {
-            BroadcastState.Invoke(new CanLogin(CanLogIn));
-        }
-        private void CanLogingEventHandler(MainDataTypes.AllAction state)
-        {
-            BroadcastState.Invoke(new CanLogin(CanLogIn));
-        }
-        //
+
 
         void OnLoginCompleted(string json)
         {
-            var getIsLoginResult = UserUtil.GetLoginType();
+            var isLoggedIn = UserUtil.IsLoggedIn(out LoginType loginType);
 
-            if (getIsLoginResult.Tag == UResultTag.Err)
+            if (isLoggedIn == false)
             {
                 CreateAgentUsingIdentityJson(json, false).Forget();
                 return;
             }
 
-            if (getIsLoginResult.Tag == UResultTag.Ok && getIsLoginResult.AsOk() == UserUtil.LoginType.Anon)
+            if (isLoggedIn && loginType == LoginType.Anon)
             {
                 CreateAgentUsingIdentityJson(json, false).Forget();
                 return;
@@ -231,7 +199,7 @@ namespace Candid
         {
             PlayerPrefs.SetString("authTokenId", string.Empty);
             InitializeCandidApis(cachedAnonAgent.Value, true).Forget();
-            BroadcastState.Invoke(new CanLogin(CanLogIn));
+
             configsRequested = false;
 
             //WEBSOCKET
@@ -288,7 +256,7 @@ namespace Candid
 
 
                 //Set Login Data
-                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, true));
+                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.LoggedInAsAnon));
             }
             else
             {
@@ -304,8 +272,8 @@ namespace Candid
 
                 //Set Login Data
                 //UserUtil.Clean<DataTypes.LoginData>(new UserUtil.CleanUpType.All());
-                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, false));
-
+                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.LoggedIn));
+                BroadcastState.Invoke(new WaitingForResponse(false));
 
                 //USER DATA
                 UserUtil.RequestData(new DataTypeRequestArgs.Entity(userPrincipal, WORLD_CANISTER_ID));
@@ -355,6 +323,8 @@ namespace Candid
                     //TODO: CONNECT WEBSOCKET
                 }
             }
+
+            isLoginIn = false;
 
             //INIT CONFIGS
             if (!configsRequested)
@@ -823,9 +793,11 @@ namespace Candid
         }
         private void FetchHandler(UserLoginRequest arg)
         {
-            if (UserUtil.IsLoginIn() || UserUtil.IsUserLoggedIn()) return;
+            if (UserUtil.IsLoginRequestedPending() || UserUtil.IsUserLoggedIn()) return;
 
-            UserUtil.SetAsLoginIn();
+            SetAsLoginIn();
+            BroadcastState.Invoke(new WaitingForResponse(true));
+
 
             PlayerPrefs.SetString("walletType", "II");
 
@@ -833,7 +805,7 @@ namespace Candid
             LoginManager.Instance.StartLoginFlowWebGl(OnLoginCompleted);
             return;
 #endif
-
+            isLoginIn = true;
             LoginManager.Instance.StartLoginFlow(OnLoginCompleted);
         }
 
