@@ -2,16 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28f6e340-17a0-427c-86ce-b7d69dbd1212" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PawsArenaGit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PawsArenaGit/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebGL.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebGL/ICPEvents.jslib" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/WebGL/ICPEvents.jslib.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Scenes/Lobby/Lobby.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/Scenes/Lobby/Lobby.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Scripts/GameLobby/ConnectingToServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/Scripts/GameLobby/ConnectingToServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Scripts/GameLobby/ExternalJSCommunication.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Scripts/GameLobby/ExternalJSCommunication.cs.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="mock://D:/Projects/_Freelancing/PawsArena/PawsArenaGit/Assets/_ProjectAssets/Scripts/GameLobby/ConnectingToServer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Projects/_Freelancing/PawsArena/PawsArenaGit/Assets/_ProjectAssets/Scripts/GameLobby/ConnectingToServer.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -79,6 +82,8 @@
       <workItem from="1705478262088" duration="893000" />
       <workItem from="1705505412353" duration="430000" />
       <workItem from="1705599838671" duration="2223000" />
+      <workItem from="1705760185048" duration="945000" />
+      <workItem from="1705761771269" duration="1416000" />
     </task>
     <servers />
   </component>
