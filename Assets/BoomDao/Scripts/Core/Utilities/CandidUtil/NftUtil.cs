@@ -3,9 +3,7 @@ using Boom.Values;
 using Candid;
 using Candid.World.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 public static class NftUtil
 {
@@ -255,7 +253,7 @@ public static class NftUtil
         bool update = false;
         foreach (var mintedNft in mintedNfts)
         {
-            UnityEngine.Debug.Log($"ADDING NFT: {mintedNft.Canister} : {-1}");
+            $"ADDING NFT: {mintedNft.Canister} : {-1}".Log();
 
             //if (mintedNft.Index.HasValue == false)
             //{

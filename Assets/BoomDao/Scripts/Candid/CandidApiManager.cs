@@ -3,10 +3,8 @@ namespace Candid
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Candid.Extv2Standard;
     using Candid.Extv2Boom;
     using Candid.IcpLedger;
-    using Candid.IcpLedger.Models;
     using Candid.World;
     using Candid.WorldHub;
     using Cysharp.Threading.Tasks;
@@ -18,7 +16,6 @@ namespace Candid
     using Boom.Values;
     using UnityEngine;
     using Candid.IcrcLedger;
-    using Unity.VisualScripting;
     using Boom;
     using EdjCase.ICP.BLS;
     using Newtonsoft.Json;
@@ -26,6 +23,7 @@ namespace Candid
 
     public class CandidApiManager : MonoBehaviour
     {
+        [SerializeField] bool enableBoomLogs = true;
         [field : SerializeField] public string WORLD_HUB_CANISTER_ID { private set; get; } = "fgpem-ziaaa-aaaag-abi2q-cai";
         [field : SerializeField] public string WORLD_CANISTER_ID { private set; get; } = "j4n55-giaaa-aaaap-qb3wq-cai";
         [field: SerializeField] public string WORLD_COLLECTION_CANISTER_ID { private set; get; } = "6uvic-diaaa-aaaap-abgca-cai";
@@ -64,6 +62,7 @@ namespace Candid
 
         private void Awake()
         {
+
             BroadcastState.Invoke(new WaitingForResponse(true));
 
             IAgent CreateAgentWithRandomIdentity(bool useLocalHost = false)
@@ -86,7 +85,7 @@ namespace Candid
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e.ToString());
+                    e.ToString().Error();
                 }
 
                 return randomAgent;
@@ -132,6 +131,8 @@ namespace Candid
         int frameCount;
         private void Update()
         {
+            DebugUtil.enableBoomLogs = enableBoomLogs;
+
             ++frameCount;
             if (BoomDaoGameType == GameType.Multiplayer)
             {
@@ -167,7 +168,7 @@ namespace Candid
                 return;
             }
 
-            Debug.Log("You already have an Agent created");
+            "You already have an Agent created".Log();
         }
         public async UniTaskVoid CreateAgentUsingIdentityJson(string json, bool useLocalHost = false)
         {
@@ -187,11 +188,11 @@ namespace Candid
                 if (useLocalHost) await InitializeCandidApis(new HttpAgent(identity, new Uri("http://localhost:4943"), bls));
                 else await InitializeCandidApis(new HttpAgent(httpClient, identity, bls));
 
-                Debug.Log("You have logged in");
+                "You have logged in".Log();
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
 
@@ -287,7 +288,7 @@ namespace Candid
 
                 if (allTokensConfigResult.IsErr)
                 {
-                    Debug.LogWarning(allTokensConfigResult.AsErr());
+                    allTokensConfigResult.AsErr().Warning();
                     return;
                 }
 
@@ -304,7 +305,7 @@ namespace Candid
 
                 if (nftsToFetchResult.IsErr)
                 {
-                    Debug.LogWarning(nftsToFetchResult.AsErr());
+                    nftsToFetchResult.AsErr().Warning();
                     return;
                 }
 
@@ -397,7 +398,7 @@ namespace Candid
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                ex.Message.Error();
             }
         }
 
@@ -411,7 +412,7 @@ namespace Candid
 
             if (!UserUtil.IsUserLoggedIn(out var loginData))
             {
-                Debug.LogError("something went wrong, user is not logged in!");
+                "something went wrong, user is not logged in!".Error();
                 return;
             }
 
@@ -446,7 +447,7 @@ namespace Candid
 
             if (!UserUtil.IsUserLoggedIn(out var loginData))
             {
-                Debug.LogError("something went wrong, user is not logged in!");
+                "something went wrong, user is not logged in!".Error();
                 return;
             }
 
@@ -482,7 +483,7 @@ namespace Candid
 
             if (!UserUtil.IsUserLoggedIn(out var loginData))
             {
-                Debug.LogError("something went wrong, user is not logged in!");
+                "something went wrong, user is not logged in!".Error();
                 return;
             }
 
@@ -520,7 +521,7 @@ namespace Candid
 
             if (!UserUtil.IsUserLoggedIn(out var loginData))
             {
-                Debug.LogError("something went wrong, user is not logged in!");
+                "something went wrong, user is not logged in!".Error();
                 return;
             }
 
@@ -633,7 +634,7 @@ namespace Candid
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
 
@@ -647,7 +648,7 @@ namespace Candid
 
                 if (ConfigUtil.QueryConfigsByTag(WORLD_CANISTER_ID, "nft", out var nftConfigs))
                 {
-                    Debug.Log($"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}");
+                    $"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}".Log();
                     nftConfigs.Iterate(e =>
                     {
                         if (!e.GetConfigFieldAs<string>("name", out var collectionName))
@@ -690,7 +691,7 @@ namespace Candid
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
         //Listings
@@ -702,10 +703,9 @@ namespace Candid
 
             if (getAgentResult.Tag == UResultTag.Err)
             {
-                Debug.Log(getAgentResult.AsErr());
+                getAgentResult.AsErr().Error();
                 return;
             }
-            Debug.Log("Get Nft Listings Of " + WORLD_COLLECTION_CANISTER_ID);
 
             Extv2BoomApiClient collectionInterface = new(getAgentResult.AsOk(), Principal.FromText(WORLD_COLLECTION_CANISTER_ID));
 
@@ -732,7 +732,7 @@ namespace Candid
 
             if (EntityUtil.TryGetAllEntitiesOf<DataTypes.Entity>(EntityUtil.Queries.rooms, out var rooms, e => e))
             {
-                Debug.Log($"Try Fetch Room Data Success, data: {JsonConvert.SerializeObject(rooms)}");
+                $"Try Fetch Room Data Success, data: {JsonConvert.SerializeObject(rooms)}".Log();
 
                 var allRoomsData = new MainDataTypes.AllRoomData(rooms);
                 UserUtil.UpdateMainData(allRoomsData);
@@ -756,7 +756,7 @@ namespace Candid
                         var tokenConfigsResult = ConfigUtil.GetAllTokenConfigs();
                         if (tokenConfigsResult.IsErr)
                         {
-                            Debug.LogError(tokenConfigsResult.AsErr());
+                            tokenConfigsResult.AsErr().Error();
                             return;
                         }
                         var tokenConfigs = tokenConfigsResult.AsOk();
@@ -769,7 +769,7 @@ namespace Candid
 
                         if (nftConfigsResult.IsErr)
                         {
-                            Debug.LogError(nftConfigsResult.AsErr());
+                            nftConfigsResult.AsErr().Error();
                             return;
                         }
                         var nftConfigs = nftConfigsResult.AsOk();
@@ -780,7 +780,7 @@ namespace Candid
             }
             else
             {
-                Debug.Log("Try Fetch Room Data Failure");
+                "Try Fetch Room Data Failure".Log();
             }
         }
 

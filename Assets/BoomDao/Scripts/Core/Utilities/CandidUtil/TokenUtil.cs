@@ -13,7 +13,7 @@ public static class TokenUtil
 
         if (ConfigUtil.TryGetTokenConfig(canisterId, out var tokenConfig) == false)
         {
-            Debug.LogError("Failure to find config of tokenId: " + canisterId);
+            ("Failure to find config of tokenId: " + canisterId).Error();
             return 0;
         }
 
@@ -43,7 +43,7 @@ public static class TokenUtil
         }
         catch (System.Exception ex)
         {
-            Debug.LogException(ex);
+            ex.Message.Error();
         }
     }
     public static void IncrementTokenByBaseUnit(string uid, params (string canisterId, ulong baseUnitAmount)[] amountToAdd)
@@ -52,7 +52,7 @@ public static class TokenUtil
 
         if (tokensResult.IsErr)
         {
-            Debug.LogWarning("Token Data is not yet ready");
+            "Token Data is not yet ready".Warning();
             return;
         }
 
@@ -78,7 +78,7 @@ public static class TokenUtil
 
         if (tokensResult.IsErr)
         {
-            Debug.LogWarning("Token Data is not yet ready");
+            "Token Data is not yet ready".Warning();
             return;
         }
 

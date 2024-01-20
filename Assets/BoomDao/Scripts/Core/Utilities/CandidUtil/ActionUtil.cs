@@ -11,12 +11,10 @@ using Boom.Utility;
 using Candid.IcrcLedger;
 using Candid.IcpLedger;
 using WebSocketSharp;
-using System;
 using Newtonsoft.Json;
 using Boom.Patterns.Broadcasts;
 using Boom;
 using Candid.Extv2Boom;
-using static EntityFieldEdit;
 
 
 //TRANSFER ERROR TYPES
@@ -181,7 +179,7 @@ public class ProcessedActionResponse
 
                             if (splitedUid.Length != 2)
                             {
-                                Debug.LogError("Issue assigning an argument as an entity id");
+                                "Issue assigning an argument as an entity id".Error();
                                 return;
                             }
 

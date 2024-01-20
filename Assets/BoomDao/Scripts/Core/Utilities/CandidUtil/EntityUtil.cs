@@ -169,11 +169,11 @@ internal static class EntityUtil
                                     break;
                                 case EntityFilterPredicate.Double predicate:
 
-                                    if(value.TryParseValue<double>(out var decimalValue) == false)
+                                    if (value.TryParseValue<double>(out var decimalValue) == false)
                                     {
-                                        Debug.LogError($"Issue parsing field of id: {condition.key}, from string to double");
+                                        $"Issue parsing field of id: {condition.key}, from string to double".Error();
                                         return false;
-                                    } 
+                                    }
 
                                     if (predicate.Predicate.Invoke(decimalValue) == false) goto entityLoopEnd;
 
@@ -182,7 +182,7 @@ internal static class EntityUtil
 
                                     if (value.TryParseValue<ulong>(out var ulongValue) == false)
                                     {
-                                        Debug.LogError($"Issue parsing field of id: {condition.key}, from string to ulong");
+                                        $"Issue parsing field of id: {condition.key}, from string to ulong".Error();
                                         return false;
                                     }
 
@@ -193,7 +193,7 @@ internal static class EntityUtil
 
                                     if (value.TryParseValue<bool>(out var boolValue) == false)
                                     {
-                                        Debug.LogError($"Issue parsing field of id: {condition.key}, from string to bool");
+                                        $"Issue parsing field of id: {condition.key}, from string to bool".Error();
                                         return false;
                                     }
 
@@ -231,7 +231,7 @@ internal static class EntityUtil
         {
             return true;
         }
-        Debug.LogError($"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}");
+        $"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}".Error();
         return false;
     }
     public static bool GetFieldAsString(string uid, string entityId, string fieldName, out string returnValue, string defaultValue = default)
@@ -256,7 +256,7 @@ internal static class EntityUtil
         {
             return true;
         }
-        Debug.LogError($"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}");
+        $"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}".Error();
         return false;
     }
     public static bool GetFieldAsString(this DataTypes.Entity entity, string fieldName, out string returnValue, string defaultValue = default)
@@ -285,7 +285,7 @@ internal static class EntityUtil
                 returnValue = e.Value;
                 return true;
             default:
-                Debug.LogError($"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}");
+                $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}".Error();
                 return false;
         }
     }
@@ -301,7 +301,7 @@ internal static class EntityUtil
                 returnValue = e.Value;
                 return true;
             default:
-                Debug.LogError($"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.SetText)} for field: {fieldName}");
+                $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.SetText)} for field: {fieldName}".Error();
                 return false;
         }
     }
@@ -317,7 +317,7 @@ internal static class EntityUtil
                 returnValue = e.OldText;
                 return true;
             default:
-                Debug.LogError($"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}");
+                $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}".Error();
                 return false;
         }
     }
@@ -333,7 +333,7 @@ internal static class EntityUtil
                 returnValue = e.NewText;
                 return true;
             default:
-                Debug.LogError($"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}");
+                $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}".Error();
                 return false;
         }
     }
@@ -455,7 +455,7 @@ internal static class EntityUtil
                         {
                             if (!config.fields.TryGetValue(fieldName, out feildValue))
                             {
-                                Debug.LogError($"Formula error, variable's value of id: {variable} could not be found");
+                                $"Formula error, variable's value of id: {variable} could not be found".Error();
                                 feildValue = "Nan";
                             }
                             else
@@ -473,7 +473,7 @@ internal static class EntityUtil
                     {
                         if (!entity.fields.TryGetValue(fieldName, out feildValue))
                         {
-                            Debug.LogError($"Formula error, variable's value of id: {variable} could not be found");
+                            $"Formula error, variable's value of id: {variable} could not be found".Error();
                             feildValue = "Nan";
                         }
                     }
