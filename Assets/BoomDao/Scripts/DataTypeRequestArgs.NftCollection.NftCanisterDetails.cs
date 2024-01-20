@@ -629,33 +629,10 @@ public static class EntityFieldEdit
 
 
     public abstract class Numeric : Base
-    { 
-        public static class ValueType
-        {
-            public abstract class Base { }
-            public class Number : Base
-            {
-                public double Value { get; set; }
+    {
+        public double Value { get; set; }
 
-                public Number(double value)
-                {
-                    Value = value;
-                }
-            }
-            public class Formula : Base
-            {
-                public string Value { get; set; }
-
-                public Formula(string value)
-                {
-                    Value = value;
-                }
-            }
-        }
-
-        public ValueType.Base Value { get; set; }
-
-        protected Numeric(ValueType.Base value)
+        public Numeric(double value)
         {
             Value = value;
         }
@@ -663,25 +640,25 @@ public static class EntityFieldEdit
 
     public class SetNumber : Numeric
     {
-        public SetNumber(ValueType.Base value) : base(value)
+        public SetNumber(double value) : base(value)
         {
         }
     }
     public class IncrementNumber : Numeric
     {
-        public IncrementNumber(ValueType.Base value) : base(value)
+        public IncrementNumber(double value) : base(value)
         {
         }
     }
     public class DecrementNumber : Numeric
     {
-        public DecrementNumber(ValueType.Base value) : base(value)
+        public DecrementNumber(double value) : base(value)
         {
         }
     }
     public class RenewTimestamp : Numeric
     {
-        public RenewTimestamp(ValueType.Base value) : base(value)
+        public RenewTimestamp(double value) : base(value)
         {
         }
     }
@@ -1058,30 +1035,28 @@ public class MainDataTypes
     [Serializable]
     public class LoginData : Base
     {
+        public enum State
+        {
+            Logedout,
+            LoginRequested,
+            LoggedIn,
+            LoggedInAsAnon,
+        }
         public IAgent agent;
         public string principal;
         public string accountIdentifier;
-        public bool isLoginIn;
-        public bool asAnon;
+        public State state;
         public long updateTs;
-
-        public LoginData() { }
-        public LoginData(bool isLoginIn, LoginData old) 
+        public LoginData() 
         {
-            this.isLoginIn = isLoginIn;
-
-            this.agent = old.agent;
-            this.principal = old.principal;
-            this.accountIdentifier = old.accountIdentifier;
-            this.asAnon = old.asAnon;
-            updateTs = MainUtil.Now();
+            this.state = State.Logedout;
         }
-        public LoginData(IAgent agent, string principal, string accountIdentifier, bool asAnon)
+        public LoginData(IAgent agent, string principal, string accountIdentifier, State state)
         {
             this.agent = agent;
             this.principal = principal;
             this.accountIdentifier = accountIdentifier;
-            this.asAnon = asAnon;
+            this.state = state;
             updateTs = MainUtil.Now();
         }
     }

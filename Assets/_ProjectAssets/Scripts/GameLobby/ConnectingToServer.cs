@@ -29,7 +29,7 @@ public class ConnectingToServer : MonoBehaviour
 
     private void LoginDataChangeHandler(MainDataTypes.LoginData data)
     {
-        if (data.asAnon)
+        if (data.state != MainDataTypes.LoginData.State.LoggedIn)
         {
             //Return, client is not logged in yet
             return;
