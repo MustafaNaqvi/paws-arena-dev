@@ -125,38 +125,38 @@ namespace Boom.UI
                 {
                     WindowManager.Instance.AddWidgets<ActionWidget>(new ActionWidget.WindowData()
                     {
-                        id = $"{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID}|{element.Key}|{element.Value.details.Seller}",
+                        id = $"{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID}|{element.Key}|{element.Value.details.Seller}",
                         content = $"Nft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nIndex:\n{element.Value.index}\n\nPrice:\n{element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nSeller: YOU",
                         textButtonContent = "UNLIST",
                         action = (a, b) => UnlistNft(a, b).Forget(),
 
                         customData = (
-                            CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID,
+                            BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID,
                             element.Value.tokenIdentifier,
                             $"{element.Value.details.Seller}",
                             element.Value.details.Price),
 
-                        imageContentType = new ImageContentType.Url($"https://{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID}.raw.icp0.io/?&tokenid={element.Value.tokenIdentifier}&type=thumbnail"),
-                        infoWindowData = new($"Your NFT Listing Info", $"Price:\n{element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nSeller: YOU\n\nNft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
+                        imageContentType = new ImageContentType.Url($"https://{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID}.raw.icp0.io/?&tokenid={element.Value.tokenIdentifier}&type=thumbnail"),
+                        infoWindowData = new($"Your NFT Listing Info", $"Price:\n{element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nSeller: YOU\n\nNft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
                     }, listingContent);
                 }
                 else
                 {
                     WindowManager.Instance.AddWidgets<ActionWidget>(new ActionWidget.WindowData()
                     {
-                        id = $"{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID}|{element.Key}|{element.Value.details.Seller}",
+                        id = $"{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID}|{element.Key}|{element.Value.details.Seller}",
                         content = $"Nft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nSeller:\n{element.Value.details.Seller.ToText().SimplifyAddress()}",
                         textButtonContent = $"BUY {element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP",
                         action = (a, b) => Buy(a, b).Forget(),
 
                         customData = (
-                            CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID,
+                            BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID,
                             element.Value.tokenIdentifier,
                             $"{element.Value.details.Seller}",
                             element.Value.details.Price),
 
-                        imageContentType = new ImageContentType.Url($"https://{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID}.raw.icp0.io/?&tokenid={element.Value.tokenIdentifier}&type=thumbnail"),
-                        infoWindowData = new($"NFT Listing Info", $"Price:\n{element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nSeller: {element.Value.details.Seller.ToText().SimplifyAddress()}\n\nNft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
+                        imageContentType = new ImageContentType.Url($"https://{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID}.raw.icp0.io/?&tokenid={element.Value.tokenIdentifier}&type=thumbnail"),
+                        infoWindowData = new($"NFT Listing Info", $"Price:\n{element.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nSeller: {element.Value.details.Seller.ToText().SimplifyAddress()}\n\nNft ID:\n{element.Value.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
                     }, listingContent);
                 }
             }
@@ -210,7 +210,7 @@ namespace Boom.UI
 
             var listings = listingResult.AsOk();
 
-            var nftCountResult = NftUtil.GetNftCount(principal, CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID);
+            var nftCountResult = NftUtil.GetNftCount(principal, BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID);
 
             if (nftCountResult.Tag == Boom.Values.UResultTag.Err)
             {
@@ -227,11 +227,11 @@ namespace Boom.UI
                 //There is no listings. No need to return.
                 loadingVisualNftToList.text = "You don't have any NFTs to list";
 
-                Debug.LogWarning("You dont have any Nft from collection: "+ CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID);
+                Debug.LogWarning("You dont have any Nft from collection: "+ BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID);
             }
             else
             {
-                if(nftsState.elements.TryGetValue(CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID, out var nftCollection))
+                if(nftsState.elements.TryGetValue(BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID, out var nftCollection))
                 {
                     nftCollection.tokens.Iterate(token =>
                     {
@@ -253,7 +253,7 @@ namespace Boom.UI
                                     "", (ulong)0),
 
                                 imageContentType = new ImageContentType.Url(url),
-                                infoWindowData = new($"NFT Listing Info", $"Price:\n{listing.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nNft ID:\n{token.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
+                                infoWindowData = new($"NFT Listing Info", $"Price:\n{listing.Value.details.Price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nNft ID:\n{token.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
                             }, nftToListContent);
                         }
                         else
@@ -271,14 +271,14 @@ namespace Boom.UI
                                     token.index),
 
                                 imageContentType = new ImageContentType.Url(url),
-                                infoWindowData = new($"NFT Info", $"Nft ID:\n{token.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
+                                infoWindowData = new($"NFT Info", $"Nft ID:\n{token.tokenIdentifier.SimplifyAddress()}\n\nCanister ID:\n{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}")
                             }, nftToListContent);
                         }
                     });
                 }
                 else
                 {
-                    Debug.LogError($"Failure to find config of nft collectionId: {CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID}");
+                    Debug.LogError($"Failure to find config of nft collectionId: {BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID}");
                     return;
                 }
             }
@@ -394,7 +394,7 @@ namespace Boom.UI
 
             //
 
-            if (ConfigUtil.QueryConfigsByTag(CandidApiManager.Instance.WORLD_CANISTER_ID, "nft", out var nftConfigs))
+            if (ConfigUtil.QueryConfigsByTag(BoomManager.Instance.WORLD_CANISTER_ID, "nft", out var nftConfigs))
             {
                 nftConfigs.Iterate(e =>
                 {
@@ -447,7 +447,7 @@ namespace Boom.UI
 
             (selectedNftCollectionCanisterId, selectedNftIdentifier, selectedNftIndex) = ((string, string, uint))customData;
 
-            newListingContentText.text = $"Canister ID:\n{CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}\n\nNft ID:\n{selectedNftIdentifier.SimplifyAddress()}\n\nNft Index: {selectedNftIndex}";
+            newListingContentText.text = $"Canister ID:\n{BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID.SimplifyAddress()}\n\nNft ID:\n{selectedNftIdentifier.SimplifyAddress()}\n\nNft Index: {selectedNftIndex}";
         }
         private void CancelMakeOfferPanel()
         {
@@ -483,7 +483,7 @@ namespace Boom.UI
                 return;
             }
 
-            Extv2BoomApiClient collectionInterface = new(getAgentResult.AsOk(), Principal.FromText(CandidApiManager.Instance.WORLD_COLLECTION_CANISTER_ID));
+            Extv2BoomApiClient collectionInterface = new(getAgentResult.AsOk(), Principal.FromText(BoomManager.Instance.WORLD_COLLECTION_CANISTER_ID));
 
             var listingReqResult = await collectionInterface.List(new Candid.Extv2Boom.Models.ListRequest(new(), new(nftPrice.ConvertToBaseUnit(CandidUtil.ICP_DECIMALS)), selectedNftIdentifier));
 

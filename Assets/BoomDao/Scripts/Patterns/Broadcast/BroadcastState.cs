@@ -5,7 +5,6 @@ namespace Boom.Patterns.Broadcasts
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
 
     public static class BroadcastState
@@ -27,6 +26,7 @@ namespace Boom.Patterns.Broadcasts
 
             private class BroadcastGroup
             {
+                private int updateCount;
                 private InitValue<IBroadcastState> msg;
                 private readonly LinkedList<DelegateInfo> listeners;
                 public bool IsInit { get { return msg.IsInit; } }
@@ -72,6 +72,8 @@ namespace Boom.Patterns.Broadcasts
                 {
                     void _Invoke()
                     {
+                        ++updateCount;
+
                         this.msg.Value = msg;
 
                         LinkedListNode<DelegateInfo> runner = listeners.First;
@@ -103,12 +105,18 @@ namespace Boom.Patterns.Broadcasts
                         return true;
                     }
                 }
-
+                public void Clear()
+                {
+                    updateCount = 0;
+                    msg = new();
+                }
                 public T Read<T>() where T : IBroadcastState, new()
                 {
                     if (msg.IsInit) return (T)msg.Value;
                     return new();
                 }
+
+                public int GetUpdateCount() { return updateCount; }
             }
 
             private readonly string typeName;
@@ -161,6 +169,16 @@ namespace Boom.Patterns.Broadcasts
                 return broadcastGroup.Read<T>();
             }
 
+            public int GetUpdateCount(string tag)
+            {
+                if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
+                {
+                    return 0;
+                }
+                return broadcastGroup.GetUpdateCount();
+            }
+
+
             public bool IsInit(string tag)
             {
                 if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
@@ -170,7 +188,37 @@ namespace Boom.Patterns.Broadcasts
 
                 return broadcastGroup.IsInit;
             }
+            public void Clear(string tag)
+            {
+                if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
+                {
+                    return;
+                }
 
+                broadcastGroup.Clear();
+            }
+            public void ClearAll(params string[] tagsToIgnore)
+            {
+                if (tagsToIgnore.Length > 0)
+                {
+                    var keys = broadcastGroups.Keys.ToList();
+
+                    foreach (var k in keys)
+                    {
+                        if (!tagsToIgnore.Has(e => e == k))
+                        {
+                            broadcastGroups[k].Clear();
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var group in broadcastGroups)
+                    {
+                        group.Value.Clear();
+                    }
+                }
+            }
             public bool TryDispose<T>(out T outVal, string tag) where T : IBroadcastState, new()
             {
                 outVal = default;
@@ -188,7 +236,7 @@ namespace Boom.Patterns.Broadcasts
 
             public void TryDisposeAll(params string[] tagsToIgnore)
             {
-                if(broadcastGroups.Count > 0)
+                if (tagsToIgnore.Length > 0)
                 {
                     var keys = broadcastGroups.Keys.ToList();
 
@@ -199,6 +247,10 @@ namespace Boom.Patterns.Broadcasts
                             broadcastGroups.Remove(k);
                         }
                     }
+                }
+                else
+                {
+                    broadcastGroups.Clear();
                 }
             }
 
@@ -256,6 +308,18 @@ namespace Boom.Patterns.Broadcasts
                 return false;
             }
         }
+        public static int GetUpdateCount<T>(string tag = "main") where T : IBroadcastState, new()
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+
+            if (!events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                return 0;
+            }
+
+            return targets.GetUpdateCount(tag);
+
+        }
         public static bool WasInit<T>(string tag = "main") where T : IBroadcastState, new()
         {
             ushort key = HashUtil.ToHash16(typeof(T).FullName);
@@ -286,6 +350,27 @@ namespace Boom.Patterns.Broadcasts
             }
             return Invoke(refactor(new()), force, tag);
         }
+        public static void Clear<T>(string tag = "main") where T : IBroadcastState, new()
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+            if (events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                targets.Clear(tag);
+            }
+        }
+        public static bool ClearAll<T>(params string[] tagsToIgnore) where T : IBroadcastState, new()
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+
+            if (events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                targets.ClearAll(tagsToIgnore);
+
+                return true;
+            }
+            else return false;
+        }
+
         public static bool ForceInvoke<T>(T msg, string tag = "main") where T : IBroadcastState, new()
         {
             return Invoke(msg, true, tag);

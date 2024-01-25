@@ -17,13 +17,11 @@ public class ConnectingToServer : MonoBehaviour
     private void Awake()
     {
         UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
-        UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(NftDataChangeHandler);
     }
 
     private void OnDestroy()
     {
         UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
-        UserUtil.RemoveListenerDataChangeSelf<DataTypes.NftCollection>(NftDataChangeHandler);
     }
 
 
@@ -35,21 +33,39 @@ public class ConnectingToServer : MonoBehaviour
             return;
         }
         var text = logText.GetComponent<TMPro.TextMeshProUGUI>();
-        text.text = "Connection made. Waiting for NFTs...";
+        text.text = "Connection made!";
+
+        SetupNftData();
+
+        var loginDataResult = UserUtil.GetLogInData();
+
+        var loginDataAsOk = loginDataResult.AsOk();
+
+        GameState.principalId = loginDataAsOk.principal;
+
+        //Connect to firebase
+        FirebaseManager.Instance.TryLoginAndGetData(loginDataAsOk.principal, OnLoginFinished);
     }
 
-    private void NftDataChangeHandler(Data<DataTypes.NftCollection> data)
+    private void SetupNftData()
     {
-        if (UserUtil.IsDataValidSelf<DataTypes.NftCollection>() == false) return;
-
-        if (UserUtil.IsUserLoggedIn() == false) return;
 
         $"Setup ICKitties Nft Collection".Log(typeof(ConnectingToServer).Name);
 
         GameState.nfts.Add(new NFT() { imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?&tokenid=hvtag-6ykor-uwiaa-aaaaa-cqace-eaqca-aaabd-a" });
 
+        var nftCollectionsResult = UserUtil.GetDataSelf<DataTypes.NftCollection>();
+
+        if (nftCollectionsResult.IsErr)
+        {
+            $"{nftCollectionsResult.AsErr()}".Error (typeof(ConnectingToServer).Name);
+            return;
+        }
+
+        var nftCollectionsAsOk = nftCollectionsResult.AsOk();
+
         //Look for the ICKitties Collection and  add the user's nft images to the GameState.nfts
-        foreach (var keyValue in data.elements)
+        foreach (var keyValue in nftCollectionsAsOk.elements)
         {
             var collection = keyValue.Value;
 
@@ -66,20 +82,6 @@ public class ConnectingToServer : MonoBehaviour
                 break;
             }
         }
-
-        var loginDataResult = UserUtil.GetLogInData();
-        if (loginDataResult.IsErr)
-        {
-            $"{loginDataResult.AsErr()}".Error(typeof(ConnectingToServer).Name);
-            return;
-        }
-        
-        GameState.principalId = UserUtil.GetPrincipal();
-
-        var loginDataAsOk = loginDataResult.AsOk();
-
-        //Connect to firebase
-        FirebaseManager.Instance.TryLoginAndGetData(loginDataAsOk.principal, OnLoginFinished);
     }
 
     //NEW

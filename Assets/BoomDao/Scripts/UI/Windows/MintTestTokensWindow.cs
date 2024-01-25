@@ -120,14 +120,14 @@ public class MintTestTokensWindow : Window
 
 
         //ENTITIES
-        resonse.callerOutcomes.entityEdits.Iterate(e =>
+        resonse.callerOutcomes.entityOutcomes.Iterate(e =>
         {
             if (e.Value.fields.Has(k => k.Value is EntityFieldEdit.IncrementNumber) == false) return;
 
-            if (!ConfigUtil.GetConfigFieldAs<string>(CandidApiManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
+            if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
             if (!e.Value.GetEditedFieldAsNumeber("quantity", out double quantity)) return;
 
-            if (e.Value.TryGetConfig(CandidApiManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
+            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
             else inventoryElements.Add($"{e.Value.GetKey()} x {quantity}");
         });
 

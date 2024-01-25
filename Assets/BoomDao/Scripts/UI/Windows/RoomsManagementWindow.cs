@@ -52,7 +52,7 @@ public class RoomsManagementWindow : Window
 
 
         bool isRoomDataValid = UserUtil.IsMainDataValid<MainDataTypes.AllRoomData>();
-        bool isWorldEntityDataValid = UserUtil.IsDataValid<DataTypes.Entity>(CandidApiManager.Instance.WORLD_CANISTER_ID);
+        bool isWorldEntityDataValid = UserUtil.IsDataValid<DataTypes.Entity>(BoomManager.Instance.WORLD_CANISTER_ID);
 
         if (isRoomDataValid && isWorldEntityDataValid)
         {

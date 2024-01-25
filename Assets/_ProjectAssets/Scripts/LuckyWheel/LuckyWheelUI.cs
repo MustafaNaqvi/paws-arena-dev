@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Candid.World.Models;
 using Candid;
 using Boom.Utility;
-using static EntityFieldEdit;
+using Boom;
 
 public class LuckyWheelUI : MonoBehaviour
 {
@@ -62,7 +62,7 @@ public class LuckyWheelUI : MonoBehaviour
 
             //Try get Action Config
 
-            if (ConfigUtil.TryGetAction(CandidApiManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig) == false)
+            if (ConfigUtil.TryGetAction(BoomManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig) == false)
             {
                 $"Action of Id: {actionId} could not be found".Error(typeof(LuckyWheelUI).Name);
                 throw new();
@@ -113,7 +113,7 @@ public class LuckyWheelUI : MonoBehaviour
 
             var callerActionOutcome = actionResultAsOk.callerOutcomes;
             Debug.Log($"Configs Rewards, {JsonConvert.SerializeObject(possibleWheelOfFortuneOutcomesConfig)}");
-            Debug.Log($"Rewards, {JsonConvert.SerializeObject(callerActionOutcome.entityEdits)}");
+            Debug.Log($"Rewards, {JsonConvert.SerializeObject(callerActionOutcome.entityOutcomes)}");
 
             var rewardName = "";
             var rewardAmount = 0.0;
@@ -131,7 +131,7 @@ public class LuckyWheelUI : MonoBehaviour
 
                 var outcomeEntityConfig = posibleOutcome.Option.AsUpdateEntity();
 
-                foreach (var actionCallerEntityOutcome in callerActionOutcome.entityEdits)
+                foreach (var actionCallerEntityOutcome in callerActionOutcome.entityOutcomes)
                 {
                     //If one of the expected Wheel of Fortune outcomes is found on the applied outcomes then pick the one that matches
                     if (outcomeEntityConfig.Eid == actionCallerEntityOutcome.Value.eid)

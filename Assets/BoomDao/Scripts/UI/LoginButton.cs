@@ -10,6 +10,7 @@ namespace Boom.UI
     {
         [SerializeField] Button button;
         [SerializeField, ShowOnly] bool noneInteractable;
+        [SerializeField, ShowOnly] MainDataTypes.LoginData.State loginState;
 
         //Register to events
         private void Awake()
@@ -35,12 +36,14 @@ namespace Boom.UI
         private void AllowButtonInteractionHandler(WaitingForResponse response)
         {
             noneInteractable = response.value;
-            if (button) button.interactable = !response.value;
+            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.LoggedInAsAnon;
         }
         //Handle whether or not the button must be disabled
         private void EnableButtonHandler(MainDataTypes.LoginData data)
         {
+            loginState = data.state;
             button.gameObject.SetActive(data.state != MainDataTypes.LoginData.State.LoggedIn);
+            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.LoggedInAsAnon;
         }
 
         //Execute Login Request

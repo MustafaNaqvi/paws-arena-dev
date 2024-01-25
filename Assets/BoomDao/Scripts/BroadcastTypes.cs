@@ -3,14 +3,14 @@ namespace Boom
     using System;
     using System.Collections.Generic;
     using Boom.Patterns.Broadcasts;
+    using Boom.Values;
 
     #region Login
     public struct UserLoginRequest : IBroadcast { }
     public struct UserLogout : IBroadcast { }
 
     #endregion
-
-
+    
     public struct FetchDataReq<T> : IBroadcast where T : DataTypeRequestArgs.Base
     {
         public T arg;

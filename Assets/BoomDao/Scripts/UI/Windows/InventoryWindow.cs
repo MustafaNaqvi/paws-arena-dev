@@ -49,7 +49,7 @@ public class InventoryWindow : Window
             return;
         }
 
-        if (CandidApiManager.Instance.BoomDaoGameType == CandidApiManager.GameType.SinglePlayer? UserUtil.IsDataLoadingSelf<DataTypes.Entity>() : UserUtil.IsDataValidSelf<DataTypes.Entity>() == false)
+        if (BoomManager.Instance.BoomDaoGameType == BoomManager.GameType.SinglePlayer? UserUtil.IsDataLoadingSelf<DataTypes.Entity>() : UserUtil.IsDataValidSelf<DataTypes.Entity>() == false)
         {
 
             loadingText.text = "Loading...";
