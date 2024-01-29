@@ -1,107 +1,104 @@
-using Boom.Utility;
-using Candid;
-using Candid.World.Models;
-using Cysharp.Threading.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Unity.VisualScripting;
-using UnityEngine;
-
-public static class CandidUtil
+namespace Boom
 {
-    public const byte ICP_DECIMALS = 8;
+    using Boom.Utility;
+    using Candid;
+    using Cysharp.Threading.Tasks;
+    using System.Text.RegularExpressions;
+    using UnityEngine;
 
-    public static byte[] HexStringToByteArray(string hexString)
+    public static class CandidUtil
     {
-        var bytes = new byte[hexString.Length / 2];
-        for (var i = 0; i < bytes.Length; i++)
+        public const byte ICP_DECIMALS = 8;
+
+        public static byte[] HexStringToByteArray(string hexString)
         {
-            bytes[i] = System.Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-        }
-        return bytes;
-    }
-
-    public static ulong ConvertToBaseUnit(this double value, byte decimals)//Zero
-    {
-        var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
-
-
-        return (ulong)(baseUnitCount * value);
-    }
-    public static double ConvertToDecimal(this ulong value, byte decimals)//Zero
-    {
-        var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
-
-
-        return value / (double)baseUnitCount;
-    }
-
-    public static bool MathAdd(string a, double b, out double returnVal)
-    {
-        returnVal = default;
-
-        if (!a.TryParseValue<double>(out var _a))
-        {
-            "Could not parse a".Error();
-            return false;
+            var bytes = new byte[hexString.Length / 2];
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                bytes[i] = System.Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+            }
+            return bytes;
         }
 
-        returnVal = _a + b;
-
-        return true;
-    }
-    public static bool MathSub(string a, double b, out double returnVal)
-    {
-        returnVal = default;
-
-        if (!a.TryParseValue<double>(out var _a))
+        public static ulong ConvertToBaseUnit(this double value, byte decimals)//Zero
         {
-            "Could not parse a".Error();
-            return false;
+            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
+
+
+            return (ulong)(baseUnitCount * value);
+        }
+        public static double ConvertToDecimal(this ulong value, byte decimals)//Zero
+        {
+            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
+
+
+            return value / (double)baseUnitCount;
         }
 
-        returnVal = _a - b;
-
-        return true;
-    }
-
-    public static bool MathAdd(string a, ulong b, out ulong returnVal)
-    {
-        returnVal = default;
-
-        if (!a.TryParseValue<ulong>(out var _a))
+        public static bool MathAdd(string a, double b, out double returnVal)
         {
-            "Could not parse a".Error();
-            return false;
+            returnVal = default;
+
+            if (!a.TryParseValue<double>(out var _a))
+            {
+                "Could not parse a".Error();
+                return false;
+            }
+
+            returnVal = _a + b;
+
+            return true;
+        }
+        public static bool MathSub(string a, double b, out double returnVal)
+        {
+            returnVal = default;
+
+            if (!a.TryParseValue<double>(out var _a))
+            {
+                "Could not parse a".Error();
+                return false;
+            }
+
+            returnVal = _a - b;
+
+            return true;
         }
 
-        returnVal = _a + b;
+        public static bool MathAdd(string a, ulong b, out ulong returnVal)
+        {
+            returnVal = default;
 
-        return true;
-    }
+            if (!a.TryParseValue<ulong>(out var _a))
+            {
+                "Could not parse a".Error();
+                return false;
+            }
 
-    public static bool IsValidDfinityAddress(this string address)
-    {
-        string pattern = @"^[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}$";
-        Regex regex = new Regex(pattern);
+            returnVal = _a + b;
 
-        return regex.IsMatch(address);
-    }
-    public static bool IsValidDfinityPrincipal(this string address)
-    {
-        string pattern = @"^[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}$";
-        Regex regex = new Regex(pattern);
+            return true;
+        }
 
-        return regex.IsMatch(address);
-    }
+        public static bool IsValidDfinityAddress(this string address)
+        {
+            string pattern = @"^[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}$";
+            Regex regex = new Regex(pattern);
 
-    internal static async UniTask<string> ToAddress(string principal)
-    {
-        var userAccountIdentity = await CandidApiManager.Instance.WorldHub.GetAccountIdentifier(principal);
+            return regex.IsMatch(address);
+        }
+        public static bool IsValidDfinityPrincipal(this string address)
+        {
+            string pattern = @"^[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}$";
+            Regex regex = new Regex(pattern);
 
-        return userAccountIdentity;
+            return regex.IsMatch(address);
+        }
+
+        internal static async UniTask<string> ToAddress(string principal)
+        {
+            var userAccountIdentity = await BoomManager.Instance.WorldHub.GetAccountIdentifier(principal);
+
+            return userAccountIdentity;
+        }
     }
 }

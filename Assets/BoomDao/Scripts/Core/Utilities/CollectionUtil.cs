@@ -117,18 +117,18 @@
         /// <param name="match"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static bool TryLocate<T>(this IEnumerable<T> arr, Predicate<T> match, out T returnValue)
+        public static bool TryLocate<T>(this IEnumerable<T> arr, Predicate<T> match, out T outValue)
         {
             foreach (T item in arr)
             {
                 if (match(item))
                 {
-                    returnValue = item;
+                    outValue = item;
                     return true;
                 }
 
             }
-            returnValue = default;
+            outValue = default;
             return false;
         }
 

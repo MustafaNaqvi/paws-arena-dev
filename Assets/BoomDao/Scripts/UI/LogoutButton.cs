@@ -1,7 +1,7 @@
-using Boom.Patterns.Broadcasts;
-using Boom;
 namespace Boom.UI
 {
+    using Boom.Patterns.Broadcasts;
+    using Boom;
     using UnityEngine;
     using UnityEngine.UI;
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using WebSocketSharp.Server;
 using WebSocketSharp;
+using Boom.Utility;
 
 namespace Candid
 {
@@ -77,7 +78,7 @@ namespace Candid
 
         public void CloseSocket()
         {
-            Debug.Log("CloseWebSocket");
+            "CloseWebSocket".Log();
 
             wssv.Stop();
             wssv = null;
@@ -94,7 +95,7 @@ namespace Candid
     {
         protected override void OnMessage(MessageEventArgs e)
         {
-            Debug.Log("Websocket Message Received: " + e.Data);
+            ("Websocket Message Received: " + e.Data).Log();
             
             LoginManager.Instance.CreateIdentityWithJson(e.Data); // Comment this out and uncomment the below to test the new login flow
 

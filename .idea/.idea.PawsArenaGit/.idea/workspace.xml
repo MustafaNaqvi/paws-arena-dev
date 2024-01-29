@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="28f6e340-17a0-427c-86ce-b7d69dbd1212" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.PawsArenaGit/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PawsArenaGit/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/CatV2/2D_assets/cat_parts/assets_tail/tail_mud.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/CatV2/2D_assets/cat_parts/assets_tail/tail_mud.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/CatV2/Prefabs/CatWrapper.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/CatV2/Prefabs/CatWrapper.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Configurations/EquipmentsConfig.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/Configurations/EquipmentsConfig.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ProjectAssets/Shiine/FlagAnimation.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ProjectAssets/Shiine/FlagAnimation.mat" afterDir="false" />
-    </list>
+    <list default="true" id="28f6e340-17a0-427c-86ce-b7d69dbd1212" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,6 +75,7 @@
       <workItem from="1705599838671" duration="2223000" />
       <workItem from="1705760185048" duration="945000" />
       <workItem from="1705761771269" duration="1416000" />
+      <workItem from="1706544613088" duration="659000" />
     </task>
     <servers />
   </component>

@@ -9,7 +9,7 @@ public static class StringUtil
 {
     public static LinkedList<string> PeekBraketsValues(this string value)
     {
-        LinkedList<string> returnValue = new();
+        LinkedList<string> outValue = new();
         StringBuilder subExpr = new StringBuilder();
         bool isOpen = false;
         var index = 0;
@@ -40,14 +40,14 @@ public static class StringUtil
 
             if (!isOpen && subExpr.Length > 0)
             {
-                returnValue.AddLast(subExpr.ToString());
+                outValue.AddLast(subExpr.ToString());
                 subExpr.Length = 0;
 
             }
             index += 1;
         }
 
-        return returnValue;
+        return outValue;
     }
 
 }

@@ -48,7 +48,7 @@ public class LoginWindow : Window
         typesToLoad.Add(typeof(DataTypes.ActionState));
         typesToLoad.Add(typeof(DataTypes.NftCollection));
 
-        if (CandidApiManager.Instance.BoomDaoGameType == CandidApiManager.GameType.SinglePlayer) roomsButton.SetActive(false);
+        if (BoomManager.Instance.BoomDaoGameType == BoomManager.GameType.SinglePlayer) roomsButton.SetActive(false);
     }
 
 

@@ -29,7 +29,7 @@ public class WebSocketManager : MonoBehaviour
 
     async void Start()
     {
-        Principal canisterId = Principal.FromText(CandidApiManager.Instance.WORLD_CANISTER_ID);
+        Principal canisterId = Principal.FromText(BoomManager.Instance.WORLD_CANISTER_ID);
         Uri _gatewayUri = new(devMode ? "ws://127.0.0.1:8080" : prodGatewayUri);
 
         var builder = new WebSocketBuilder<AppMessage>(canisterId, _gatewayUri)

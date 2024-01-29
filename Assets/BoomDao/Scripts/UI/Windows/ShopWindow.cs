@@ -6,12 +6,9 @@ using Boom.Values;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 using Cysharp.Threading.Tasks;
 using Boom;
 using System.Linq;
-using EdjCase.ICP.Candid.Models;
-using static Env;
 using Candid;
 
 public class ShopWindow : Window
@@ -47,7 +44,7 @@ public class ShopWindow : Window
 
         if (principalResult.IsErr)
         {
-            Debug.LogError(principalResult.AsErr());
+            principalResult.AsErr().Value.Error();
 
             return;
         }
@@ -64,7 +61,7 @@ public class ShopWindow : Window
 
         if (principalResult.IsErr)
         {
-            Debug.LogError(principalResult.AsErr());
+            principalResult.AsErr().Value.Error();
 
             return;
         }
@@ -83,9 +80,9 @@ public class ShopWindow : Window
             Destroy(child.gameObject);
         }
 
-        if (!ConfigUtil.TryGetConfig(CandidApiManager.Instance.WORLD_CANISTER_ID, listOfValidActionsConfig, out var config))
+        if (!ConfigUtil.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, listOfValidActionsConfig, out var config))
         {
-            Debug.LogError("Could not find config of id: " + listOfValidActionsConfig);
+            ("Could not find config of id: " + listOfValidActionsConfig).Error();
             return;
         }
 
@@ -96,9 +93,9 @@ public class ShopWindow : Window
             string actionId = e.Key;
             string actionType = e.Value;
 
-            if (!ConfigUtil.TryGetConfig(CandidApiManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig))
+            if (!ConfigUtil.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, actionId, out var actionConfig))
             {
-                Debug.LogError("Could not find config of id: " + listOfValidActionsConfig);
+                ("Could not find config of id: " + listOfValidActionsConfig).Error();
                 return;
             }
 
@@ -106,9 +103,9 @@ public class ShopWindow : Window
             actionConfig.fields.TryGetValue("description", out string description);
             actionConfig.fields.TryGetValue("imageUrl", out string imageUrl);
 
-            if (!ConfigUtil.TryGetAction(CandidApiManager.Instance.WORLD_CANISTER_ID, actionId, out var action))
+            if (!ConfigUtil.TryGetAction(BoomManager.Instance.WORLD_CANISTER_ID, actionId, out var action))
             {
-                Debug.LogError("Could not find action of id: " + actionId);
+                ("Could not find action of id: " + actionId).Error();
 
                 return;
             }
@@ -120,7 +117,7 @@ public class ShopWindow : Window
             {
                 if(!ConfigUtil.TryGetActionPart<List<EntityConstrainTypes.Base>>(actionId, e => e.callerAction.EntityConstraints, out var entityConstraints))
                 {
-                    Debug.LogError("Could not find entities constraints of action of id: " + actionId);
+                    ("Could not find entities constraints of action of id: " + actionId).Error();
 
                     return;
                 }
@@ -134,7 +131,7 @@ public class ShopWindow : Window
                     double amount = (double)e.GetValue();
                     string name = e.GetKey();
 
-                    if (ConfigUtil.GetConfigFieldAs<string>(CandidApiManager.Instance.WORLD_CANISTER_ID, e.Eid, "name", out var configName)) name = configName;
+                    if (ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Eid, "name", out var configName)) name = configName;
 
                     return $"{name} x {amount}\n\n";
                 }, "\n");
@@ -153,7 +150,7 @@ public class ShopWindow : Window
             {
                 if (!ConfigUtil.TryGetActionPart<IcpTx>(actionId, e => e.callerAction.IcpConstraint, out var txConstraint))
                 {
-                    Debug.LogError("Could not find icp constraint of action of id: " + actionId);
+                    ("Could not find icp constraint of action of id: " + actionId).Error();
 
                     return;
                 }
@@ -172,14 +169,14 @@ public class ShopWindow : Window
             {
                 if (!ConfigUtil.TryGetActionPart<List<IcrcTx>>(actionId, e => e.callerAction.IcrcConstraint, out var txConstraints))
                 {
-                    Debug.LogError("Could not find icrc constraint of action of id: " + actionId);
+                    ("Could not find icrc constraint of action of id: " + actionId).Error();
 
                     return;
                 }
 
                 if(txConstraints.Count == 0)
                 {
-                    Debug.LogError("empty icrc constraint of action of id: " + actionId);
+                    ("empty icrc constraint of action of id: " + actionId).Error();
 
                     return;
                 }
@@ -205,20 +202,20 @@ public class ShopWindow : Window
             {
                 if (!ConfigUtil.TryGetActionPart<ActionResult>(actionId, e => e.callerAction.ActionResult, out var actionResult))
                 {
-                    Debug.LogError("Could not find action result of action of id: " + actionId);
+                    ("Could not find action result of action of id: " + actionId).Error();
 
                     return;
                 }
                 if (!ConfigUtil.TryGetActionPart<List<NftTx>>(actionId, e => e.callerAction.NftConstraint, out var txConstraints))
                 {
-                    Debug.LogError("Could not find nft constraint of action of id: " + actionId);
+                    ("Could not find nft constraint of action of id: " + actionId).Error();
 
                     return;
                 }
 
                 if (txConstraints.Count == 0)
                 {
-                    Debug.LogError("empty nft constraint of action of id: " + actionId);
+                    ("empty nft constraint of action of id: " + actionId).Error();
 
                     return;
                 }
@@ -241,7 +238,7 @@ public class ShopWindow : Window
                     var asUpdateEntity = k.Option.AsUpdateEntity();
                     var asIncrementNumber = asUpdateEntity.Updates.First(e => e.Tag == UpdateEntityTypeTag.IncrementNumber);
 
-                    ConfigUtil.GetConfigFieldAs<string>(CandidApiManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
+                    ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
 
                     return $"{configName} x {(asIncrementNumber.AsIncrementNumber().FieldValue.Tag == IncrementNumber.FieldValueInfoTag.Number? asIncrementNumber.AsIncrementNumber().FieldValue.Value : "some formula")}";
                 });
@@ -262,20 +259,20 @@ public class ShopWindow : Window
             {
                 if (!ConfigUtil.TryGetActionPart<ActionResult>(actionId, e => e.callerAction.ActionResult, out var actionResult))
                 {
-                    Debug.LogError("Could not find action result of action of id: " + actionId);
+                    ("Could not find action result of action of id: " + actionId).Error();
 
                     return;
                 }
                 if (!ConfigUtil.TryGetActionPart<List<NftTx>>(actionId, e => e.callerAction.NftConstraint, out var txConstraints))
                 {
-                    Debug.LogError("Could not find nft constraint of action of id: " + actionId);
+                    ("Could not find nft constraint of action of id: " + actionId).Error();
 
                     return;
                 }
 
                 if (txConstraints.Count == 0)
                 {
-                    Debug.LogError("empty nft constraint of action of id: " + actionId);
+                    ("empty nft constraint of action of id: " + actionId).Error();
 
                     return;
                 }
@@ -298,7 +295,7 @@ public class ShopWindow : Window
                     var asUpdateEntity = k.Option.AsUpdateEntity();
                     var asIncrementNumber = asUpdateEntity.Updates.First(e => e.Tag == UpdateEntityTypeTag.IncrementNumber);
 
-                    ConfigUtil.GetConfigFieldAs<string>(CandidApiManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
+                    ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
 
                     return $"{configName} x {(asIncrementNumber.AsIncrementNumber().FieldValue.Tag == IncrementNumber.FieldValueInfoTag.Number ? asIncrementNumber.AsIncrementNumber().FieldValue.Value : "some formula")}";
                 });
@@ -317,7 +314,7 @@ public class ShopWindow : Window
             }
             else
             {
-                Debug.LogError("action type not handled: " + actionType);
+                ("action type not handled: " + actionType).Error();
 
             }
         });
@@ -342,7 +339,7 @@ public class ShopWindow : Window
 
         if (principalResult.Tag == UResultTag.Err)
         {
-            Debug.Log(principalResult.AsErr());
+            principalResult.AsErr().Value.Error();
             return;
         }
         var principal = principalResult.AsOk().Value;
@@ -381,7 +378,7 @@ public class ShopWindow : Window
 
         if (result.Tag == UResultTag.Err)
         {
-            Debug.LogError(result.AsErr().content);
+            result.AsErr().content.Error();
 
             switch (result.AsErr())
             {
@@ -427,7 +424,7 @@ public class ShopWindow : Window
 
         if (principalResult.Tag == UResultTag.Err)
         {
-            Debug.Log(principalResult.AsErr());
+            principalResult.AsErr().Value.Error();
             return;
         }
         var principal = principalResult.AsOk().Value;
@@ -449,7 +446,7 @@ public class ShopWindow : Window
 
         if (result.Tag == UResultTag.Err)
         {
-            Debug.LogError(result.AsErr().content);
+            result.AsErr().content.Error();
 
             switch (result.AsErr())
             {
@@ -584,7 +581,7 @@ public class ShopWindow : Window
 
         if (principalResult.Tag == UResultTag.Err)
         {
-            Debug.Log(principalResult.AsErr());
+            principalResult.AsErr().Value.Error();
             return;
         }
         var principal = principalResult.AsOk().Value;
@@ -712,14 +709,14 @@ public class ShopWindow : Window
 
 
         //ENTITIES
-        resonse.callerOutcomes.entityEdits.Iterate(e =>
+        resonse.callerOutcomes.entityOutcomes.Iterate(e =>
         {
             if (e.Value.fields.Has(k => k.Value is EntityFieldEdit.IncrementNumber) == false) return;
 
-            if (!ConfigUtil.GetConfigFieldAs<string>(CandidApiManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
-            if (!e.Value.GetEditedFieldAsNumeber("quantity", out double quantity)) return;
+            if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
+            if (!e.Value.TryGetEditedFieldAsNumeber("quantity", out double quantity)) return;
 
-            if (e.Value.TryGetConfig(CandidApiManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
+            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
             else inventoryElements.Add($"{e.Value.GetKey()} x {quantity}");
         });
 

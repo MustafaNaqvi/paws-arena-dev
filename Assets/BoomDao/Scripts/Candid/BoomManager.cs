@@ -3,10 +3,8 @@ namespace Candid
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Candid.Extv2Standard;
     using Candid.Extv2Boom;
     using Candid.IcpLedger;
-    using Candid.IcpLedger.Models;
     using Candid.World;
     using Candid.WorldHub;
     using Cysharp.Threading.Tasks;
@@ -18,25 +16,37 @@ namespace Candid
     using Boom.Values;
     using UnityEngine;
     using Candid.IcrcLedger;
-    using Unity.VisualScripting;
     using Boom;
     using EdjCase.ICP.BLS;
     using Newtonsoft.Json;
-    using static UserUtil;
 
-    public class CandidApiManager : MonoBehaviour
+    public class BoomManager : MonoBehaviour
     {
-        [field : SerializeField] public string WORLD_HUB_CANISTER_ID { private set; get; } = "fgpem-ziaaa-aaaag-abi2q-cai";
-        [field : SerializeField] public string WORLD_CANISTER_ID { private set; get; } = "j4n55-giaaa-aaaap-qb3wq-cai";
+        [SerializeField] bool enableBoomLogs = true;
+        [field: SerializeField] public string WORLD_HUB_CANISTER_ID { private set; get; } = "fgpem-ziaaa-aaaag-abi2q-cai";
+        [field: SerializeField] public string WORLD_CANISTER_ID { private set; get; } = "j4n55-giaaa-aaaap-qb3wq-cai";
         [field: SerializeField] public string WORLD_COLLECTION_CANISTER_ID { private set; get; } = "6uvic-diaaa-aaaap-abgca-cai";
 
-        public enum GameType { SinglePlayer, Multiplayer, WebsocketMultiplayer}
+        public enum GameType { SinglePlayer, Multiplayer, WebsocketMultiplayer }
 
         // Instance
-        public static CandidApiManager Instance { get; private set; }
+        private static BoomManager instance;
+        public static BoomManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    var temp = GameObject.FindObjectOfType<BoomManager>();
+                    instance = temp;
+                }
+
+                return instance;
+            }
+        }
 
         //Cache
-        [field : SerializeField] public GameType BoomDaoGameType { private set; get; } = GameType.SinglePlayer;
+        [field: SerializeField] public GameType BoomDaoGameType { private set; get; } = GameType.SinglePlayer;
         [ShowOnly, SerializeField] InitValue<IAgent> cachedAnonAgent;
         [ShowOnly, SerializeField] InitValue<string> cachedUserAddress;
 
@@ -61,9 +71,12 @@ namespace Candid
         [SerializeField] bool multPlayerCollectionFetch;
 
         bool configsRequested;
+        [SerializeField, ShowOnly] MainDataTypes.LoginData.State loginState;
+        [SerializeField, ShowOnly] bool loginCompleted;
 
         private void Awake()
         {
+
             BroadcastState.Invoke(new WaitingForResponse(true));
 
             IAgent CreateAgentWithRandomIdentity(bool useLocalHost = false)
@@ -86,13 +99,13 @@ namespace Candid
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e.ToString());
+                    e.ToString().Error();
                 }
 
                 return randomAgent;
             }
 
-            Instance = this;
+            instance = this;
 
             Broadcast.Register<UserLoginRequest>(FetchHandler);
 
@@ -100,14 +113,75 @@ namespace Candid
 
             Broadcast.Register<FetchListings>(FetchHandler);
 
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler, true);
 
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.Entity>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.ActionState>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.Token>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.NftCollection>(FetchHandler);
 
+            UserUtil.AddListenerDataChange<DataTypes.Entity>(SelfDataChangeHandler, false, WORLD_CANISTER_ID);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(SelfDataChangeHandler);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(SelfDataChangeHandler);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Token>(SelfDataChangeHandler);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(SelfDataChangeHandler);
+
             InitializeCandidApis(CreateAgentWithRandomIdentity(), true).Forget();
         }
+
+        private void LoginDataChangeHandler(MainDataTypes.LoginData data)
+        {
+            loginState = data.state;
+        }
+
+        private void SelfDataChangeHandler(Data<DataTypes.Entity> data)
+        {
+            HandleLoginCompletion();
+        }
+        private void SelfDataChangeHandler(Data<DataTypes.ActionState> data)
+        {
+            HandleLoginCompletion();
+        }
+
+        private void SelfDataChangeHandler(Data<DataTypes.Token> data)
+        {
+            HandleLoginCompletion();
+        }
+
+        private void SelfDataChangeHandler(Data<DataTypes.NftCollection> data)
+        {
+            HandleLoginCompletion();
+        }
+
+        private void HandleLoginCompletion()
+        {
+            if (loginCompleted) return;
+
+            loginCompleted =
+                UserUtil.IsDataValid<DataTypes.Entity>(WORLD_CANISTER_ID) &&
+
+                UserUtil.IsDataValidSelf<DataTypes.Entity>() &&
+                UserUtil.IsDataValidSelf<DataTypes.ActionState>() &&
+                UserUtil.IsDataValidSelf<DataTypes.Token>() &&
+                UserUtil.IsDataValidSelf<DataTypes.NftCollection>();
+
+            if (loginCompleted)
+            {
+                var loginDataResult = UserUtil.GetLogInData();
+
+                if (loginDataResult.IsErr)
+                {
+                    loginDataResult.AsErr().Error();
+                    return;
+                }
+
+                var loginDataOk = loginDataResult.AsOk();
+                UserUtil.UpdateMainData(new MainDataTypes.LoginData(loginDataOk, MainDataTypes.LoginData.State.LoggedIn));
+                BroadcastState.Invoke(new WaitingForResponse(false));
+            }
+        }
+
+
 
         private void OnDestroy()
         {
@@ -117,13 +191,21 @@ namespace Candid
 
             Broadcast.Unregister<FetchListings>(FetchHandler);
 
+            UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
+
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.Entity>(FetchHandler);
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.ActionState>(FetchHandler);
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.Token>(FetchHandler);
             UserUtil.RemoveListenerRequestData<DataTypeRequestArgs.NftCollection>(FetchHandler);
 
+            UserUtil.RemoveListenerDataChange<DataTypes.Entity>(SelfDataChangeHandler, WORLD_CANISTER_ID);
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.Entity>(SelfDataChangeHandler);
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.ActionState>(SelfDataChangeHandler);
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.Token>(SelfDataChangeHandler);
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.NftCollection>(SelfDataChangeHandler);
+
             //WEBSOCKET
-            if (BoomDaoGameType == CandidApiManager.GameType.WebsocketMultiplayer)
+            if (BoomDaoGameType == BoomManager.GameType.WebsocketMultiplayer)
             {
                 //TODO: DISCONNECT WEBSOCKET
             }
@@ -132,6 +214,8 @@ namespace Candid
         int frameCount;
         private void Update()
         {
+            DebugUtil.enableBoomLogs = enableBoomLogs;
+
             ++frameCount;
             if (BoomDaoGameType == GameType.Multiplayer)
             {
@@ -140,7 +224,7 @@ namespace Candid
                 {
                     lastClientUpdate = MainUtil.Now() + (long)(secondsToUpdateClient * 1000);
 
-                    if(frameCount > 0) FetchRoomData();
+                    if (frameCount > 0) FetchRoomData();
                 }
 
             }
@@ -153,7 +237,7 @@ namespace Candid
 
         void OnLoginCompleted(string json)
         {
-            var isLoggedIn = UserUtil.IsLoggedIn(out LoginType loginType);
+            var isLoggedIn = UserUtil.IsLoggedIn(out UserUtil.LoginType loginType);
 
             if (isLoggedIn == false)
             {
@@ -161,13 +245,13 @@ namespace Candid
                 return;
             }
 
-            if (isLoggedIn && loginType == LoginType.Anon)
+            if (isLoggedIn && loginType == UserUtil.LoginType.Anon)
             {
                 CreateAgentUsingIdentityJson(json, false).Forget();
                 return;
             }
 
-            Debug.Log("You already have an Agent created");
+            "You already have an Agent created".Log();
         }
         public async UniTaskVoid CreateAgentUsingIdentityJson(string json, bool useLocalHost = false)
         {
@@ -187,23 +271,30 @@ namespace Candid
                 if (useLocalHost) await InitializeCandidApis(new HttpAgent(identity, new Uri("http://localhost:4943"), bls));
                 else await InitializeCandidApis(new HttpAgent(httpClient, identity, bls));
 
-                Debug.Log("You have logged in");
+                "You have logged in".Log();
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
 
         private void UserLogoutHandler(UserLogout obj)
         {
+            loginCompleted = false;
+
+            UserUtil.ClearData<DataTypes.Entity>();
+            UserUtil.ClearData<DataTypes.ActionState>();
+            UserUtil.ClearData<DataTypes.Token>();
+            UserUtil.ClearData<DataTypes.NftCollection>();
+
             PlayerPrefs.SetString("authTokenId", string.Empty);
             InitializeCandidApis(cachedAnonAgent.Value, true).Forget();
 
             configsRequested = false;
 
             //WEBSOCKET
-            if (BoomDaoGameType == CandidApiManager.GameType.WebsocketMultiplayer)
+            if (BoomDaoGameType == BoomManager.GameType.WebsocketMultiplayer)
             {
                 //TODO: DISCONNECT WEBSOCKET
             }
@@ -222,15 +313,6 @@ namespace Candid
             //Check if anon setup is required
             if (asAnon)
             {
-                if (UserUtil.IsUserLoggedIn() && frameCount > 0)
-                {
-                    //Clean up logged in user data
-                    UserUtil.ClearData<DataTypes.Token>();
-                    UserUtil.ClearData<DataTypes.Entity>();
-                    UserUtil.ClearData<DataTypes.ActionState>();
-                    UserUtil.ClearData<DataTypes.NftCollection>();
-                }
-
                 //If anon Agent is cached then set it up
                 if (cachedAnonAgent.IsInit)
                 {
@@ -272,8 +354,7 @@ namespace Candid
 
                 //Set Login Data
                 //UserUtil.Clean<DataTypes.LoginData>(new UserUtil.CleanUpType.All());
-                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.LoggedIn));
-                BroadcastState.Invoke(new WaitingForResponse(false));
+                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.FetchingUserData));
 
                 //USER DATA
                 UserUtil.RequestData(new DataTypeRequestArgs.Entity(userPrincipal, WORLD_CANISTER_ID));
@@ -287,7 +368,7 @@ namespace Candid
 
                 if (allTokensConfigResult.IsErr)
                 {
-                    Debug.LogWarning(allTokensConfigResult.AsErr());
+                    allTokensConfigResult.AsErr().Warning();
                     return;
                 }
 
@@ -304,7 +385,7 @@ namespace Candid
 
                 if (nftsToFetchResult.IsErr)
                 {
-                    Debug.LogWarning(nftsToFetchResult.AsErr());
+                    nftsToFetchResult.AsErr().Warning();
                     return;
                 }
 
@@ -315,10 +396,10 @@ namespace Candid
                     return e.canisterId;
                 });
 
-               UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftsToFetchIds.ToArray()));
+                UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftsToFetchIds.ToArray()));
 
                 //WEBSOCKET
-                if (BoomDaoGameType == CandidApiManager.GameType.WebsocketMultiplayer)
+                if (BoomDaoGameType == BoomManager.GameType.WebsocketMultiplayer)
                 {
                     //TODO: CONNECT WEBSOCKET
                 }
@@ -334,6 +415,10 @@ namespace Candid
             }
         }
 
+
+
+
+        #region Fetch
 
         private async UniTask FetchConfigs()
         {
@@ -390,37 +475,24 @@ namespace Candid
                 }
                 else
                 {
-                    throw new(configsResult.AsErr());
+                    throw new(actionsResult.AsErr());
                 }
 
                 BroadcastState.Invoke(new WaitingForResponse(false));
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                ex.Message.Error();
             }
         }
 
         //
-        #region Fetch
+
         private async UniTask FetchEntities(DataTypeRequestArgs.Entity arg)
         {
             await UniTask.SwitchToMainThread();
 
             var uids = arg.uids;
-
-            if (!UserUtil.IsUserLoggedIn(out var loginData))
-            {
-                Debug.LogError("something went wrong, user is not logged in!");
-                return;
-            }
-
-            var userUid = loginData.principal;
-
-            if (uids.Length == 0)
-            {
-                uids = new string[1] { userUid };
-            }
 
             var result = await FetchUtil.GetAllEntities(WORLD_CANISTER_ID, uids);
 
@@ -435,7 +507,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type {nameof(DataTypes.Entity)} failed to load. Message: {result.AsErr()}".Warning(nameof(CandidApiManager));
+                $"DATA of type {nameof(DataTypes.Entity)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
             }
         }
         private async UniTask FetchActionStates(DataTypeRequestArgs.ActionState arg)
@@ -443,19 +515,6 @@ namespace Candid
             await UniTask.SwitchToMainThread();
 
             var uids = arg.uids;
-
-            if (!UserUtil.IsUserLoggedIn(out var loginData))
-            {
-                Debug.LogError("something went wrong, user is not logged in!");
-                return;
-            }
-
-            var userUid = loginData.principal;
-
-            if (uids.Length == 0)
-            {
-                uids = new string[1] { userUid };
-            }
 
             var result = await FetchUtil.GetAllActionState(WORLD_CANISTER_ID, uids);
 
@@ -470,7 +529,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type {nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(CandidApiManager));
+                $"DATA of type {nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
             }
         }
         //
@@ -480,21 +539,7 @@ namespace Candid
 
             var uids = arg.uids;
 
-            if (!UserUtil.IsUserLoggedIn(out var loginData))
-            {
-                Debug.LogError("something went wrong, user is not logged in!");
-                return;
-            }
-
-            var userUid = loginData.principal;
-
-            if (uids.Length == 0)
-            {
-                uids = new string[1] { userUid };
-            }
-
             //
-
             var result = await FetchUtil.GetAllTokens(arg.canisterIds, uids);
 
             if (result.IsOk)
@@ -508,7 +553,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type {nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(CandidApiManager));
+                $"DATA of type {nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
             }
         }
 
@@ -517,19 +562,6 @@ namespace Candid
             await UniTask.SwitchToMainThread();
 
             var uids = arg.uids;
-
-            if (!UserUtil.IsUserLoggedIn(out var loginData))
-            {
-                Debug.LogError("something went wrong, user is not logged in!");
-                return;
-            }
-
-            var userUid = loginData.principal;
-
-            if (uids.Length == 0)
-            {
-                uids = new string[1] { userUid };
-            }
 
             //
             var result = await FetchUtil.GetAllNfts(arg.canisterIds, uids);
@@ -545,7 +577,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type{nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(CandidApiManager));
+                $"DATA of type{nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
             }
         }
 
@@ -558,6 +590,16 @@ namespace Candid
             {
                 List<MainDataTypes.AllTokenConfigs.TokenConfig> tokens = new();
 
+                var icpTokenInterface = new IcpLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(Env.CanisterIds.ICP_LEDGER));
+
+                var icpDecimals = await icpTokenInterface.Icrc1Decimals();
+                var icpName = await icpTokenInterface.Icrc1Name();
+                var icpSymbol = await icpTokenInterface.Symbol();
+                var icpFee = await icpTokenInterface.Icrc1Fee();
+                icpFee.TryToUInt64(out ulong _icpFee);
+
+                tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(Env.CanisterIds.ICP_LEDGER, icpName, icpSymbol.Symbol, icpDecimals, _icpFee, "This is the base Internet Computer Token", "https://cryptologos.cc/logos/internet-computer-icp-logo.png?v=026"));
+
                 if (ConfigUtil.QueryConfigsByTag(WORLD_CANISTER_ID, "token", out var tokensMetadata))
                 {
                     foreach (var tokenMetadata in tokensMetadata)
@@ -568,55 +610,27 @@ namespace Candid
 
                             if (string.IsNullOrEmpty(tokenCanisterId)) tokenCanisterId = Env.CanisterIds.ICP_LEDGER;
 
-                            if (tokenCanisterId == Env.CanisterIds.ICP_LEDGER)
+                            var tokenInterface = new IcrcLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(tokenCanisterId));
+
+                            var decimals = await tokenInterface.Icrc1Decimals();
+                            var name = await tokenInterface.Icrc1Name();
+                            var symbol = await tokenInterface.Icrc1Symbol();
+                            var fee = await tokenInterface.Icrc1Fee();
+
+                            fee.TryToUInt64(out ulong _fee);
+
+                            if (ConfigUtil.TryGetConfig(WORLD_CANISTER_ID, e =>
                             {
-                                var tokenInterface = new IcpLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(tokenCanisterId));
+                                e.GetConfigFieldAs<string>("canister", out var _canister, "");
 
-                                var decimals = await tokenInterface.Icrc1Decimals();
-                                var name = await tokenInterface.Icrc1Name();
-                                var symbol = await tokenInterface.Symbol();
-                                var fee = await tokenInterface.Icrc1Fee();
-                                fee.TryToUInt64(out ulong _fee);
-
-
-                                if (ConfigUtil.TryGetConfig(WORLD_CANISTER_ID, e =>
-                                {
-                                    e.GetConfigFieldAs<string>("canister", out var _canister, "");
-
-                                    return _canister == tokenCanisterId;
-                                }, out var tokenConfig))
-                                {
-                                    tokenConfig.GetConfigFieldAs("description", out var description, "");
-
-                                    tokenConfig.GetConfigFieldAs("urlLogo", out var urlLogo, "");
-
-                                    tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(tokenCanisterId, name, symbol.Symbol, decimals, _fee, description, urlLogo));
-                                }
-                            }
-                            else
+                                return _canister == tokenCanisterId;
+                            }, out var tokenConfig))
                             {
-                                var tokenInterface = new IcrcLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(tokenCanisterId));
+                                tokenConfig.GetConfigFieldAs("description", out var description, "");
 
-                                var decimals = await tokenInterface.Icrc1Decimals();
-                                var name = await tokenInterface.Icrc1Name();
-                                var symbol = await tokenInterface.Icrc1Symbol();
-                                var fee = await tokenInterface.Icrc1Fee();
+                                tokenConfig.GetConfigFieldAs("url_logo", out var urlLogo, "");
 
-                                fee.TryToUInt64(out ulong _fee);
-
-                                if (ConfigUtil.TryGetConfig(WORLD_CANISTER_ID, e =>
-                                {
-                                    e.GetConfigFieldAs<string>("canister", out var _canister, "");
-
-                                    return _canister == tokenCanisterId;
-                                }, out var tokenConfig))
-                                {
-                                    tokenConfig.GetConfigFieldAs("description", out var description, "");
-
-                                    tokenConfig.GetConfigFieldAs("urlLogo", out var urlLogo, "");
-
-                                    tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(tokenCanisterId, name, symbol, decimals, _fee, description, urlLogo));
-                                }
+                                tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(tokenCanisterId, name, symbol, decimals, _fee, description, urlLogo));
                             }
                         }
                         else
@@ -625,15 +639,15 @@ namespace Candid
                         }
                     }
                 }
-                else "No Token Config found in World Config".Warning(nameof(CandidApiManager));
+                else "No Token Config found in World Config".Warning(nameof(BoomManager));
 
-                if(tokens.Count > 0) UserUtil.UpdateMainData(new MainDataTypes.AllTokenConfigs(tokens.ToArray().ToDictionary(e => e.canisterId)));
+                if (tokens.Count > 0) UserUtil.UpdateMainData(new MainDataTypes.AllTokenConfigs(tokens.ToArray().ToDictionary(e => e.canisterId)));
                 else UserUtil.UpdateMainData(new MainDataTypes.AllTokenConfigs());
 
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
 
@@ -647,7 +661,7 @@ namespace Candid
 
                 if (ConfigUtil.QueryConfigsByTag(WORLD_CANISTER_ID, "nft", out var nftConfigs))
                 {
-                    Debug.Log($"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}");
+                    $"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}".Log();
                     nftConfigs.Iterate(e =>
                     {
                         if (!e.GetConfigFieldAs<string>("name", out var collectionName))
@@ -658,14 +672,14 @@ namespace Candid
                         {
                             $"config of tag \"nft\" doesn't have field \"description\"".Warning();
                         }
-                        if (!e.GetConfigFieldAs<string>("urlLogo", out var urlLogo))
+                        if (!e.GetConfigFieldAs<string>("url_logo", out var urlLogo))
                         {
-                            $"config of tag \"nft\" doesn't have field \"urlLogo\"".Warning();
+                            $"config of tag \"nft\" doesn't have field \"url_logo\"".Warning();
                         }
 
-                        if (!e.GetConfigFieldAs<bool>("isStandard", out var isStandard))
+                        if (!e.GetConfigFieldAs<bool>("is_standard", out var isStandard))
                         {
-                            $"config of tag \"nft\" doesn't have field \"isStandard\"".Error();
+                            $"config of tag \"nft\" doesn't have field \"is_standard\"".Error();
 
                             return;
                         }
@@ -680,7 +694,7 @@ namespace Candid
                         collections.Add(new MainDataTypes.AllNftCollectionConfig.NftConfig(canisterId, isStandard == false, collectionName, description, urlLogo));
                     });
                 }
-                else "No Nft Config found in World Config".Warning(nameof(CandidApiManager));
+                else "No Nft Config found in World Config".Warning(nameof(BoomManager));
 
                 if (collections.Count > 0)
                 {
@@ -690,7 +704,7 @@ namespace Candid
             }
             catch (Exception e)
             {
-                Debug.LogError(e.Message);
+                e.Message.Error();
             }
         }
         //Listings
@@ -702,10 +716,9 @@ namespace Candid
 
             if (getAgentResult.Tag == UResultTag.Err)
             {
-                Debug.Log(getAgentResult.AsErr());
+                getAgentResult.AsErr().Error();
                 return;
             }
-            Debug.Log("Get Nft Listings Of " + WORLD_COLLECTION_CANISTER_ID);
 
             Extv2BoomApiClient collectionInterface = new(getAgentResult.AsOk(), Principal.FromText(WORLD_COLLECTION_CANISTER_ID));
 
@@ -715,7 +728,7 @@ namespace Candid
 
             foreach (var item in listingResult)
             {
-                var tokenIdentifier = await CandidApiManager.Instance.WorldHub.GetTokenIdentifier(WORLD_COLLECTION_CANISTER_ID, item.F0);
+                var tokenIdentifier = await BoomManager.Instance.WorldHub.GetTokenIdentifier(WORLD_COLLECTION_CANISTER_ID, item.F0);
                 listing.Add(new(tokenIdentifier, item));
             }
 
@@ -730,9 +743,9 @@ namespace Candid
             }
 
 
-            if (EntityUtil.TryGetAllEntitiesOf<DataTypes.Entity>(EntityUtil.Queries.rooms, out var rooms, e => e))
+            if (EntityUtil.TryQueryEntities<DataTypes.Entity>(EntityUtil.Queries.rooms, out var rooms, e => e))
             {
-                Debug.Log($"Try Fetch Room Data Success, data: {JsonConvert.SerializeObject(rooms)}");
+                $"Try Fetch Room Data Success, data: {JsonConvert.SerializeObject(rooms)}".Log();
 
                 var allRoomsData = new MainDataTypes.AllRoomData(rooms);
                 UserUtil.UpdateMainData(allRoomsData);
@@ -756,12 +769,12 @@ namespace Candid
                         var tokenConfigsResult = ConfigUtil.GetAllTokenConfigs();
                         if (tokenConfigsResult.IsErr)
                         {
-                            Debug.LogError(tokenConfigsResult.AsErr());
+                            tokenConfigsResult.AsErr().Error();
                             return;
                         }
                         var tokenConfigs = tokenConfigsResult.AsOk();
 
-                        UserUtil.RequestData(new DataTypeRequestArgs.Token(tokenConfigs.Map(e=>e.canisterId).ToArray(), usersInCurrentRoom));
+                        UserUtil.RequestData(new DataTypeRequestArgs.Token(tokenConfigs.Map(e => e.canisterId).ToArray(), usersInCurrentRoom));
                     }
                     if (multPlayerCollectionFetch)
                     {
@@ -769,18 +782,18 @@ namespace Candid
 
                         if (nftConfigsResult.IsErr)
                         {
-                            Debug.LogError(nftConfigsResult.AsErr());
+                            nftConfigsResult.AsErr().Error();
                             return;
                         }
                         var nftConfigs = nftConfigsResult.AsOk();
 
-                        UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftConfigs.Map(e=>e.canisterId).ToArray(), usersInCurrentRoom));
+                        UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(nftConfigs.Map(e => e.canisterId).ToArray(), usersInCurrentRoom));
                     }
                 }
             }
             else
             {
-                Debug.Log("Try Fetch Room Data Failure");
+                "Try Fetch Room Data Failure".Log();
             }
         }
 
@@ -795,7 +808,7 @@ namespace Candid
         {
             if (UserUtil.IsLoginRequestedPending() || UserUtil.IsUserLoggedIn()) return;
 
-            SetAsLoginIn();
+            UserUtil.SetAsLoginIn();
             BroadcastState.Invoke(new WaitingForResponse(true));
 
 

@@ -95,7 +95,7 @@ public class ConnectingToServer : MonoBehaviour
         {
             DataTypes.NftCollection _collection = _keyValue.Value;
 
-            if (_collection.canisterId != CandidApiManager.Instance.WORLD_CANISTER_ID)
+            if (_collection.canisterId != BoomManager.Instance.WORLD_CANISTER_ID)
             {
                 continue;
             }

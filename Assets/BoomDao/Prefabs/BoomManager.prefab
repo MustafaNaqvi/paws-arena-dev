@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3245743282429210067}
   - component: {fileID: 729251945005567232}
   m_Layer: 0
-  m_Name: CandidManager
+  m_Name: BoomManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,9 +44,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2393423864867871022}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 433d19b1e116451b819e0652fbe4d9bd, type: 3}
+  m_Script: {fileID: 11500000, guid: f335a44cd87017247a0153fec4a79be1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableBoomLogs: 1
   <WORLD_HUB_CANISTER_ID>k__BackingField: fgpem-ziaaa-aaaag-abi2q-cai
   <WORLD_CANISTER_ID>k__BackingField: j4n55-giaaa-aaaap-qb3wq-cai
   <WORLD_COLLECTION_CANISTER_ID>k__BackingField: 6uvic-diaaa-aaaap-abgca-cai
@@ -58,8 +59,9 @@ MonoBehaviour:
     <IsInit>k__BackingField: 0
     <InitialValue>k__BackingField: 
   principal: 
+  isLoginIn: 0
   nextUpdateIn: 0
-  secondsToUpdateClient: 20
+  secondsToUpdateClient: 2
   lastClientUpdate: 0
   inRoom: 0
   currentRoomId: 
