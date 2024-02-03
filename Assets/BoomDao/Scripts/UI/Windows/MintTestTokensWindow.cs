@@ -122,13 +122,25 @@ public class MintTestTokensWindow : Window
         //ENTITIES
         resonse.callerOutcomes.entityOutcomes.Iterate(e =>
         {
-            if (e.Value.fields.Has(k => k.Value is EntityFieldEdit.IncrementNumber) == false) return;
+            //NEW EDIT
+            //if (e.Value.fields.Has(k =>
+            //{
+            //    if (k.Value is EntityFieldEdit.Numeric numericOutcome) return numericOutcome.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment;
+            //    return false;
+            //}) == false) return;
+
+            if (!e.Value.TryGetOutcomeFieldAsDouble("quantity", out var quantity)) return;
+
+            //NEW EDIT
+            string displayValue = "";
+            if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set) displayValue = $"{quantity.Value}";
+            else if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment) displayValue = $"+ {quantity.Value}";
+            else displayValue = $"- {quantity.Value}";
 
             if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
-            if (!e.Value.GetEditedFieldAsNumeber("quantity", out double quantity)) return;
 
-            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
-            else inventoryElements.Add($"{e.Value.GetKey()} x {quantity}");
+            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} {displayValue}");
+            else inventoryElements.Add($"{e.Value.GetKey()} {displayValue}");
         });
 
         WindowManager.Instance.OpenWindow<InventoryPopupWindow>(new InventoryPopupWindow.WindowData("Earned Items", inventoryElements), 3);

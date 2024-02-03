@@ -19,7 +19,7 @@ namespace Boom.Tutorials
         [SerializeField] TMP_Text triesLeftText;
         //This is the text that display the action's return value (Outcomes or an error).
         [SerializeField] TMP_Text actionLogText;
-        //This is the button that triggers the action "add_gem"
+        //This is the button that triggers the action "match_outcome_won"
         [SerializeField] Button actionButton;
 
         //This is the a coroutine cache from displaying the logs. It is used to stop it when required.
@@ -46,6 +46,8 @@ namespace Boom.Tutorials
         }
         private void OnEnable()
         {
+            actionLogText.text = "...";
+
             UpdateTriesLeftText();
         }
 
@@ -144,7 +146,7 @@ namespace Boom.Tutorials
 
                 string editedFieldName = "amount";
 
-                bool fieldAmountFound = entityEdit.GetEditedFieldAsNumeber(editedFieldName, out double amount);
+                bool fieldAmountFound = entityEdit.TryGetOutcomeFieldAsDouble(editedFieldName, out var amount);
 
                 //If the amount field is not found on the entity we just display an error
                 if (fieldAmountFound == false)
@@ -154,7 +156,7 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                incrementalOutcome.Add(new(entityName, amount));
+                incrementalOutcome.Add(new(entityName, amount.Value));
             }
 
             if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{incrementalOutcome.Reduce(e => $"> +{e.value} {e.key}", "\n")}";

@@ -1,48 +1,31 @@
-using TxIndex__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Timestamp = System.UInt64;
-using Subaccount__1 = System.Collections.Generic.List<System.Byte>;
-using Subaccount = System.Collections.Generic.List<System.Byte>;
-using QueryArchiveFn = EdjCase.ICP.Candid.Models.Values.CandidFunc;
-using Memo = System.Collections.Generic.List<System.Byte>;
-using Balance__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance = EdjCase.ICP.Candid.Models.UnboundedUInt;
 using EdjCase.ICP.Candid.Mapping;
-using Candid.IcrcLedger.Models;
 using EdjCase.ICP.Candid.Models;
+using System.Collections.Generic;
+using Candid.IcrcLedger.Models;
+using Memo = System.UInt64;
 
 namespace Candid.IcrcLedger.Models
 {
 	public class Transaction
 	{
-		[CandidName("burn")]
-		public OptionalValue<Burn> Burn { get; set; }
+		[CandidName("memo")]
+		public Memo Memo { get; set; }
 
-		[CandidName("index")]
-		public TxIndex Index { get; set; }
+		[CandidName("icrc1_memo")]
+		public OptionalValue<List<byte>> Icrc1Memo { get; set; }
 
-		[CandidName("kind")]
-		public string Kind { get; set; }
+		[CandidName("operation")]
+		public OptionalValue<Operation> Operation { get; set; }
 
-		[CandidName("mint")]
-		public OptionalValue<Mint> Mint { get; set; }
+		[CandidName("created_at_time")]
+		public TimeStamp CreatedAtTime { get; set; }
 
-		[CandidName("timestamp")]
-		public Timestamp Timestamp { get; set; }
-
-		[CandidName("transfer")]
-		public OptionalValue<Transfer> Transfer { get; set; }
-
-		public Transaction(OptionalValue<Burn> burn, TxIndex index, string kind, OptionalValue<Mint> mint, Timestamp timestamp, OptionalValue<Transfer> transfer)
+		public Transaction(Memo memo, OptionalValue<List<byte>> icrc1Memo, OptionalValue<Operation> operation, TimeStamp createdAtTime)
 		{
-			this.Burn = burn;
-			this.Index = index;
-			this.Kind = kind;
-			this.Mint = mint;
-			this.Timestamp = timestamp;
-			this.Transfer = transfer;
+			this.Memo = memo;
+			this.Icrc1Memo = icrc1Memo;
+			this.Operation = operation;
+			this.CreatedAtTime = createdAtTime;
 		}
 
 		public Transaction()

@@ -1,60 +1,109 @@
-using TxIndex__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Timestamp = System.UInt64;
-using Subaccount__1 = System.Collections.Generic.List<System.Byte>;
-using Subaccount = System.Collections.Generic.List<System.Byte>;
-using QueryArchiveFn = EdjCase.ICP.Candid.Models.Values.CandidFunc;
-using Memo = System.Collections.Generic.List<System.Byte>;
-using Balance__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance = EdjCase.ICP.Candid.Models.UnboundedUInt;
 using EdjCase.ICP.Candid.Mapping;
-using EdjCase.ICP.Candid.Models;
 using Candid.IcrcLedger.Models;
+using EdjCase.ICP.Candid.Models;
+using System.Collections.Generic;
+using SubAccount = System.Collections.Generic.List<System.Byte>;
+using Memo = System.UInt64;
+using Icrc1Timestamp = System.UInt64;
+using Icrc1Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
 	public class ApproveArgs
 	{
-		[CandidName("amount")]
-		public Balance__1 Amount { get; set; }
-
-		[CandidName("created_at_time")]
-		public OptionalValue<ulong> CreatedAtTime { get; set; }
-
-		[CandidName("expected_allowance")]
-		public OptionalValue<UnboundedUInt> ExpectedAllowance { get; set; }
-
-		[CandidName("expires_at")]
-		public OptionalValue<ulong> ExpiresAt { get; set; }
-
-		[CandidName("fee")]
-		public OptionalValue<Balance__1> Fee { get; set; }
-
 		[CandidName("from_subaccount")]
-		public OptionalValue<Subaccount__1> FromSubaccount { get; set; }
-
-		[CandidName("memo")]
-		public OptionalValue<Memo> Memo { get; set; }
+		public ApproveArgs.FromSubaccountInfo FromSubaccount { get; set; }
 
 		[CandidName("spender")]
-		public Account__1 Spender { get; set; }
+		public Account Spender { get; set; }
 
-		public ApproveArgs(Balance__1 amount, OptionalValue<ulong> createdAtTime, OptionalValue<UnboundedUInt> expectedAllowance, OptionalValue<ulong> expiresAt, OptionalValue<Balance__1> fee, OptionalValue<Subaccount__1> fromSubaccount, OptionalValue<Memo> memo, Account__1 spender)
+		[CandidName("amount")]
+		public Icrc1Tokens Amount { get; set; }
+
+		[CandidName("expected_allowance")]
+		public ApproveArgs.ExpectedAllowanceInfo ExpectedAllowance { get; set; }
+
+		[CandidName("expires_at")]
+		public ApproveArgs.ExpiresAtInfo ExpiresAt { get; set; }
+
+		[CandidName("fee")]
+		public ApproveArgs.FeeInfo Fee { get; set; }
+
+		[CandidName("memo")]
+		public OptionalValue<List<byte>> Memo { get; set; }
+
+		[CandidName("created_at_time")]
+		public ApproveArgs.CreatedAtTimeInfo CreatedAtTime { get; set; }
+
+		public ApproveArgs(ApproveArgs.FromSubaccountInfo fromSubaccount, Account spender, Icrc1Tokens amount, ApproveArgs.ExpectedAllowanceInfo expectedAllowance, ApproveArgs.ExpiresAtInfo expiresAt, ApproveArgs.FeeInfo fee, OptionalValue<List<byte>> memo, ApproveArgs.CreatedAtTimeInfo createdAtTime)
 		{
+			this.FromSubaccount = fromSubaccount;
+			this.Spender = spender;
 			this.Amount = amount;
-			this.CreatedAtTime = createdAtTime;
 			this.ExpectedAllowance = expectedAllowance;
 			this.ExpiresAt = expiresAt;
 			this.Fee = fee;
-			this.FromSubaccount = fromSubaccount;
 			this.Memo = memo;
-			this.Spender = spender;
+			this.CreatedAtTime = createdAtTime;
 		}
 
 		public ApproveArgs()
 		{
+		}
+
+		public class FromSubaccountInfo : OptionalValue<SubAccount>
+		{
+			public FromSubaccountInfo()
+			{
+			}
+
+			public FromSubaccountInfo(SubAccount value) : base(value)
+			{
+			}
+		}
+
+		public class ExpectedAllowanceInfo : OptionalValue<Icrc1Tokens>
+		{
+			public ExpectedAllowanceInfo()
+			{
+			}
+
+			public ExpectedAllowanceInfo(Icrc1Tokens value) : base(value)
+			{
+			}
+		}
+
+		public class ExpiresAtInfo : OptionalValue<Icrc1Timestamp>
+		{
+			public ExpiresAtInfo()
+			{
+			}
+
+			public ExpiresAtInfo(Icrc1Timestamp value) : base(value)
+			{
+			}
+		}
+
+		public class FeeInfo : OptionalValue<Icrc1Tokens>
+		{
+			public FeeInfo()
+			{
+			}
+
+			public FeeInfo(Icrc1Tokens value) : base(value)
+			{
+			}
+		}
+
+		public class CreatedAtTimeInfo : OptionalValue<Icrc1Timestamp>
+		{
+			public CreatedAtTimeInfo()
+			{
+			}
+
+			public CreatedAtTimeInfo(Icrc1Timestamp value) : base(value)
+			{
+			}
 		}
 	}
 }

@@ -35,7 +35,7 @@ public class RoomWindow : Window
     {
         UserUtil.AddListenerMainDataChange<MainDataTypes.AllRoomData>(HandleListeningToUsers, true);
 
-        EntityUtil.GetFieldAsDouble("self", "item_b", "quantity", out var item_bQuantity);
+        EntityUtil.TryGetFieldAsDouble("self", "item_b", "quantity", out var item_bQuantity);
         var testTokenAmount = TokenUtil.GetTokenAmountAsDecimal("self", "tvmv4-uqaaa-aaaap-abt5q-cai");
 
         
@@ -141,7 +141,7 @@ public class RoomWindow : Window
                         {
                             if (user != loginData.principal)
                             {
-                                EntityUtil.GetFieldAsDouble(user, "item_b", "quantity", out var item_bQuantity);
+                                EntityUtil.TryGetFieldAsDouble(user, "item_b", "quantity", out var item_bQuantity);
                                 bool areUserEntityLoading = !UserUtil.IsDataValid<DataTypes.Entity>(user);
                                 bool areUserTokenLoading = !UserUtil.IsDataValid<DataTypes.Token>(user);
 
@@ -149,7 +149,7 @@ public class RoomWindow : Window
                             }
                             else
                             {
-                                EntityUtil.GetFieldAsDouble("self", "item_b", "quantity", out var item_bQuantity);
+                                EntityUtil.TryGetFieldAsDouble("self", "item_b", "quantity", out var item_bQuantity);
 
                                 selfInfoText.text = $"> YOU: {user.SimplifyAddress()}\n- Item B: {item_bQuantity}\n- Token Amount: {TokenUtil.GetTokenAmountAsDecimal("self", "tvmv4-uqaaa-aaaap-abt5q-cai")}";
                             }
@@ -174,7 +174,7 @@ public class RoomWindow : Window
     {
         var selfPrincipal = obj != null? obj.ToString() : "";
 
-        EntityUtil.GetFieldAsDouble(selfPrincipal, "item_b", "quantity", out var item_bQuantity);
+        EntityUtil.TryGetFieldAsDouble(selfPrincipal, "item_b", "quantity", out var item_bQuantity);
         var testTokenAmount = TokenUtil.GetTokenAmountAsDecimal(selfPrincipal, "tvmv4-uqaaa-aaaap-abt5q-cai");
 
         multiplayerActionsWindow = WindowManager.Instance.OpenWindow<MultiplayerActionWindow>( new MultiplayerActionWindow.WindowData($"> USER: {selfPrincipal.SimplifyAddress()}", new ActionWidgetTwo.WindowData[]
@@ -300,14 +300,25 @@ public class RoomWindow : Window
         //ENTITIES
         resonse.targetOutcomes.entityOutcomes.Iterate(e =>
         {
-            //Debug.Log(">>> Outcome: " + e.Key);
-            if (e.Value.fields.Has(k => k.Value is EntityFieldEdit.IncrementNumber) == false) return;
+            //NEW EDIT
+            //if (e.Value.fields.Has(k =>
+            //{
+            //    if (k.Value is EntityFieldEdit.Numeric numericOutcome) return numericOutcome.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment;
+            //    return false;
+            //}) == false) return;
+
+            if (!e.Value.TryGetOutcomeFieldAsDouble("quantity", out var quantity)) return;
+
+            //NEW EDIT
+            string displayValue = "";
+            if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set) displayValue = $"{quantity.Value}";
+            else if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment) displayValue = $"+ {quantity.Value}";
+            else displayValue = $"- {quantity.Value}";
 
             if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
-            if (!e.Value.GetEditedFieldAsNumeber("quantity", out double quantity)) return;
 
-            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
-            else inventoryElements.Add($"{e.Value.GetKey()} x {quantity}");
+            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} {displayValue}");
+            else inventoryElements.Add($"{e.Value.GetKey()} {displayValue}");
         });
 
         WindowManager.Instance.OpenWindow<InventoryPopupWindow>(new InventoryPopupWindow.WindowData($"You have gifted to {resonse.targetOutcomes.uid.SimplifyAddress()}:", inventoryElements), 3);

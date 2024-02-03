@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using EdjCase.ICP.Candid.Mapping;
 using WorldId = System.String;
 using EntityId = System.String;
+using ActionId = System.String;
 
 namespace Candid.World
 {
@@ -336,15 +337,16 @@ namespace Candid.World
 			return reply.ToObjects<Models.Result2>(this.Converter);
 		}
 
-		public async Task UpdateOwnership(Principal arg0)
+		public async Task<bool> ValidateConstraints(string arg0, List<Models.StableEntity> arg1, ActionId arg2, OptionalValue<Models.ActionConstraint> arg3)
 		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
-			await this.Agent.CallAndWaitAsync(this.CanisterId, "updateOwnership", arg);
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter), CandidTypedValue.FromObject(arg2, this.Converter), CandidTypedValue.FromObject(arg3, this.Converter));
+			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "validateConstraints", arg);
+			return reply.ToObjects<bool>(this.Converter);
 		}
 
-		public async Task<bool> ValidateEntityConstraints(List<Models.StableEntity> arg0, List<Models.EntityConstraint> arg1)
+		public async Task<bool> ValidateEntityConstraints(string arg0, List<Models.StableEntity> arg1, List<Models.EntityConstraint> arg2)
 		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter));
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter), CandidTypedValue.FromObject(arg2, this.Converter));
 			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "validateEntityConstraints", arg);
 			CandidArg reply = response.ThrowOrGetReply();
 			return reply.ToObjects<bool>(this.Converter);
@@ -362,35 +364,6 @@ namespace Candid.World
 			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
 			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "withdrawIcrcFromWorld", arg);
 			return reply.ToObjects<Models.Result>(this.Converter);
-		}
-
-		public async Task<Models.CanisterWsCloseResult> WsClose(Models.CanisterWsCloseArguments arg0)
-		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
-			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "ws_close", arg);
-			return reply.ToObjects<Models.CanisterWsCloseResult>(this.Converter);
-		}
-
-		public async Task<Models.CanisterWsGetMessagesResult> WsGetMessages(Models.CanisterWsGetMessagesArguments arg0)
-		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
-			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "ws_get_messages", arg);
-			CandidArg reply = response.ThrowOrGetReply();
-			return reply.ToObjects<Models.CanisterWsGetMessagesResult>(this.Converter);
-		}
-
-		public async Task<Models.CanisterWsMessageResult> WsMessage(Models.CanisterWsMessageArguments arg0, OptionalValue<Models.WSSentArg> arg1)
-		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter));
-			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "ws_message", arg);
-			return reply.ToObjects<Models.CanisterWsMessageResult>(this.Converter);
-		}
-
-		public async Task<Models.CanisterWsOpenResult> WsOpen(Models.CanisterWsOpenArguments arg0)
-		{
-			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
-			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "ws_open", arg);
-			return reply.ToObjects<Models.CanisterWsOpenResult>(this.Converter);
 		}
 
 		public class AddAdminArg0

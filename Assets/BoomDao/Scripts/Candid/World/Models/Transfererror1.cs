@@ -1,7 +1,7 @@
 using EdjCase.ICP.Candid.Mapping;
 using Candid.World.Models;
 using System;
-using BlockIndex = System.UInt64;
+using Blockindex1 = System.UInt64;
 
 namespace Candid.World.Models
 {
@@ -84,9 +84,9 @@ namespace Candid.World.Models
 		public class BadFeeInfo
 		{
 			[CandidName("expected_fee")]
-			public Tokens ExpectedFee { get; set; }
+			public Tokens1 ExpectedFee { get; set; }
 
-			public BadFeeInfo(Tokens expectedFee)
+			public BadFeeInfo(Tokens1 expectedFee)
 			{
 				this.ExpectedFee = expectedFee;
 			}
@@ -99,9 +99,9 @@ namespace Candid.World.Models
 		public class InsufficientFundsInfo
 		{
 			[CandidName("balance")]
-			public Tokens Balance { get; set; }
+			public Tokens1 Balance { get; set; }
 
-			public InsufficientFundsInfo(Tokens balance)
+			public InsufficientFundsInfo(Tokens1 balance)
 			{
 				this.Balance = balance;
 			}
@@ -114,9 +114,9 @@ namespace Candid.World.Models
 		public class TxDuplicateInfo
 		{
 			[CandidName("duplicate_of")]
-			public BlockIndex DuplicateOf { get; set; }
+			public Blockindex1 DuplicateOf { get; set; }
 
-			public TxDuplicateInfo(BlockIndex duplicateOf)
+			public TxDuplicateInfo(Blockindex1 duplicateOf)
 			{
 				this.DuplicateOf = duplicateOf;
 			}

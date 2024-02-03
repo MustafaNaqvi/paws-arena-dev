@@ -5,13 +5,10 @@ namespace Boom
     using Boom.Values;
     using System.Collections.Generic;
     using Candid.World.Models;
-    using Candid.IcpLedger.Models;
     using EdjCase.ICP.Candid.Models;
     using System.Linq;
     using Boom.Utility;
     using Candid.IcrcLedger;
-    using Candid.IcpLedger;
-    using WebSocketSharp;
     using Newtonsoft.Json;
     using Boom.Patterns.Broadcasts;
     using Boom;
@@ -207,6 +204,29 @@ namespace Boom
                             {
                                 switch (update.Tag)
                                 {
+                                    case UpdateEntityTypeTag.DeleteField:
+
+                                        var val00 = update.AsDeleteField();
+                                        fieldName = val00.FieldName;
+
+                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit00))
+                                        {
+                                            entityToEdit00 = new(wid, eid, new());
+                                            entityOutcomes.Add(entityKey, entityToEdit00);
+                                        }
+
+                                        allFieldsToEdit = entityToEdit00.fields;
+
+
+                                        if (allFieldsToEdit != null)
+                                        {
+                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.DeleteField()))
+                                            {
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.DeleteField();
+                                            }
+                                        }
+
+                                        break;
                                     case UpdateEntityTypeTag.SetText:
 
                                         var val1 = update.AsSetText();
@@ -231,6 +251,54 @@ namespace Boom
                                         }
 
                                         break;
+                                    case UpdateEntityTypeTag.AddToList:
+
+                                        var val10 = update.AsAddToList();
+                                        fieldName = val10.FieldName;
+                                        var fieldValue10 = val10.Value;
+
+                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit10))
+                                        {
+                                            entityToEdit10 = new(wid, eid, new());
+                                            entityOutcomes.Add(entityKey, entityToEdit10);
+                                        }
+
+                                        allFieldsToEdit = entityToEdit10.fields;
+
+
+                                        if (allFieldsToEdit != null)
+                                        {
+                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.AddToList((string)fieldValue10)))
+                                            {
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.AddToList((string)fieldValue10);
+                                            }
+                                        }
+
+                                        break;
+                                    case UpdateEntityTypeTag.RemoveFromList:
+
+                                        var val11 = update.AsRemoveFromList();
+                                        fieldName = val11.FieldName;
+                                        var fieldValue11 = val11.Value;
+
+                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit11))
+                                        {
+                                            entityToEdit10 = new(wid, eid, new());
+                                            entityOutcomes.Add(entityKey, entityToEdit11);
+                                        }
+
+                                        allFieldsToEdit = entityToEdit11.fields;
+
+
+                                        if (allFieldsToEdit != null)
+                                        {
+                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.RemoveFromList((string)fieldValue11)))
+                                            {
+                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.RemoveFromList((string)fieldValue11);
+                                            }
+                                        }
+
+                                        break;
                                     case UpdateEntityTypeTag.SetNumber:
 
                                         var val2 = update.AsSetNumber();
@@ -250,10 +318,18 @@ namespace Boom
                                         {
                                             if (fieldValue2.Tag == Candid.World.Models.SetNumber.FieldValueInfoTag.Number)
                                             {
-                                                var v = new EntityFieldEdit.SetNumber(fieldValue2.AsNumber());
+                                                var v = new EntityFieldEdit.Numeric(fieldValue2.AsNumber(), EntityFieldEdit.Numeric.NumericType.Set);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
-                                                    allFieldsToEdit[fieldName] = v;
+                                                    var currentValue = allFieldsToEdit[fieldName];
+                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                             else
@@ -261,10 +337,18 @@ namespace Boom
                                                 var formula = fieldValue2.AsFormula();
                                                 //TODO: Parse formula
                                                 var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.SetNumber(formulaResult);
+                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Set);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
-                                                    allFieldsToEdit[fieldName] = v;
+                                                    var currentValue = allFieldsToEdit[fieldName];
+                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                         }
@@ -289,23 +373,37 @@ namespace Boom
                                         {
                                             if (fieldValue3.Tag == Candid.World.Models.IncrementNumber.FieldValueInfoTag.Number)
                                             {
-                                                var v = new EntityFieldEdit.IncrementNumber(fieldValue3.AsNumber());
+                                                var v = new EntityFieldEdit.Numeric(fieldValue3.AsNumber(), EntityFieldEdit.Numeric.NumericType.Increment);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
                                                     var currentValue = allFieldsToEdit[fieldName];
-
-                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.IncrementNumber(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
+                                                    if(currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                             else
                                             {
                                                 var formula = fieldValue3.AsFormula();
-                                                //TODO: Parse formula
+
                                                 var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.IncrementNumber(formulaResult);
+                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Increment);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
-                                                    allFieldsToEdit[fieldName] = v;
+                                                    var currentValue = allFieldsToEdit[fieldName];
+                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                         }
@@ -330,23 +428,37 @@ namespace Boom
                                         {
                                             if (fieldValue4.Tag == Candid.World.Models.DecrementNumber.FieldValueInfoTag.Number)
                                             {
-                                                var v = new EntityFieldEdit.DecrementNumber(fieldValue4.AsNumber());
+                                                var v = new EntityFieldEdit.Numeric(fieldValue4.AsNumber(), EntityFieldEdit.Numeric.NumericType.Decrement);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
                                                     var currentValue = allFieldsToEdit[fieldName];
-
-                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.DecrementNumber(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
+                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                             else
                                             {
                                                 var formula = fieldValue4.AsFormula();
-                                                //TODO: Parse formula
+
                                                 var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.DecrementNumber(formulaResult);
+                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Decrement);
                                                 if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                 {
-                                                    allFieldsToEdit[fieldName] = v;
+                                                    var currentValue = allFieldsToEdit[fieldName];
+                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    {
+                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    }
+                                                    else
+                                                    {
+                                                        $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
+                                                    }
                                                 }
                                             }
                                         }
@@ -426,24 +538,21 @@ namespace Boom
         public Outcomes targetOutcomes;
         public Outcomes worldOutcomes;
 
+        public bool hasTarget;
+
         public ProcessedActionResponse(ActionReturn actionReturn, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
         {
             var callerOutcomeResult = actionReturn.CallerOutcomes;
             var targetOutcomeResult = actionReturn.TargetOutcomes;
             var worldOutcomeResult = actionReturn.WorldOutcomes;
 
-            if (callerOutcomeResult.HasValue)
-            {
-                callerOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, callerOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
-            }
-            if (targetOutcomeResult.HasValue)
-            {
-                targetOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, targetOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
-            }
-            if (worldOutcomeResult.HasValue)
-            {
-                worldOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId.ValueOrDefault, worldOutcomeResult.ValueOrDefault, worldEntities, callerEntities, targetEntities, configs, args);
-            }
+            hasTarget = !string.IsNullOrEmpty(actionReturn.TargetPrincipalId);
+
+            callerOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, callerOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
+
+            targetOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, targetOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
+
+            worldOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, worldOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
         }
     }//UTILS
     public static class ActionUtil
@@ -837,79 +946,79 @@ namespace Boom
         public static class Transfer
         {
             //ICP
-            public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcp(IcpTx tx)
-            {
-                //CHECK LOGIN
-                var principalResult = UserUtil.GetPrincipal();
+            //public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcp(IcpTx tx)
+            //{
+            //    //CHECK LOGIN
+            //    var principalResult = UserUtil.GetPrincipal();
 
-                if (principalResult.Tag == UResultTag.Err)
-                {
-                    return new(new TransferErrType.LogIn($"You cannot execute this function, you might not be logged in or maybe you are as anon.\n More details:\n{principalResult.AsErr()}"));
+            //    if (principalResult.Tag == UResultTag.Err)
+            //    {
+            //        return new(new TransferErrType.LogIn($"You cannot execute this function, you might not be logged in or maybe you are as anon.\n More details:\n{principalResult.AsErr()}"));
 
-                }
-                var principal = principalResult.AsOk().Value;
+            //    }
+            //    var principal = principalResult.AsOk().Value;
 
-                //CHECK USER BALANCE
+            //    //CHECK USER BALANCE
 
-                var tokenDetailsResult = TokenUtil.GetTokenDetails(principal, Env.CanisterIds.ICP_LEDGER);
+            //    var tokenDetailsResult = TokenUtil.GetTokenDetails(principal, Env.CanisterIds.ICP_LEDGER);
 
-                if (tokenDetailsResult.Tag == UResultTag.Err)
-                {
-                    return new(new TransferErrType.Other(tokenDetailsResult.AsErr()));
-                }
+            //    if (tokenDetailsResult.Tag == UResultTag.Err)
+            //    {
+            //        return new(new TransferErrType.Other(tokenDetailsResult.AsErr()));
+            //    }
 
-                var (token, metadata) = tokenDetailsResult.AsOk();
+            //    var (token, metadata) = tokenDetailsResult.AsOk();
 
-                var requiredBaseUnitAmount = CandidUtil.ConvertToBaseUnit(tx.Amount, metadata.decimals);
+            //    var requiredBaseUnitAmount = CandidUtil.ConvertToBaseUnit(tx.Amount, metadata.decimals);
 
-                if (token.baseUnitAmount < requiredBaseUnitAmount + metadata.fee)
-                {
-                    return new(new TransferErrType.InsufficientBalance($"Not enough \"${Env.CanisterIds.ICP_LEDGER}\" currency. Current balance: {token.baseUnitAmount.ConvertToDecimal(metadata.decimals).NotScientificNotation()}, required balance: {tx.Amount}"));
-                }
+            //    if (token.baseUnitAmount < requiredBaseUnitAmount + metadata.fee)
+            //    {
+            //        return new(new TransferErrType.InsufficientBalance($"Not enough \"${Env.CanisterIds.ICP_LEDGER}\" currency. Current balance: {token.baseUnitAmount.ConvertToDecimal(metadata.decimals).NotScientificNotation()}, required balance: {tx.Amount}"));
+            //    }
 
-                //UPDATE LOCAL STATE
-                TokenUtil.DecrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
+            //    //UPDATE LOCAL STATE
+            //    TokenUtil.DecrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
 
-                //SETUP INTERFACE
-                var tokenInterface = new IcpLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(Env.CanisterIds.ICP_LEDGER));
+            //    //SETUP INTERFACE
+            //    var tokenInterface = new IcpLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(Env.CanisterIds.ICP_LEDGER));
 
-                //SETUP ARGS
-                var toAddress = await CandidUtil.ToAddress(tx.ToPrincipal);
-                List<byte> addressBytes = CandidUtil.HexStringToByteArray(toAddress).ToList();
-                var arg = new TransferArgs
-                {
-                    To = addressBytes,
-                    Amount = new Candid.IcpLedger.Models.Tokens(requiredBaseUnitAmount),
-                    Fee = new Candid.IcpLedger.Models.Tokens(metadata.fee),
-                    CreatedAtTime = OptionalValue<TimeStamp>.NoValue(),
-                    Memo = new ulong(),
-                    FromSubaccount = new(),
-                };
+            //    //SETUP ARGS
+            //    var toAddress = await CandidUtil.ToAddress(tx.ToPrincipal);
+            //    List<byte> addressBytes = CandidUtil.HexStringToByteArray(toAddress).ToList();
+            //    var arg = new TransferArgs
+            //    {
+            //        To = addressBytes,
+            //        Amount = new Candid.IcpLedger.Models.Tokens(requiredBaseUnitAmount),
+            //        Fee = new Candid.IcpLedger.Models.Tokens(metadata.fee),
+            //        CreatedAtTime = OptionalValue<TimeStamp>.NoValue(),
+            //        Memo = new ulong(),
+            //        FromSubaccount = new(),
+            //    };
 
-                //TRANSFER
-                $"Transfer to address: {toAddress},\n amount {tx.Amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
-                var result = await tokenInterface.Transfer(arg);
+            //    //TRANSFER
+            //    $"Transfer to address: {toAddress},\n amount {tx.Amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
+            //    var result = await tokenInterface.Transfer(arg);
 
-                //CHECK SUCCESS
-                if (result.Tag == Candid.IcpLedger.Models.TransferResultTag.Ok)
-                {
-                    var blockIndex = result.AsOk();
-                    $"BlockIndex Transfer: {blockIndex}".Log();
-                    return new(blockIndex);
-                }
-                else
-                {
-                    //Due to failure restore to previews value
-                    TokenUtil.IncrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
+            //    //CHECK SUCCESS
+            //    if (result.Tag == Candid.IcpLedger.Models.TransferResultTag.Ok)
+            //    {
+            //        var blockIndex = result.AsOk();
+            //        $"BlockIndex Transfer: {blockIndex}".Log();
+            //        return new(blockIndex);
+            //    }
+            //    else
+            //    {
+            //        //Due to failure restore to previews value
+            //        TokenUtil.IncrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
 
-                    return new(new TransferErrType.Transfer($"{result.AsErr().Tag}: {result.AsErr().Value}"));
-                }
-            }
+            //        return new(new TransferErrType.Transfer($"{result.AsErr().Tag}: {result.AsErr().Value}"));
+            //    }
+            //}
             //ICRC
             public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcrc(IcrcTx tx)
             {
                 //CHECK LOGIN
-                if (tx.Canister == Env.CanisterIds.ICP_LEDGER) return new(new TransferErrType.Other($"You cannot use this function to transfer ICRC, try using \"{nameof(TransferIcp)}\""));
+                //if (tx.Canister == Env.CanisterIds.ICP_LEDGER) return new(new TransferErrType.Other($"You cannot use this function to transfer ICRC, try using \"{nameof(TransferIcrc)}\""));
 
                 var principalResult = UserUtil.GetPrincipal();
 
@@ -944,21 +1053,21 @@ namespace Boom
                 var tokenInterface = new IcrcLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(tx.Canister));
 
                 //SETUP ARGS
-                var arg = new Candid.IcrcLedger.Models.TransferArgs(
-                    (UnboundedUInt)requiredBaseUnitAmount,
+                var arg = new Candid.IcrcLedger.Models.TransferArg(
                     new(),
+                    new(Principal.FromText(tx.ToPrincipal), new()),
+                    (UnboundedUInt)requiredBaseUnitAmount,
                     new((UnboundedUInt)metadata.fee),
                     new(),
-                    new(),
-                    new(Principal.FromText(tx.ToPrincipal),
-                    new()));
+                    new()
+                    );
 
                 //TRANSFER
                 $"Transfer to principal: {tx.ToPrincipal},\n amount {tx.Amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
                 var result = await tokenInterface.Icrc1Transfer(arg);
 
                 //CHECK SUCCESS
-                if (result.Tag == Candid.IcrcLedger.Models.TransferResultTag.Ok)
+                if (result.Tag == Candid.IcrcLedger.Models.Icrc1TransferResultTag.Ok)
                 {
                     var blockIndex = (ulong)result.AsOk();
                     $"BlockIndex Transfer: {blockIndex}".Log(nameof(ActionUtil));

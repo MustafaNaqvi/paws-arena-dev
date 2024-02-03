@@ -11,6 +11,7 @@ namespace Boom
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.Scripting;
+    using static Boom.EntityFieldEdit.Numeric;
 
     public class NftCollectionToFetch
     {
@@ -501,7 +502,6 @@ namespace Boom
 
         public TimeConstraint TimeConstraint { get; set; }
         public List<EntityConstrainTypes.Base> EntityConstraints { get; set; }
-        public IcpTx IcpConstraint { get; set; }
         public List<IcrcTx> IcrcConstraint { get; set; }
         public List<NftTx> NftConstraint { get; set; }
         public ActionResult ActionResult { get; set; }
@@ -575,7 +575,6 @@ namespace Boom
                     }
                 }
 
-                if (constraints.IcpConstraint.HasValue) IcpConstraint = constraints.IcpConstraint.ValueOrDefault;
                 IcrcConstraint = constraints.IcrcConstraint;
                 NftConstraint = new();
 
@@ -605,6 +604,14 @@ namespace Boom
     {
         public abstract class Base { }
 
+        public class DeleteField : Base
+        {
+            public DeleteField()
+            {
+            }
+        }
+
+
         public class SetText : Base
         {
             public string Value { get; set; }
@@ -614,51 +621,98 @@ namespace Boom
                 Value = value;
             }
         }
-        public class ReplaceText : Base
+
+        public class AddToList : Base
         {
-            public ReplaceText(string oldText, string newText)
+            public string Value { get; set; }
+
+            public AddToList(string value)
             {
-                OldText = oldText;
-                NewText = newText;
+                Value = value;
             }
-
-            public string OldText { get; set; }
-            public string NewText { get; set; }
         }
-
-
-        public abstract class Numeric : Base
+        public class RemoveFromList : Base
         {
-            public double Value { get; set; }
+            public string Value { get; set; }
 
-            public Numeric(double value)
+            public RemoveFromList(string value)
             {
                 Value = value;
             }
         }
 
-        public class SetNumber : Numeric
+        public class Numeric : Base
         {
-            public SetNumber(double value) : base(value)
+            public enum NumericType { Set, Increment, Decrement }
+            public NumericType NumericType_ { get; set; }
+            public double Value { get; set; }
+
+            public Numeric(double value, NumericType numericType)
             {
+                NumericType_ = numericType;
+                Value = value;
+            }
+            public void EditNumericValue(double value, NumericType numericType)
+            {
+                if (numericType == NumericType.Set)
+                {
+                    NumericType_ = numericType;
+                    Value = value;
+                }
+                else if (numericType == NumericType.Increment)
+                {
+                    if(NumericType_ == NumericType.Set)
+                    {
+                        NumericType_ = numericType;
+                        Value = value;
+                    }
+                    else if (NumericType_ == NumericType.Increment)
+                    {
+                        Value += value;
+                    }
+                    else
+                    {
+                        Value -= value;
+
+                        if(Value < 0)
+                        {
+                            Value *= -1;
+                            NumericType_ = numericType;
+                        }
+                    }
+                }
+                else
+                {
+                    if (NumericType_ == NumericType.Set)
+                    {
+                        NumericType_ = numericType;
+                        Value = value;
+                    }
+                    else if (NumericType_ == NumericType.Decrement)
+                    {
+                        Value += value;
+                    }
+                    else
+                    {
+                        Value -= value;
+
+                        if (Value < 0)
+                        {
+                            Value *= -1;
+                            NumericType_ = numericType;
+                        }
+                    }
+                }
             }
         }
-        public class IncrementNumber : Numeric
+
+        public class RenewTimestamp : Base
         {
-            public IncrementNumber(double value) : base(value)
+            public double Value { get; set; }
+
+            public RenewTimestamp(double value) 
             {
-            }
-        }
-        public class DecrementNumber : Numeric
-        {
-            public DecrementNumber(double value) : base(value)
-            {
-            }
-        }
-        public class RenewTimestamp : Numeric
-        {
-            public RenewTimestamp(double value) : base(value)
-            {
+                Value = value;
             }
         }
     }
@@ -782,7 +836,7 @@ namespace Boom
 
             public override string GetKey()
             {
-                return $"{eid}";
+                return $"{wid}{eid}";
             }
         }
 
@@ -1105,11 +1159,11 @@ namespace Boom
 
                 foreach (var roomEntity in roomEntities)
                 {
-                    roomEntity.GetFieldAsDouble("userCount", out var userCount);
+                    roomEntity.TryGetFieldAsDouble("userCount", out var userCount);
 
                     if (userCount > 0)
                     {
-                        if (roomEntity.GetFieldAsString("users", out var users))
+                        if (roomEntity.TryGetFieldAsText("users", out var users))
                         {
                             var usersInRoom = users.Split(',');
                             var room = new RoomData(roomEntity.eid, usersInRoom);

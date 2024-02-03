@@ -148,12 +148,21 @@ public class ShopWindow : Window
             }
             else if (actionType == "verifyICP")
             {
-                if (!ConfigUtil.TryGetActionPart<IcpTx>(actionId, e => e.callerAction.IcpConstraint, out var txConstraint))
+                if (!ConfigUtil.TryGetActionPart<List<IcrcTx>>(actionId, e => e.callerAction.IcrcConstraint, out var txConstraints))
                 {
-                    ("Could not find icp constraint of action of id: " + actionId).Error();
+                    ("Could not find icrc constraint of action of id: " + actionId).Error();
 
                     return;
                 }
+
+                if (txConstraints.Count == 0)
+                {
+                    ("empty icrc constraint of action of id: " + actionId).Error();
+
+                    return;
+                }
+
+                var txConstraint = txConstraints[0];
 
                 ActionWidget aw = WindowManager.Instance.AddWidgets<ActionWidget>(new ActionWidget.WindowData()
                 {
@@ -519,11 +528,11 @@ public class ShopWindow : Window
 
         BroadcastState.Invoke(new WaitingForResponse(false));
     }
-    private async UniTaskVoid BuyWithIcp(string actionId, IcpTx icpConstraint)
+    private async UniTaskVoid BuyWithIcp(string actionId, IcrcTx icpConstraint)
     {
         BroadcastState.Invoke(new WaitingForResponse(true));
 
-        var blockIndexResult = await ActionUtil.Transfer.TransferIcp(icpConstraint);
+        var blockIndexResult = await ActionUtil.Transfer.TransferIcrc(icpConstraint);
 
         if (blockIndexResult.IsErr)
         {
@@ -711,13 +720,25 @@ public class ShopWindow : Window
         //ENTITIES
         resonse.callerOutcomes.entityOutcomes.Iterate(e =>
         {
-            if (e.Value.fields.Has(k => k.Value is EntityFieldEdit.IncrementNumber) == false) return;
+            //NEW EDIT
+            //if (e.Value.fields.Has(k =>
+            //{
+            //    if (k.Value is EntityFieldEdit.Numeric numericOutcome) return numericOutcome.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment;
+            //    return false;
+            //}) == false) return;
+
+            if (!e.Value.TryGetOutcomeFieldAsDouble("quantity", out var quantity)) return;
+
+            //NEW EDIT
+            string displayValue = "";
+            if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set) displayValue = $"{quantity.Value}";
+            else if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment) displayValue = $"+ {quantity.Value}";
+            else displayValue = $"- {quantity.Value}";
 
             if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
-            if (!e.Value.GetEditedFieldAsNumeber("quantity", out double quantity)) return;
 
-            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} x {quantity}");
-            else inventoryElements.Add($"{e.Value.GetKey()} x {quantity}");
+            if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} {displayValue}");
+            else inventoryElements.Add($"{e.Value.GetKey()} {displayValue}");
         });
 
         WindowManager.Instance.OpenWindow<InventoryPopupWindow>(new InventoryPopupWindow.WindowData("Earned Items", inventoryElements), 3);

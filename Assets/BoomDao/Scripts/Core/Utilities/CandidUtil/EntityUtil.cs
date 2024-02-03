@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Unity.VisualScripting;
     using UnityEngine;
     // Ignore Spelling: Util
 
@@ -104,9 +105,32 @@
             public static EntityFilter.FromSelf ownItems = new EntityFilter.FromSelf(new KeyValue<string, EntityFilterPredicate.Base>("tag", new EntityFilterPredicate.Text(e => e == "item")));
         }
 
-
-        public static bool TryGetAllEntitiesOf<T>(EntityFilter.Base entityFilter, out LinkedList<T> entities, Func<DataTypes.Entity, T> getter)
+        //Multiple output
+        public static bool TryGetEntities(out LinkedList<DataTypes.Entity> entities, string userPrincipalId = "self", string sourceWorldId = default)
         {
+            if (string.IsNullOrEmpty(sourceWorldId)) sourceWorldId = BoomManager.Instance.WORLD_CANISTER_ID;
+
+            entities = default;
+            var elementsResult = UserUtil.GetElementsOfType<DataTypes.Entity>(userPrincipalId);
+
+            if (elementsResult.IsErr) return false;
+
+            entities = new();
+
+            var elements = elementsResult.AsOk();
+            foreach (var e in elements)
+            {
+                if (sourceWorldId == e.wid)
+                    entities.AddLast(e);
+            }
+
+            return true;
+        }
+
+        public static bool TryQueryEntities(EntityFilter.Base entityFilter, out LinkedList<DataTypes.Entity> entities, string sourceWorldId = default)
+        {
+            if (string.IsNullOrEmpty(sourceWorldId)) sourceWorldId = BoomManager.Instance.WORLD_CANISTER_ID;
+
             string principalId = "";
             KeyValue<string, EntityFilterPredicate.Base>[] conditions = null;
 
@@ -126,29 +150,32 @@
                     break;
             }
 
-            entities = null;
+            entities = default;
+
             var elementsResult = UserUtil.GetElementsOfType<DataTypes.Entity>(principalId);
 
             if (elementsResult.IsErr) return false;
 
+            entities = new();
+
             if (conditions == null)
             {
-                entities = new();
                 var elements = elementsResult.AsOk();
 
                 foreach (var e in elements)
                 {
-                    entities.AddLast(getter.Invoke(e));
+                    if (sourceWorldId == e.wid)
+                        entities.AddLast(e);
                 }
             }
             else
             {
-                entities = new();
-
                 var entitiesToCheckOn = elementsResult.AsOk();
 
                 foreach (var entity in entitiesToCheckOn)
                 {
+                    if (sourceWorldId != entity.wid) continue;
+
                     foreach (var condition in conditions)
                     {
                         if (entity.fields.TryGetValue(condition.key, out var value) == false)
@@ -204,7 +231,7 @@
                         }
                     }
 
-                    entities.AddLast(getter.Invoke(entity));
+                    entities.AddLast(entity);
 
                 entityLoopEnd: { }
                 }
@@ -213,18 +240,53 @@
             return true;
         }
 
-
-        public static bool GetFieldAs<T>(string uid, string entityId, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryQueryAllEntitiesFeild<T>(EntityFilter.Base entityFilter, out LinkedList<T> allEntityField, Func<DataTypes.Entity, T> getter, string sourceWorldId = default)
         {
+            allEntityField = default;
+
+            if (TryQueryEntities(entityFilter, out var entities, sourceWorldId) == false) return false;
+
+            allEntityField = new();
+
+            foreach (var entity in entities)
+            {
+                allEntityField.AddLast(getter(entity));
+            }
+            return true;
+        }
+
+        //Single output
+        public static bool TryGetEntity(string uid, string entityId, out DataTypes.Entity entity, string sourceWorldId = default)
+        {
+            if (string.IsNullOrEmpty(sourceWorldId)) sourceWorldId = BoomManager.Instance.WORLD_CANISTER_ID;
+
+            entity = null;
+
+            var result = UserUtil.GetElementOfType<DataTypes.Entity>(uid, $"{sourceWorldId}{entityId}");
+
+            if (result.IsErr)
+            {
+                $"{result.AsErr()}".Warning(typeof(EntityUtil).Name);
+
+                return false;
+            }
+
+            entity = result.AsOk();
+
+            return true;
+        }
+        private static bool TryGetFieldAs<T>(string uid, string entityId, string fieldName, out T outValue, T defaultValue = default, string sourceWorldId = default)
+        {
+            if (string.IsNullOrEmpty(sourceWorldId)) sourceWorldId = BoomManager.Instance.WORLD_CANISTER_ID;
+
             outValue = defaultValue;
 
-            var result = UserUtil.GetElementOfType<DataTypes.Entity>(uid, entityId);
-            if (result.IsErr)
+            if (TryGetEntity(uid, entityId, out var entity, sourceWorldId) == false)
             {
                 return false;
             }
 
-            if (!result.AsOk().fields.TryGetValue(fieldName, out var value)) return false;
+            if (!entity.fields.TryGetValue(fieldName, out var value)) return false;
 
             if (value.TryParseValue<T>(out outValue))
             {
@@ -233,19 +295,25 @@
             $"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}".Error();
             return false;
         }
-        public static bool GetFieldAsString(string uid, string entityId, string fieldName, out string outValue, string defaultValue = default)
+        public static bool TryGetFieldAsText(string uid, string entityId, string fieldName, out string outValue, string defaultValue = default, string sourceWorldId = default)
         {
-            return GetFieldAs<string>(uid, entityId, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<string>(uid, entityId, fieldName, out outValue, defaultValue, sourceWorldId);
         }
-        public static bool GetFieldAsDouble(string uid, string entityId, string fieldName, out double outValue, double defaultValue = default)
+        public static bool TryGetFieldAsDouble(string uid, string entityId, string fieldName, out double outValue, double defaultValue = default, string sourceWorldId = default)
         {
-            return GetFieldAs<double>(uid, entityId, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<double>(uid, entityId, fieldName, out outValue, defaultValue, sourceWorldId);
         }
-        public static bool GetFieldAsULong(string uid, string entityId, string fieldName, out ulong outValue, ulong defaultValue = default)
+        public static bool TryGetFieldAsTimeStamp(string uid, string entityId, string fieldName, out ulong outValue, ulong defaultValue = default, string sourceWorldId = default)
         {
-            return GetFieldAs<ulong>(uid, entityId, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<ulong>(uid, entityId, fieldName, out outValue, defaultValue, sourceWorldId);
         }
-        private static bool GetFieldAs<T>(this DataTypes.Entity entity, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryGetFieldAsBool(string uid, string entityId, string fieldName, out bool outValue, bool defaultValue = default, string sourceWorldId = default)
+        {
+            return TryGetFieldAs<bool>(uid, entityId, fieldName, out outValue, defaultValue, sourceWorldId);
+        }
+
+        //Single output (Datatypes.Entity extension functions)
+        private static bool TryGetFieldAs<T>(this DataTypes.Entity entity, string fieldName, out T outValue, T defaultValue = default)
         {
             outValue = defaultValue;
 
@@ -258,37 +326,25 @@
             $"Error on \"value\" type, current type: {value.GetType()}, desired type is: {typeof(T)}".Error();
             return false;
         }
-        public static bool GetFieldAsString(this DataTypes.Entity entity, string fieldName, out string outValue, string defaultValue = default)
+        public static bool TryGetFieldAsText(this DataTypes.Entity entity, string fieldName, out string outValue, string defaultValue = default)
         {
-            return GetFieldAs<string>(entity, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<string>(entity, fieldName, out outValue, defaultValue);
         }
-        public static bool GetFieldAsDouble(this DataTypes.Entity entity, string fieldName, out double outValue, double defaultValue = default)
+        public static bool TryGetFieldAsDouble(this DataTypes.Entity entity, string fieldName, out double outValue, double defaultValue = default)
         {
-            return GetFieldAs<double>(entity, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<double>(entity, fieldName, out outValue, defaultValue);
         }
-        public static bool GetFieldAsULong(this DataTypes.Entity entity, string fieldName, out ulong outValue, ulong defaultValue = default)
+        public static bool TryGetFieldAsTimeStamp(this DataTypes.Entity entity, string fieldName, out ulong outValue, ulong defaultValue = default)
         {
-            return GetFieldAs<ulong>(entity, fieldName, out outValue, defaultValue);
+            return TryGetFieldAs<ulong>(entity, fieldName, out outValue, defaultValue);
         }
-        //
-        public static bool GetEditedFieldAsNumeber(this EntityOutcome newEntityValues, string fieldName, out double outValue, double defaultValue = default)
+        public static bool TryGetFieldAsBool(this DataTypes.Entity entity, string fieldName, out bool outValue, bool defaultValue = default)
         {
-            outValue = defaultValue;
+            return TryGetFieldAs<bool>(entity, fieldName, out outValue, defaultValue);
+        }
 
-            if (!newEntityValues.fields.TryGetValue(fieldName, out var edit)) return false;
-
-            switch (edit)
-            {
-                case EntityFieldEdit.Numeric e:
-
-                    outValue = e.Value;
-                    return true;
-                default:
-                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}".Error();
-                    return false;
-            }
-        }
-        public static bool GetEditedFieldAsText(this EntityOutcome newEntityValues, string fieldName, out string outValue, string defaultValue = default)
+        //Single output (EntityOutcome extension functions)
+        public static bool TryGetOutcomeFieldAsText(this EntityOutcome newEntityValues, string fieldName, out string outValue, string defaultValue = default)
         {
             outValue = defaultValue;
 
@@ -304,7 +360,7 @@
                     return false;
             }
         }
-        public static bool GetEditedFieldAsOldText(this EntityOutcome newEntityValues, string fieldName, out string outValue, string defaultValue = default)
+        public static bool TryGetOutcomeFieldAsDouble(this EntityOutcome newEntityValues, string fieldName, out EntityFieldEdit.Numeric outValue, EntityFieldEdit.Numeric defaultValue = default)
         {
             outValue = defaultValue;
 
@@ -312,15 +368,16 @@
 
             switch (edit)
             {
-                case EntityFieldEdit.ReplaceText e:
-                    outValue = e.OldText;
+                case EntityFieldEdit.Numeric e:
+
+                    outValue = e;
                     return true;
                 default:
-                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}".Error();
+                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}".Error();
                     return false;
             }
         }
-        public static bool GetEditedFieldAsNewText(this EntityOutcome newEntityValues, string fieldName, out string outValue, string defaultValue = default)
+        public static bool TryGetOutcomeFieldAsTimeStamp(this EntityOutcome newEntityValues, string fieldName, out ulong outValue, ulong defaultValue = default)
         {
             outValue = defaultValue;
 
@@ -328,16 +385,43 @@
 
             switch (edit)
             {
-                case EntityFieldEdit.ReplaceText e:
-                    outValue = e.NewText;
+                case EntityFieldEdit.Numeric e:
+
+                    outValue = (ulong)e.Value;
                     return true;
                 default:
-                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.ReplaceText)} for field: {fieldName}".Error();
+                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.Numeric)} for field: {fieldName}".Error();
+                    return false;
+            }
+        }
+        public static bool TryGetOutcomeFieldAsBool(this EntityOutcome newEntityValues, string fieldName, out bool outValue, bool defaultValue = default)
+        {
+            outValue = defaultValue;
+
+            if (!newEntityValues.fields.TryGetValue(fieldName, out var edit)) return false;
+
+            switch (edit)
+            {
+                case EntityFieldEdit.SetText e:
+
+                    var valueToCheck = e.Value.ToLower();
+                    if (valueToCheck == "true") outValue = true;
+                    else if (valueToCheck == "false") outValue = false;
+                    else
+                    {
+                        $"Error trying to read \"{e.Value}\" as a bool value type".Error();
+                        return false;
+                    }
+
+                    return true;
+                default:
+                    $"Error on \"value\" type, current type: {edit.GetType()}, desired type is: {typeof(EntityFieldEdit.SetText)} for field: {fieldName}".Error();
                     return false;
             }
         }
 
-        //
+
+        //Formulas
         private static readonly FormulaEvaluation formulaEvaluation = new();
 
         public static (IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs) GetFormulaDependencies(ActionReturn actionReturn)
@@ -381,9 +465,9 @@
             }
 
             //TARGET
-            if (actionReturn.TargetPrincipalId.HasValue)
+            if (string.IsNullOrEmpty(actionReturn.TargetPrincipalId) == false)
             {
-                var targetEntityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(actionReturn.TargetPrincipalId.ValueOrDefault);
+                var targetEntityDataTypeResult = UserUtil.GetData<DataTypes.Entity>(actionReturn.TargetPrincipalId);
 
                 if (targetEntityDataTypeResult.IsOk)
                 {
@@ -523,7 +607,7 @@
 
                 Dictionary<string, string> currentEntityFields = null;
 
-                var currentEntityDataTypeResult = UserUtil.GetElementOfType<DataTypes.Entity>(uid, eid);
+                var currentEntityDataTypeResult = UserUtil.GetElementOfType<DataTypes.Entity>(uid, $"{wid}{eid}");
 
                 if (currentEntityDataTypeResult.IsOk) currentEntityFields = currentEntityDataTypeResult.AsOk().fields;
                 else currentEntityFields = new();
@@ -540,29 +624,55 @@
                             currentEntityFields[fieldId] = e.Value;
                             break;
 
-                        case EntityFieldEdit.ReplaceText e:
-                            currentEntityFields[fieldId] = currentEntityFields[fieldId].Replace(e.OldText, e.NewText);
+                        case EntityFieldEdit.DeleteField e:
+                            if(currentEntityFields.ContainsKey(fieldId)) currentEntityFields.Remove(fieldId);
+                            break;
+                        case EntityFieldEdit.AddToList e:
+                            if(currentEntityFields.TryAdd(fieldId, e.Value) == false)
+                            {
+                                currentEntityFields[fieldId] += $",{e.Value}";
+                            }
+                            break;
+                        case EntityFieldEdit.RemoveFromList e:
+                            if (currentEntityFields.ContainsKey(e.Value))
+                            {
+                                var currentFieldValue = currentEntityFields[fieldId];
+
+                                if (currentFieldValue.Contains(e.Value))
+                                {
+                                    var split = currentFieldValue.Split(',').ToList();
+
+                                    split.Remove(e.Value);
+
+                                    var newFieldValue = split.Reduce(e => $"{e}", ",");
+
+                                    currentEntityFields[fieldId] = newFieldValue;
+                                }
+                            }
+
                             break;
 
-                        case EntityFieldEdit.SetNumber e:
-                            currentEntityFields[fieldId] = e.Value.ToString();
-                            break;
-                        case EntityFieldEdit.IncrementNumber e:
+                        case EntityFieldEdit.Numeric e:
 
-                            if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
-                            numberAsText.TryParseValue(out double currentNumericValue);
+                            if(e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set)
+                            {
+                                currentEntityFields[fieldId] = e.Value.ToString();
+                            }
+                            else if (e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
+                            {
+                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
+                                numberAsText.TryParseValue(out double currentNumericValue);
 
-                            currentEntityFields[fieldId] = (currentNumericValue + e.Value).ToString();
+                                currentEntityFields[fieldId] = (currentNumericValue + e.Value).ToString();
+                            }
+                            else
+                            {
+                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
+                                numberAsText.TryParseValue(out double currentNumericValue);
 
-                            break;
-
-                        case EntityFieldEdit.DecrementNumber e:
-
-                            if (currentEntityFields.TryGetValue(fieldId, out numberAsText) == false) numberAsText = "0";
-                            numberAsText.TryParseValue(out currentNumericValue);
-
-                            currentEntityFields[fieldId] = (currentNumericValue - e.Value).ToString();
-
+                                currentEntityFields[fieldId] = (currentNumericValue - e.Value).ToString();
+                            }
+                            
                             break;
 
                         case EntityFieldEdit.RenewTimestamp e:

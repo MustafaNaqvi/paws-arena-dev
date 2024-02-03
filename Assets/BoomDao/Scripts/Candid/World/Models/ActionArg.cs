@@ -1,6 +1,7 @@
 using EdjCase.ICP.Candid.Mapping;
 using System.Collections.Generic;
 using Candid.World.Models;
+using ActionId = System.String;
 
 namespace Candid.World.Models
 {

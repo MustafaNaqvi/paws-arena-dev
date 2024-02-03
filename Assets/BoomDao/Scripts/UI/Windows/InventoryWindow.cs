@@ -57,7 +57,7 @@ public class InventoryWindow : Window
         }
 
 
-        EntityUtil.TryGetAllEntitiesOf<DataTypes.Entity>(EntityUtil.Queries.ownItems, out var entities, e => e);
+        EntityUtil.TryQueryAllEntitiesFeild<DataTypes.Entity>(EntityUtil.Queries.ownItems, out var entities, e => e);
 
 
         int itemsCount = entities.Count;
@@ -76,7 +76,7 @@ public class InventoryWindow : Window
             try
             {
                 if(!ConfigUtil.GetConfigFieldAs<string>(e, "name", out var configName)) throw new Exception($"Config of id: {e.eid} doesn't have field \"name\"");
-                if (!EntityUtil.GetFieldAsDouble(e, "quantity", out var currentQuantity)) throw new Exception($"Element of id : \"{e.GetKey()}\" doesn't have field \"quantity\"");
+                if (!EntityUtil.TryGetFieldAsDouble(e, "quantity", out var currentQuantity)) throw new Exception($"Element of id : \"{e.GetKey()}\" doesn't have field \"quantity\"");
 
                 if (currentQuantity > 0)
                 {

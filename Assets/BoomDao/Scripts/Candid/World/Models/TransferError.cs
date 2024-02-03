@@ -2,6 +2,9 @@ using EdjCase.ICP.Candid.Mapping;
 using Candid.World.Models;
 using System;
 using EdjCase.ICP.Candid.Models;
+using Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using Timestamp = System.UInt64;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.World.Models
 {
@@ -111,9 +114,9 @@ namespace Candid.World.Models
 		public class BadBurnInfo
 		{
 			[CandidName("min_burn_amount")]
-			public UnboundedUInt MinBurnAmount { get; set; }
+			public Tokens MinBurnAmount { get; set; }
 
-			public BadBurnInfo(UnboundedUInt minBurnAmount)
+			public BadBurnInfo(Tokens minBurnAmount)
 			{
 				this.MinBurnAmount = minBurnAmount;
 			}
@@ -126,9 +129,9 @@ namespace Candid.World.Models
 		public class BadFeeInfo
 		{
 			[CandidName("expected_fee")]
-			public UnboundedUInt ExpectedFee { get; set; }
+			public Tokens ExpectedFee { get; set; }
 
-			public BadFeeInfo(UnboundedUInt expectedFee)
+			public BadFeeInfo(Tokens expectedFee)
 			{
 				this.ExpectedFee = expectedFee;
 			}
@@ -141,9 +144,9 @@ namespace Candid.World.Models
 		public class CreatedInFutureInfo
 		{
 			[CandidName("ledger_time")]
-			public ulong LedgerTime { get; set; }
+			public Timestamp LedgerTime { get; set; }
 
-			public CreatedInFutureInfo(ulong ledgerTime)
+			public CreatedInFutureInfo(Timestamp ledgerTime)
 			{
 				this.LedgerTime = ledgerTime;
 			}
@@ -156,9 +159,9 @@ namespace Candid.World.Models
 		public class DuplicateInfo
 		{
 			[CandidName("duplicate_of")]
-			public UnboundedUInt DuplicateOf { get; set; }
+			public BlockIndex DuplicateOf { get; set; }
 
-			public DuplicateInfo(UnboundedUInt duplicateOf)
+			public DuplicateInfo(BlockIndex duplicateOf)
 			{
 				this.DuplicateOf = duplicateOf;
 			}
@@ -190,9 +193,9 @@ namespace Candid.World.Models
 		public class InsufficientFundsInfo
 		{
 			[CandidName("balance")]
-			public UnboundedUInt Balance { get; set; }
+			public Tokens Balance { get; set; }
 
-			public InsufficientFundsInfo(UnboundedUInt balance)
+			public InsufficientFundsInfo(Tokens balance)
 			{
 				this.Balance = balance;
 			}

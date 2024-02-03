@@ -43,6 +43,11 @@ namespace Boom.Tutorials
             //Unregister to action button click
             actionButton.onClick.RemoveListener(ActionButtonClickHandler);
         }
+
+        private void OnEnable()
+        {
+            actionLogText.text = "...";
+        }
         #endregion
 
 
@@ -124,7 +129,7 @@ namespace Boom.Tutorials
 
                 string editedFieldName = "amount";
 
-                bool fieldAmountFound = entityOutcome.GetEditedFieldAsNumeber(editedFieldName, out double amount);
+                bool fieldAmountFound = entityOutcome.TryGetOutcomeFieldAsDouble(editedFieldName, out var amount);
 
                 //If the amount field is not found on the entity we just display an error
                 if (fieldAmountFound == false)
@@ -134,7 +139,7 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                outcomesToDisplay.Add(new(entityName, amount));
+                outcomesToDisplay.Add(new(entityName, amount.Value));
             }
 
             if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{outcomesToDisplay.Reduce(e => $"> +{e.value} {e.key}", "\n")}";

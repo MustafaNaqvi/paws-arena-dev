@@ -1,7 +1,7 @@
 using EdjCase.ICP.Candid.Mapping;
 using Candid.World.Models;
 using System;
-using BlockIndex = System.UInt64;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.World.Models
 {
@@ -24,7 +24,7 @@ namespace Candid.World.Models
 		{
 		}
 
-		public static TransferResult Err(Transfererror1 info)
+		public static TransferResult Err(TransferError info)
 		{
 			return new TransferResult(TransferResultTag.Err, info);
 		}
@@ -34,10 +34,10 @@ namespace Candid.World.Models
 			return new TransferResult(TransferResultTag.Ok, info);
 		}
 
-		public Transfererror1 AsErr()
+		public TransferError AsErr()
 		{
 			this.ValidateTag(TransferResultTag.Err);
-			return (Transfererror1)this.Value!;
+			return (TransferError)this.Value!;
 		}
 
 		public BlockIndex AsOk()

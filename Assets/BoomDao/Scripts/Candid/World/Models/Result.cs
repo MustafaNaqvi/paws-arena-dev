@@ -28,7 +28,7 @@ namespace Candid.World.Models
 			return new Result(ResultTag.Err, info);
 		}
 
-		public static Result Ok(Result1 info)
+		public static Result Ok(TransferResult info)
 		{
 			return new Result(ResultTag.Ok, info);
 		}
@@ -39,10 +39,10 @@ namespace Candid.World.Models
 			return (Result.ErrInfo)this.Value!;
 		}
 
-		public Result1 AsOk()
+		public TransferResult AsOk()
 		{
 			this.ValidateTag(ResultTag.Ok);
-			return (Result1)this.Value!;
+			return (TransferResult)this.Value!;
 		}
 
 		private void ValidateTag(ResultTag tag)

@@ -4,7 +4,6 @@ namespace Candid
     using System.Collections.Generic;
     using System.Linq;
     using Candid.Extv2Boom;
-    using Candid.IcpLedger;
     using Candid.World;
     using Candid.WorldHub;
     using Cysharp.Threading.Tasks;
@@ -507,7 +506,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type {nameof(DataTypes.Entity)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
+                $"DATA of type {nameof(DataTypes.Entity)} failed to load. Message: {result.AsErr()}".Error(nameof(BoomManager));
             }
         }
         private async UniTask FetchActionStates(DataTypeRequestArgs.ActionState arg)
@@ -553,7 +552,7 @@ namespace Candid
             }
             else
             {
-                $"DATA of type {nameof(DataTypes.ActionState)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
+                $"DATA of type {nameof(DataTypes.Token)} failed to load. Message: {result.AsErr()}".Warning(nameof(BoomManager));
             }
         }
 
@@ -590,15 +589,15 @@ namespace Candid
             {
                 List<MainDataTypes.AllTokenConfigs.TokenConfig> tokens = new();
 
-                var icpTokenInterface = new IcpLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(Env.CanisterIds.ICP_LEDGER));
+                var icpTokenInterface = new IcrcLedgerApiClient(cachedAnonAgent.Value, Principal.FromText(Env.CanisterIds.ICP_LEDGER));
 
                 var icpDecimals = await icpTokenInterface.Icrc1Decimals();
                 var icpName = await icpTokenInterface.Icrc1Name();
-                var icpSymbol = await icpTokenInterface.Symbol();
+                var icpSymbol = await icpTokenInterface.Icrc1Symbol();
                 var icpFee = await icpTokenInterface.Icrc1Fee();
                 icpFee.TryToUInt64(out ulong _icpFee);
 
-                tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(Env.CanisterIds.ICP_LEDGER, icpName, icpSymbol.Symbol, icpDecimals, _icpFee, "This is the base Internet Computer Token", "https://cryptologos.cc/logos/internet-computer-icp-logo.png?v=026"));
+                tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(Env.CanisterIds.ICP_LEDGER, icpName, icpSymbol, icpDecimals, _icpFee, "This is the base Internet Computer Token", "https://cryptologos.cc/logos/internet-computer-icp-logo.png?v=026"));
 
                 if (ConfigUtil.QueryConfigsByTag(WORLD_CANISTER_ID, "token", out var tokensMetadata))
                 {
@@ -743,7 +742,7 @@ namespace Candid
             }
 
 
-            if (EntityUtil.TryGetAllEntitiesOf<DataTypes.Entity>(EntityUtil.Queries.rooms, out var rooms, e => e))
+            if (EntityUtil.TryQueryAllEntitiesFeild<DataTypes.Entity>(EntityUtil.Queries.rooms, out var rooms, e => e))
             {
                 $"Try Fetch Room Data Success, data: {JsonConvert.SerializeObject(rooms)}".Log();
 

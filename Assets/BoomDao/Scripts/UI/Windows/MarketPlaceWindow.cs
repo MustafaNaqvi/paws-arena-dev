@@ -358,7 +358,7 @@ namespace Boom.UI
             var addressToTransferTo = lockResult.AsOk();
             Debug.Log("Transfer from: " + accountIdentifier + " Price: " + price);
 
-            var transferResult = await ActionUtil.Transfer.TransferIcp(new Candid.World.Models.IcpTx(CandidUtil.ConvertToDecimal(price, tokenData.configs.decimals), addressToTransferTo));
+            var transferResult = await ActionUtil.Transfer.TransferIcrc(new Candid.World.Models.IcrcTx(CandidUtil.ConvertToDecimal(price, tokenData.configs.decimals), addressToTransferTo, Env.CanisterIds.ICP_LEDGER));
 
             if (transferResult.Tag == Values.UResultTag.Err)
             {

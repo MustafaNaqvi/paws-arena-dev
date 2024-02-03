@@ -1,29 +1,20 @@
-using TxIndex__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using TxIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Timestamp = System.UInt64;
-using Subaccount__1 = System.Collections.Generic.List<System.Byte>;
-using Subaccount = System.Collections.Generic.List<System.Byte>;
-using QueryArchiveFn = EdjCase.ICP.Candid.Models.Values.CandidFunc;
-using Memo = System.Collections.Generic.List<System.Byte>;
-using Balance__2 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance__1 = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Balance = EdjCase.ICP.Candid.Models.UnboundedUInt;
 using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
 using System;
 using EdjCase.ICP.Candid.Models;
+using Icrc1BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using Icrc1Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
 	[Variant]
 	public class ApproveError
 	{
-		[VariantTagProperty()]
+		[VariantTagProperty]
 		public ApproveErrorTag Tag { get; set; }
 
-		[VariantValueProperty()]
-		public System.Object? Value { get; set; }
+		[VariantValueProperty]
+		public object? Value { get; set; }
 
 		public ApproveError(ApproveErrorTag tag, object? value)
 		{
@@ -35,14 +26,29 @@ namespace Candid.IcrcLedger.Models
 		{
 		}
 
+		public static ApproveError BadFee(ApproveError.BadFeeInfo info)
+		{
+			return new ApproveError(ApproveErrorTag.BadFee, info);
+		}
+
+		public static ApproveError InsufficientFunds(ApproveError.InsufficientFundsInfo info)
+		{
+			return new ApproveError(ApproveErrorTag.InsufficientFunds, info);
+		}
+
 		public static ApproveError AllowanceChanged(ApproveError.AllowanceChangedInfo info)
 		{
 			return new ApproveError(ApproveErrorTag.AllowanceChanged, info);
 		}
 
-		public static ApproveError BadFee(ApproveError.BadFeeInfo info)
+		public static ApproveError Expired(ApproveError.ExpiredInfo info)
 		{
-			return new ApproveError(ApproveErrorTag.BadFee, info);
+			return new ApproveError(ApproveErrorTag.Expired, info);
+		}
+
+		public static ApproveError TooOld()
+		{
+			return new ApproveError(ApproveErrorTag.TooOld, null);
 		}
 
 		public static ApproveError CreatedInFuture(ApproveError.CreatedInFutureInfo info)
@@ -55,9 +61,9 @@ namespace Candid.IcrcLedger.Models
 			return new ApproveError(ApproveErrorTag.Duplicate, info);
 		}
 
-		public static ApproveError Expired(ApproveError.ExpiredInfo info)
+		public static ApproveError TemporarilyUnavailable()
 		{
-			return new ApproveError(ApproveErrorTag.Expired, info);
+			return new ApproveError(ApproveErrorTag.TemporarilyUnavailable, null);
 		}
 
 		public static ApproveError GenericError(ApproveError.GenericErrorInfo info)
@@ -65,19 +71,16 @@ namespace Candid.IcrcLedger.Models
 			return new ApproveError(ApproveErrorTag.GenericError, info);
 		}
 
-		public static ApproveError InsufficientFunds(ApproveError.InsufficientFundsInfo info)
+		public ApproveError.BadFeeInfo AsBadFee()
 		{
-			return new ApproveError(ApproveErrorTag.InsufficientFunds, info);
+			this.ValidateTag(ApproveErrorTag.BadFee);
+			return (ApproveError.BadFeeInfo)this.Value!;
 		}
 
-		public static ApproveError TemporarilyUnavailable()
+		public ApproveError.InsufficientFundsInfo AsInsufficientFunds()
 		{
-			return new ApproveError(ApproveErrorTag.TemporarilyUnavailable, null);
-		}
-
-		public static ApproveError TooOld()
-		{
-			return new ApproveError(ApproveErrorTag.TooOld, null);
+			this.ValidateTag(ApproveErrorTag.InsufficientFunds);
+			return (ApproveError.InsufficientFundsInfo)this.Value!;
 		}
 
 		public ApproveError.AllowanceChangedInfo AsAllowanceChanged()
@@ -86,10 +89,10 @@ namespace Candid.IcrcLedger.Models
 			return (ApproveError.AllowanceChangedInfo)this.Value!;
 		}
 
-		public ApproveError.BadFeeInfo AsBadFee()
+		public ApproveError.ExpiredInfo AsExpired()
 		{
-			this.ValidateTag(ApproveErrorTag.BadFee);
-			return (ApproveError.BadFeeInfo)this.Value!;
+			this.ValidateTag(ApproveErrorTag.Expired);
+			return (ApproveError.ExpiredInfo)this.Value!;
 		}
 
 		public ApproveError.CreatedInFutureInfo AsCreatedInFuture()
@@ -104,22 +107,10 @@ namespace Candid.IcrcLedger.Models
 			return (ApproveError.DuplicateInfo)this.Value!;
 		}
 
-		public ApproveError.ExpiredInfo AsExpired()
-		{
-			this.ValidateTag(ApproveErrorTag.Expired);
-			return (ApproveError.ExpiredInfo)this.Value!;
-		}
-
 		public ApproveError.GenericErrorInfo AsGenericError()
 		{
 			this.ValidateTag(ApproveErrorTag.GenericError);
 			return (ApproveError.GenericErrorInfo)this.Value!;
-		}
-
-		public ApproveError.InsufficientFundsInfo AsInsufficientFunds()
-		{
-			this.ValidateTag(ApproveErrorTag.InsufficientFunds);
-			return (ApproveError.InsufficientFundsInfo)this.Value!;
 		}
 
 		private void ValidateTag(ApproveErrorTag tag)
@@ -130,27 +121,12 @@ namespace Candid.IcrcLedger.Models
 			}
 		}
 
-		public class AllowanceChangedInfo
-		{
-			[CandidName("current_allowance")]
-			public UnboundedUInt CurrentAllowance { get; set; }
-
-			public AllowanceChangedInfo(UnboundedUInt currentAllowance)
-			{
-				this.CurrentAllowance = currentAllowance;
-			}
-
-			public AllowanceChangedInfo()
-			{
-			}
-		}
-
 		public class BadFeeInfo
 		{
 			[CandidName("expected_fee")]
-			public Balance ExpectedFee { get; set; }
+			public Icrc1Tokens ExpectedFee { get; set; }
 
-			public BadFeeInfo(Balance expectedFee)
+			public BadFeeInfo(Icrc1Tokens expectedFee)
 			{
 				this.ExpectedFee = expectedFee;
 			}
@@ -160,32 +136,32 @@ namespace Candid.IcrcLedger.Models
 			}
 		}
 
-		public class CreatedInFutureInfo
+		public class InsufficientFundsInfo
 		{
-			[CandidName("ledger_time")]
-			public Timestamp LedgerTime { get; set; }
+			[CandidName("balance")]
+			public Icrc1Tokens Balance { get; set; }
 
-			public CreatedInFutureInfo(Timestamp ledgerTime)
+			public InsufficientFundsInfo(Icrc1Tokens balance)
 			{
-				this.LedgerTime = ledgerTime;
+				this.Balance = balance;
 			}
 
-			public CreatedInFutureInfo()
+			public InsufficientFundsInfo()
 			{
 			}
 		}
 
-		public class DuplicateInfo
+		public class AllowanceChangedInfo
 		{
-			[CandidName("duplicate_of")]
-			public TxIndex DuplicateOf { get; set; }
+			[CandidName("current_allowance")]
+			public Icrc1Tokens CurrentAllowance { get; set; }
 
-			public DuplicateInfo(TxIndex duplicateOf)
+			public AllowanceChangedInfo(Icrc1Tokens currentAllowance)
 			{
-				this.DuplicateOf = duplicateOf;
+				this.CurrentAllowance = currentAllowance;
 			}
 
-			public DuplicateInfo()
+			public AllowanceChangedInfo()
 			{
 			}
 		}
@@ -201,6 +177,36 @@ namespace Candid.IcrcLedger.Models
 			}
 
 			public ExpiredInfo()
+			{
+			}
+		}
+
+		public class CreatedInFutureInfo
+		{
+			[CandidName("ledger_time")]
+			public ulong LedgerTime { get; set; }
+
+			public CreatedInFutureInfo(ulong ledgerTime)
+			{
+				this.LedgerTime = ledgerTime;
+			}
+
+			public CreatedInFutureInfo()
+			{
+			}
+		}
+
+		public class DuplicateInfo
+		{
+			[CandidName("duplicate_of")]
+			public Icrc1BlockIndex DuplicateOf { get; set; }
+
+			public DuplicateInfo(Icrc1BlockIndex duplicateOf)
+			{
+				this.DuplicateOf = duplicateOf;
+			}
+
+			public DuplicateInfo()
 			{
 			}
 		}
@@ -223,40 +229,18 @@ namespace Candid.IcrcLedger.Models
 			{
 			}
 		}
-
-		public class InsufficientFundsInfo
-		{
-			[CandidName("balance")]
-			public Balance Balance { get; set; }
-
-			public InsufficientFundsInfo(Balance balance)
-			{
-				this.Balance = balance;
-			}
-
-			public InsufficientFundsInfo()
-			{
-			}
-		}
 	}
 
 	public enum ApproveErrorTag
 	{
-		
-		AllowanceChanged,
-		
 		BadFee,
-		
-		CreatedInFuture,
-		
-		Duplicate,
-		
-		Expired,
-		
-		GenericError,
-		
 		InsufficientFunds,
+		AllowanceChanged,
+		Expired,
+		TooOld,
+		CreatedInFuture,
+		Duplicate,
 		TemporarilyUnavailable,
-		TooOld
+		GenericError
 	}
 }

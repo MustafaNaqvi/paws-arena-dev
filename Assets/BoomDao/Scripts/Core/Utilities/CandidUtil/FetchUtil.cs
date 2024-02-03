@@ -6,9 +6,8 @@
     using Candid;
     using Candid.Extv2Boom;
     using Candid.Extv2Standard;
-    using Candid.IcpLedger;
-    using Candid.IcpLedger.Models;
     using Candid.IcrcLedger;
+    using Candid.IcrcLedger.Models;
     using Candid.World;
     using Cysharp.Threading.Tasks;
     using EdjCase.ICP.Agent.Agents;
@@ -78,8 +77,9 @@
 
         private static async UniTask FetchUserEntities(string worldId, WorldApiClient worldApiClient, Dictionary<string, IEnumerable<DataTypes.Entity>> responses, string uid)
         {
-            var response = await worldApiClient.GetAllUserEntities(new WorldApiClient.GetAllUserEntitiesArg0(new(), uid));
+            //responses.Add(uid, new List<DataTypes.Entity>());
 
+            var response = await worldApiClient.GetAllUserEntities(new WorldApiClient.GetAllUserEntitiesArg0(new(), uid));
 
             if (response.Tag == Candid.World.Models.Result5Tag.Ok)
             {
@@ -155,8 +155,6 @@
 
                 List<UniTask> asyncFunctions = new();
 
-                var icpInterface = new IcpLedgerApiClient(agent, Principal.FromText(Env.CanisterIds.ICP_LEDGER));
-
                 foreach (var uid in uids)
                 {
                     asyncFunctions.Add(GetUserAddress(uid, userAddresses));
@@ -173,7 +171,7 @@
 
                     foreach (var canisterId in canisterIds)
                     {
-                        asyncFunctions.Add(GetAllTokens(uid, canisterId, userAddresses, tokens, agent, icpInterface));
+                        asyncFunctions.Add(GetToken(uid, canisterId, userAddresses, tokens, agent));
                     }
                 }
 
@@ -188,17 +186,18 @@
             }
         }
 
-        private static async UniTask GetAllTokens(string uid, string canisterId, Dictionary<string, string> userAddresses, Dictionary<string, ulong> tokens, IAgent agent, IcpLedgerApiClient icpLedgerApiClient)
+        private static async UniTask GetToken(string uid, string canisterId, Dictionary<string, string> userAddresses, Dictionary<string, ulong> tokens, IAgent agent)
         {
+            var tokenInterface = new IcrcLedgerApiClient(agent, Principal.FromText(canisterId));
+
             if (canisterId == Env.CanisterIds.ICP_LEDGER)
             {
-                var baseUnitAmount = await icpLedgerApiClient.AccountBalance(new AccountBalanceArgs(CandidUtil.HexStringToByteArray(userAddresses[uid]).ToList()));
+                var baseUnitAmount = await tokenInterface.AccountBalance(new AccountBalanceArgs(CandidUtil.HexStringToByteArray(userAddresses[uid]).ToList()));
                 tokens.Add(canisterId, baseUnitAmount.E8s);
             }
             else
             {
-                var tokenInterface = new IcrcLedgerApiClient(agent, Principal.FromText(canisterId));
-                var baseUnitAmount = await tokenInterface.Icrc1BalanceOf(new Candid.IcrcLedger.Models.Account__2(Principal.FromText(uid), new OptionalValue<List<byte>>()));
+                var baseUnitAmount = await tokenInterface.Icrc1BalanceOf(new Candid.IcrcLedger.Models.Account(Principal.FromText(uid), new Candid.IcrcLedger.Models.Account.SubaccountInfo(new List<byte>())));
                 baseUnitAmount.TryToUInt64(out ulong _baseUnitAmount);
                 tokens.Add(canisterId, _baseUnitAmount);
             }

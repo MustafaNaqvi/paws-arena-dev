@@ -541,12 +541,12 @@ namespace Boom
                 return false;
             }
 
-            if (loginData.state != MainDataTypes.LoginData.State.LoggedIn)
-            {
-                Debug.LogError("You cannot check shared data as an anon user!");
+            //if (loginData.state != MainDataTypes.LoginData.State.LoggedIn)
+            //{
+            //    Debug.LogError("You cannot check shared data as an anon user!");
 
-                return false;
-            }
+            //    return false;
+            //}
 
             var loadingDataType = typeof(T).Name;
 
