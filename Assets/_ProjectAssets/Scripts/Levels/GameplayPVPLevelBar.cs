@@ -58,7 +58,7 @@ public class GameplayPVPLevelBar : MonoBehaviour
 
     private void TellOpponentMyLevel()
     {
-        int _experience=0;
+        double _experience=0;
         if (DataManager.Instance.GameData.SeasonEnds > DateTime.Now)
         {
             _experience = DataManager.Instance.PlayerData.Experience;

@@ -11,7 +11,7 @@ public class PlayerData
     private CrystalsData crystals = new ();
     private CraftingProcess craftingProcess;
     private bool hasPass;
-    private int experience;
+    private double experience;
     private int level;
     private int experienceOnCurrentLevel;
     private int experienceForNextLevel;
@@ -91,7 +91,7 @@ public class PlayerData
         }
     }
 
-    public int Experience
+    public double Experience
     {
         get { return experience; }
         set
@@ -247,9 +247,9 @@ public class PlayerData
     }
 
 
-    public static void CalculateLevel(int _exp, out int level, out int expForNextLevel, out int experienceOnCurrentLevel)
+    public static void CalculateLevel(double _exp, out int level, out int expForNextLevel, out int experienceOnCurrentLevel)
     {
-        float _experience = _exp;
+        double _experience = _exp;
         int _level = 1;
         float _expForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
 

@@ -10,6 +10,8 @@ using Candid.World.Models;
 using Candid;
 using Boom.Utility;
 using Boom;
+using Boom.Values;
+using BoomDaoWrapper;
 
 public class LuckyWheelUI : MonoBehaviour
 {
@@ -29,30 +31,54 @@ public class LuckyWheelUI : MonoBehaviour
     private bool requestedToSeeReward = false;
     private int currentRespinPrice;
 
-    public async void RequestReward()
+    public void RequestReward()
     {
-        //int _rewardId = -1;
-        //try
-        //{
-        //    string resp = await NetworkManager.GETRequestCoroutine("/leaderboard/spin-the-wheel?matchId=" + PhotonNetwork.CurrentRoom.Name,
-        //    (code, err) =>
-        //    {
-        //        Debug.LogWarning($"Failed to get reward type {err} : {code}");
-        //    }, true);
+        BoomDaoUtility.Instance.ExecuteIncrementalAction(BoomDaoUtility.BATTLE_WON_ACTION_KEY, OnGotRewards);
+    }
 
-        //    LuckyWheelRewardResponse _response = JsonConvert.DeserializeObject<LuckyWheelRewardResponse>(resp);
-        //    _rewardId = _response.RewardType;
-        //}
-        //catch
-        //{
-        //    _rewardId = 1;
-        //}
+    private void OnGotRewards(List<IncrementalActionOutcome> _rewards)
+    {
+        if (_rewards==null)
+        {
+            return;
+        }
+        foreach (var _reward in _rewards)
+        {
+            switch (_reward.Name)
+            {
+                case "xp":
+                    DataManager.Instance.PlayerData.Experience += _reward.Value;
+                    break;
+                case "Common Shard":
+                    DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
+                    choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
+                    break;
+                case "Rare Shard":
+                    DataManager.Instance.PlayerData.Crystals.RareCrystal++;
+                    choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
+                    break;
+                case "Epic Shard":
+                    DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
+                    choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
+                    break;
+                case "Legendary Shard":
+                    DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
+                    choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
+                    break;
+                case "Gift":
+                    Debug.Log("Received gift");
+                    choosenReward = LuckyWheelRewardSO.Get(1);
+                    break;
+                default:
+                    Debug.Log($"Don't know how to handle {_reward.Value} of {_reward.Name}");
+                    break;
+            }
+        }
 
-        //choosenReward = LuckyWheelRewardSO.Get(_rewardId);
-        //if (requestedToSeeReward)
-        //{
-        //    Setup();
-        //}
+        if (requestedToSeeReward)
+        {
+            Setup();
+        }
     }
 
     public void ShowReward()

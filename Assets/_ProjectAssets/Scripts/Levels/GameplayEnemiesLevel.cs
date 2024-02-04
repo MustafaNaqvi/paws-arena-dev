@@ -56,7 +56,7 @@ public class GameplayEnemiesLevel : MonoBehaviour
 
     private void SetOpponentsLevel()
     {
-        int _experience=0;
+        double _experience=0;
         if (DataManager.Instance.GameData.SeasonEnds > DateTime.Now)
         {
             _experience = DataManager.Instance.PlayerData.Experience;
