@@ -1,20 +1,14 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using Photon.Pun;
-using Newtonsoft.Json;
 using TMPro;
 using System.Collections.Generic;
-using Candid.World.Models;
-using Candid;
-using Boom.Utility;
-using Boom;
-using Boom.Values;
 using BoomDaoWrapper;
 
 public class LuckyWheelUI : MonoBehaviour
 {
+    private const string BATTLE_WON_ACTION_KEY = "battle_outcome_won";
+    
     [SerializeField] private GameObject playerPlatform;
     [SerializeField] private LuckyWheel luckyWheel;
     [SerializeField] private LuckyWheelClaimDisplay rewardDisplay;
@@ -33,10 +27,16 @@ public class LuckyWheelUI : MonoBehaviour
 
     public void RequestReward()
     {
-        BoomDaoUtility.Instance.ExecuteIncrementalAction(BoomDaoUtility.BATTLE_WON_ACTION_KEY, OnGotRewards);
+        List<ActionParameter> _parameters = new()
+        {
+            new ActionParameter { Key = "health", Value = PlayerManager.HealthAtEnd.ToString()},
+            new ActionParameter { Key = "total_battle_xp", Value = DamageDealingDisplay.XpEarned.ToString()}
+        };
+        BoomDaoUtility.Instance.ExecuteActionWithParameter(BATTLE_WON_ACTION_KEY,_parameters, OnGotRewards);
     }
 
-    private void OnGotRewards(List<IncrementalActionOutcome> _rewards)
+
+    private void OnGotRewards(List<ActionOutcome> _rewards)
     {
         if (_rewards==null)
         {

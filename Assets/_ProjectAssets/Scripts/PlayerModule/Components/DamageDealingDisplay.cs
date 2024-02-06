@@ -13,9 +13,11 @@ public class DamageDealingDisplay : MonoBehaviour
     private PhotonView photonView;
     private Vector3 damageOffset = new Vector3(0, 1, 0);
     private int amountOfShowingDamageTexts = 0;
+    public static int XpEarned;
 
     private void OnEnable()
     {
+        XpEarned = 0;
         isBotPlayer = GetComponentInParent<BotPlayerComponent>();
         if (PhotonNetwork.CurrentRoom.PlayerCount==2)
         {
@@ -69,7 +71,8 @@ public class DamageDealingDisplay : MonoBehaviour
             }
         }
 
-        DataManager.Instance.PlayerData.Experience += _damageTaken;
+        XpEarned += _damageTaken;
+        // DataManager.Instance.PlayerData.Experience += _damageTaken;
         EventsManager.OnGotExperience?.Invoke(_damageTaken);
         EventsManager.OnDealtDamageToOpponent?.Invoke(_damageTaken);
         for (int i = 0; i < _damageTaken; i += 5)

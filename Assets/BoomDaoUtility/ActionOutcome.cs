@@ -3,7 +3,7 @@ using System;
 namespace BoomDaoWrapper
 {
     [Serializable]
-    public class IncrementalActionOutcome
+    public class ActionOutcome
     {
         public string Name;
         public double Value;
