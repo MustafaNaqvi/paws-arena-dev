@@ -42,7 +42,7 @@ public class ConnectingToServer : MonoBehaviour
     {
         GameState.nfts.Add(new NFT() { imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?&tokenid=hvtag-6ykor-uwiaa-aaaaa-cqace-eaqca-aaabd-a" });
 
-        var _nftCollectionsResult = BoomDaoUtility.Instance.GetNFTData;
+        var _nftCollectionsResult = BoomDaoUtility.Instance.GetNftData;
         if (_nftCollectionsResult.IsErr)
         {
             Debug.Log($"{_nftCollectionsResult.AsErr()} "+ nameof(ConnectingToServer));

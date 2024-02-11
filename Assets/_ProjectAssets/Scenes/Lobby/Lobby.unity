@@ -21683,6 +21683,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
+      propertyPath: enableBoomLogs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: <WORLD_CANISTER_ID>k__BackingField
       value: hjdu4-kiaaa-aaaap-abxuq-cai
       objectReference: {fileID: 0}
@@ -38801,7 +38805,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -138.78027, y: -107.85065}
+  m_AnchoredPosition: {x: -138.78027, y: -107.85062}
   m_SizeDelta: {x: 201.23, y: 215.69}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1615072934
@@ -40750,7 +40754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -411.7699, y: -21.840332}
+  m_AnchoredPosition: {x: -411.76996, y: -21.840332}
   m_SizeDelta: {x: -1016.35, y: -204.67}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1683331250

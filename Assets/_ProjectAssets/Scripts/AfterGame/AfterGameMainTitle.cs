@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Anura.ConfigurationModule.Managers;
 using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
@@ -10,6 +12,8 @@ namespace com.colorfulcoding.AfterGame
     public class AfterGameMainTitle : MonoBehaviour
     {
         private const string BATTLE_LOST_ACTION_KEY = "battle_outcome_lost";
+        private const string HURT_KITTY = "hurtKitty";
+        
         public GameObject winTitle;
         public GameObject loseTitle;
         public GameObject drawTitle;
@@ -33,7 +37,9 @@ namespace com.colorfulcoding.AfterGame
         {
             int checkIfIWon;
             EventsManager.OnPlayedMatch?.Invoke();
-
+            
+            SaveKittyHealth();
+            
             //If unexpected error happened, we override result type
             if (GameState.pointsChange.gameResultType == 0)
             {
@@ -119,6 +125,32 @@ namespace com.colorfulcoding.AfterGame
                 reasonText.SetActive(true);
                 reasonText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = GameState.pointsChange.reason;
             }
+        }
+
+        private void SaveKittyHealth()
+        {
+            float _maxHp = 100;
+            float _minutesItWillTakeToRecover = (RecoveryHandler.RecoveryInMinutes / _maxHp) * (_maxHp - PlayerManager.HealthAtEnd);
+            if (_minutesItWillTakeToRecover<=1)
+            {
+                return;
+            }
+            DateTime _recoveryEnds = DateTime.UtcNow.AddMinutes(_minutesItWillTakeToRecover);
+            GameState.selectedNFT.RecoveryEndDate = _recoveryEnds;
+            
+            BoomDaoUtility.Instance.ExecuteActionWithParameter(
+                HURT_KITTY
+                , new List<ActionParameter> {new()
+                {
+                    Key = PlayerData.KITTY_RECOVERY_KEY, Value = _recoveryEnds.ToString(CultureInfo.InvariantCulture)
+                },
+                    new ()
+                    {
+                        Key = PlayerData.KITTY_KEY, Value = GameState.selectedNFT.imageUrl
+                    }
+                },
+                null);
+
         }
     }
 }

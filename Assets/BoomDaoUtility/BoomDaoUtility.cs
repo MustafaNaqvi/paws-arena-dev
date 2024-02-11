@@ -4,7 +4,6 @@ using System.Linq;
 using Boom;
 using Boom.Patterns.Broadcasts;
 using Boom.Values;
-using Candid;
 using Candid.World.Models;
 using UnityEngine;
 using Action = System.Action;
@@ -147,7 +146,7 @@ namespace BoomDaoWrapper
         #region Data
 
         public UResult<MainDataTypes.LoginData, string> GetLoginData => UserUtil.GetLogInData();
-        public UResult<Data<DataTypes.NftCollection>, string> GetNFTData => UserUtil.GetDataSelf<DataTypes.NftCollection>();
+        public UResult<Data<DataTypes.NftCollection>, string> GetNftData => UserUtil.GetDataSelf<DataTypes.NftCollection>();
 
         public string GetString(string _entityId,string _fieldName)
         {

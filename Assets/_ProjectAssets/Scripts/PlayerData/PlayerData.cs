@@ -308,7 +308,8 @@ public class PlayerData
     // new system
     
     public const string NAME_KEY = "username";
-    private const string KITTY_RECOVERY_KEY = "recover_date";
+    public const string KITTY_RECOVERY_KEY = "recoveryDate";
+    public const string KITTY_KEY = "kitty_id";
     private const string COMMON_SHARD = "commonShard";
     private const string UNCOMMON_SHARD = "uncommonShard";
     private const string RARE_SHARD = "rareShard";

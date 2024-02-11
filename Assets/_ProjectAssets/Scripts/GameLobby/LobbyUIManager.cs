@@ -126,9 +126,11 @@ public class LobbyUIManager : MonoBehaviour
     {
         if (!GameState.selectedNFT.CanFight)
         {
+            RecoveryMessageDisplay.Instance.ShowMessage();
             OpenNFTSelectionScreen();
             return;
         }
+        
         CloseGameMenu();
         connectingToRoom.SetActive(true);
 
@@ -142,12 +144,12 @@ public class LobbyUIManager : MonoBehaviour
 
         photonManager.Connect();
     }
-
-
+    
     public void TryConnectToTrainingRoom()
     {
         SceneManager.LoadScene("GameSceneTutorial", LoadSceneMode.Single);
     }
+    
     public void GoToSinglePlayer()
     {
         SceneManager.LoadScene("PlayerTest_new", LoadSceneMode.Single);
