@@ -15,7 +15,7 @@ public class MainMenuUI : MonoBehaviour
     {
         mainRecoveryHandler.ShowRecovery(GameState.selectedNFT.RecoveryEndDate);
         GameState.selectedNFT.UpdatedRecoveryTime += CheckIfShouldStopRecovering;
-        DataManager.Instance.PlayerData.UpdatedExp += ShowLevelProgress;
+        PlayerData.OnUpdatedExp += ShowLevelProgress;
 
         ShowLevelProgress();
     }
@@ -23,7 +23,7 @@ public class MainMenuUI : MonoBehaviour
     private void OnDisable()
     {
         GameState.selectedNFT.UpdatedRecoveryTime -= CheckIfShouldStopRecovering;
-        DataManager.Instance.PlayerData.UpdatedExp -= ShowLevelProgress;
+        PlayerData.OnUpdatedExp -= ShowLevelProgress;
     }
 
     private void CheckIfShouldStopRecovering()

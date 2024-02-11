@@ -45,11 +45,9 @@ public class DataManager : MonoBehaviour
         if (PlayerData.SeasonNumber!=GameData.SeasonNumber)
         {
             PlayerData.SeasonNumber = GameData.SeasonNumber;
-            PlayerData.Experience = 0;
             PlayerData.ClaimedLevelRewards.Clear();
             PlayerData.HasPass = false;
             SaveClaimedLevels();
-            SaveExp();
             SaveHasPass();
             SaveSeasonNumber();
         }
@@ -78,6 +76,7 @@ public class DataManager : MonoBehaviour
 
     public void SubscribeHandlers()
     {
+        PlayerData.SubscribeEvents();
         hasSubscribed = true;
         PlayerData.UpdatedSnacks += SaveSnacks;
         PlayerData.UpdatedJugOfMilk += SaveJugOfMilk;
@@ -85,7 +84,6 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedCraftingProcess += SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels += SaveClaimedLevels;
         PlayerData.UpdatedHasPass += SaveHasPass;
-        PlayerData.UpdatedExp += SaveExp;
         PlayerData.UpdatedEquiptables += SaveEquiptables;
         PlayerData.UpdatedSeasonNumber += SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis += SaveOwnedEmojis;
@@ -106,13 +104,13 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedCraftingProcess -= SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels -= SaveClaimedLevels;
         PlayerData.UpdatedHasPass -= SaveHasPass;
-        PlayerData.UpdatedExp -= SaveExp;
         PlayerData.UpdatedEquiptables -= SaveEquiptables;
         PlayerData.UpdatedSeasonNumber -= SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis -= SaveOwnedEmojis;
         ChallengeData.UpdatedProgress -= SaveChallengeProgress;
         PlayerData.Challenges.UpdatedClaimedLuckySpin -= SaveClaimedLuckySpin;
         PlayerData.UpdatedGuild -= SaveGuild;
+        PlayerData.UnsubscribeEvents();
     }
 
     private void SaveSnacks()
@@ -143,11 +141,6 @@ public class DataManager : MonoBehaviour
     private void SaveHasPass()
     {
         FirebaseManager.Instance.SaveValue(HAS_PASS, JsonConvert.SerializeObject(PlayerData.HasPass));
-    }
-
-    private void SaveExp()
-    {
-        FirebaseManager.Instance.SaveValue(EXPERIENCE,PlayerData.Experience);
     }
 
     private void SaveEquiptables()

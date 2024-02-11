@@ -13,10 +13,6 @@ public class PlayerData
     private float glassOfMilk;
     private CraftingProcess craftingProcess;
     private bool hasPass;
-    private double experience;
-    private int level;
-    private int experienceOnCurrentLevel;
-    private int experienceForNextLevel;
     private List<ClaimedReward> claimedLevelRewards = new ();
     private List<int> ownedEquiptables;
     private int seasonNumber;
@@ -25,14 +21,12 @@ public class PlayerData
     private string guildId = string.Empty;
     private int points;
 
-    public static Action OnUpdatedShards;
     [JsonIgnore] public Action UpdatedSnacks;
     [JsonIgnore] public Action UpdatedJugOfMilk;
     [JsonIgnore] public Action UpdatedGlassOfMilk;
     [JsonIgnore] public Action UpdatedCraftingProcess;
     [JsonIgnore] public Action UpdatedClaimedLevels;
     [JsonIgnore] public Action UpdatedHasPass;
-    [JsonIgnore] public Action UpdatedExp;
     [JsonIgnore] public Action UpdatedEquiptables;
     [JsonIgnore] public Action UpdatedSeasonNumber;
     [JsonIgnore] public Action UpdatedOwnedEmojis;
@@ -86,24 +80,6 @@ public class PlayerData
         }
     }
 
-    public double Experience
-    {
-        get { return experience; }
-        set
-        {
-            experience = value;
-            CalculateLevel(experience,out level,out experienceForNextLevel,out experienceOnCurrentLevel);
-            UpdatedExp?.Invoke();
-        }
-    }
-
-
-    [JsonIgnore]
-    public int Level
-    {
-        get { return level; }
-    }
-
     public void AddCollectedLevelReward(ClaimedReward _reward)
     {
         claimedLevelRewards.Add(_reward);
@@ -115,9 +91,6 @@ public class PlayerData
         get { return claimedLevelRewards; }
         set { claimedLevelRewards = value; }
     }
-
-    [JsonIgnore] public int ExperienceOnCurrentLevel => experienceOnCurrentLevel;
-    [JsonIgnore] public int ExperienceForNextLevel => experienceForNextLevel;
 
     public bool HasPass
     {
@@ -208,34 +181,7 @@ public class PlayerData
         set => challenges = value;
     }
 
-
-    public static void CalculateLevel(double _exp, out int level, out int expForNextLevel, out int experienceOnCurrentLevel)
-    {
-        double _experience = _exp;
-        int _level = 1;
-        float _expForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
-
-        if (_experience < DataManager.Instance.GameData.LevelBaseExp)
-        {
-            experienceOnCurrentLevel = (int)_experience;
-            _expForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
-        }
-        else
-        {
-            while (_experience >= _expForNextLevel)
-            {
-                _level++;
-                _experience -= _expForNextLevel;
-                _expForNextLevel = _expForNextLevel +
-                                   (_expForNextLevel * ((float)DataManager.Instance.GameData.LevelBaseScaler / 100));
-            }
-        }
-
-        expForNextLevel = (int)_expForNextLevel;
-        experienceOnCurrentLevel = (int)_experience;
-        level = _level;
-    }
-
+    
     public string GuildId
     {
         get => guildId;
@@ -258,7 +204,7 @@ public class PlayerData
                 return null;
             }
 
-            GuildData _guild = null;
+            GuildData _guild;
             try
             { 
                 _guild = DataManager.Instance.GameData.Guilds[guildId];
@@ -304,19 +250,27 @@ public class PlayerData
         }
     }
     
-    
     // new system
-    
+    public static Action OnUpdatedShards;
+    public static Action OnUpdatedExp;
+
     public const string NAME_KEY = "username";
     public const string KITTY_RECOVERY_KEY = "recoveryDate";
     public const string KITTY_KEY = "kitty_id";
+    
     private const string COMMON_SHARD = "commonShard";
+    private const string XP = "xp";
+    private const string AMOUNT_KEY = "amount";
     private const string UNCOMMON_SHARD = "uncommonShard";
     private const string RARE_SHARD = "rareShard";
     private const string EPIC_SHARD = "epicShard";
     private const string LEGENDARY_SHARD = "legendaryShard";
     private const string NAME_ENTITY_ID = "user_profile";
     private const string VALUABLES_ENTITY_ID = "user_valuables";
+
+    public int Level { get; private set; }
+    public int ExperienceOnCurrentLevel { get; private set; }
+    public int ExperienceForNextLevel { get; private set; }
 
     public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
     public double CommonCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, COMMON_SHARD);
@@ -325,7 +279,35 @@ public class PlayerData
     public double EpicShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, EPIC_SHARD);
     public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
     public double TotalCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
+
+    public double Experience => BoomDaoUtility.Instance.GetDouble(XP,AMOUNT_KEY);
     
+    public void SubscribeEvents()
+    {
+        BoomDaoUtility.OnDataUpdated += RiseEvent;
+
+        CalculateLevel();
+    }
+
+    public void UnsubscribeEvents()
+    {
+        BoomDaoUtility.OnDataUpdated += RiseEvent;
+    }
+
+    private void RiseEvent(string _key)
+    {
+        switch (_key)
+        {
+            case XP:
+                CalculateLevel();
+                OnUpdatedExp?.Invoke();
+                break;
+            default: 
+                Debug.Log($"{_key} got updated!, add handler?");
+                break;
+        }
+    }
+
     public double GetAmountOfCrystals(LuckyWheelRewardType _type)
     {
         switch (_type)
@@ -362,5 +344,42 @@ public class PlayerData
         }
         
         return _recoveryDate;
+    }
+
+    private void CalculateLevel()
+    {
+        Debug.Log("Players experience: "+Experience);
+        CalculateLevel(Experience, out var _level, out var _expForNextLevel, out var _experienceOnCurrentLevel);
+    
+        Level = _level;
+        ExperienceForNextLevel = _expForNextLevel;
+        ExperienceOnCurrentLevel = _experienceOnCurrentLevel;
+    }
+    
+    public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
+    {
+        double _experience = _exp;
+        int _calculatedLevel = 1;
+        float _calculatedExpForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
+
+        if (_experience < DataManager.Instance.GameData.LevelBaseExp)
+        {
+            _experienceOnCurrentLevel = (int)_experience;
+            _calculatedExpForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
+        }
+        else
+        {
+            while (_experience >= _calculatedExpForNextLevel)
+            {
+                _calculatedLevel++;
+                _experience -= _calculatedExpForNextLevel;
+                _calculatedExpForNextLevel = _calculatedExpForNextLevel +
+                                   (_calculatedExpForNextLevel * ((float)DataManager.Instance.GameData.LevelBaseScaler / 100));
+            }
+        }
+
+        _expForNextLevel = (int)_calculatedExpForNextLevel;
+        _experienceOnCurrentLevel = (int)_experience;
+        _level = _calculatedLevel;
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -10,13 +9,13 @@ public class GameplayLevelBar : MonoBehaviour
     
     private void OnEnable()
     {
-        DataManager.Instance.PlayerData.UpdatedExp += Show;
+        PlayerData.OnUpdatedExp += Show;
         Show();
     }
 
     private void OnDisable()
     {
-        DataManager.Instance.PlayerData.UpdatedExp -= Show;
+        PlayerData.OnUpdatedExp -= Show;
     }
 
     private void Show()

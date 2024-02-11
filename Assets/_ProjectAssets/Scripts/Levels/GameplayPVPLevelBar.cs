@@ -23,7 +23,7 @@ public class GameplayPVPLevelBar : MonoBehaviour
     {
         if (isMine)
         {
-            DataManager.Instance.PlayerData.UpdatedExp += TellOpponentThatIEarnedExp;
+            PlayerData.OnUpdatedExp += TellOpponentThatIEarnedExp;
         }
     }
 
@@ -31,7 +31,7 @@ public class GameplayPVPLevelBar : MonoBehaviour
     {
         if (isMine)
         {
-            DataManager.Instance.PlayerData.UpdatedExp -= TellOpponentThatIEarnedExp;
+            PlayerData.OnUpdatedExp -= TellOpponentThatIEarnedExp;
         }
     }
 

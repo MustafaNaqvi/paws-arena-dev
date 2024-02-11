@@ -42,12 +42,8 @@ public class LuckyWheelUI : MonoBehaviour
         }
         foreach (var _reward in _rewards)
         {
-            
             switch (_reward.Name)
             {
-                case "xp":
-                    DataManager.Instance.PlayerData.Experience += _reward.Value;
-                    break;
                 case "Common Shard":
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;

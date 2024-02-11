@@ -13,6 +13,7 @@ namespace BoomDaoWrapper
     public class BoomDaoUtility : MonoBehaviour
     {
         public static BoomDaoUtility Instance;
+        public static Action<string> OnDataUpdated;
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
         
         private const string AMOUNT_KEY = "amount";
@@ -40,11 +41,13 @@ namespace BoomDaoWrapper
         private void OnEnable()
         {
             BroadcastState.Register<WaitingForResponse>(AllowLogin);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(OnEntityDataChangeHandler);
         }
 
         private void OnDisable()
         {
             BroadcastState.Unregister<WaitingForResponse>(AllowLogin);
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.Entity>(OnEntityDataChangeHandler);
         }
 
 
@@ -167,6 +170,14 @@ namespace BoomDaoWrapper
             return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(),_entityId, out DataTypes.Entity _entityData) 
                 ? _entityData.fields 
                 : default;
+        }
+        
+        private void OnEntityDataChangeHandler(Data<DataTypes.Entity> _changedEntities)
+        {
+            foreach (var _changedEntity in _changedEntities.elements.Values)
+            {
+                OnDataUpdated?.Invoke(_changedEntity.eid);
+            }
         }
 
         #endregion
