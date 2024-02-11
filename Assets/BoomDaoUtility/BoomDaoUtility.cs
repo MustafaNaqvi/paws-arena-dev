@@ -163,6 +163,13 @@ namespace BoomDaoWrapper
                 : 0;
         }
 
+        public Dictionary<string, string> GetEntityData(string _entityId)
+        {
+            return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(),_entityId, out DataTypes.Entity _entityData) 
+                ? _entityData.fields 
+                : default;
+        }
+
         #endregion
 
     }

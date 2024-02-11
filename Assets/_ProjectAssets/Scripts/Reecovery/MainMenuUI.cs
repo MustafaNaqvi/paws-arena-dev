@@ -13,7 +13,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnEnable()
     {
-        mainRecoveryHandler.ShowRecovery(GameState.selectedNFT.RecoveryEndDate,GameState.selectedNFT.imageUrl);
+        mainRecoveryHandler.ShowRecovery(GameState.selectedNFT.RecoveryEndDate);
         GameState.selectedNFT.UpdatedRecoveryTime += CheckIfShouldStopRecovering;
         DataManager.Instance.PlayerData.UpdatedExp += ShowLevelProgress;
 

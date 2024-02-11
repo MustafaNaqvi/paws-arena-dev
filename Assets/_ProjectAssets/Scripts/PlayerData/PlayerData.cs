@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using BoomDaoWrapper;
+using UnityEngine;
 
 [Serializable]
 public class PlayerData
@@ -17,7 +18,6 @@ public class PlayerData
     private int experienceOnCurrentLevel;
     private int experienceForNextLevel;
     private List<ClaimedReward> claimedLevelRewards = new ();
-    private List<RecoveryEntrie> recoveringKitties = new ();
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
@@ -33,7 +33,6 @@ public class PlayerData
     [JsonIgnore] public Action UpdatedClaimedLevels;
     [JsonIgnore] public Action UpdatedHasPass;
     [JsonIgnore] public Action UpdatedExp;
-    [JsonIgnore] public Action UpdatedRecoveringKitties;
     [JsonIgnore] public Action UpdatedEquiptables;
     [JsonIgnore] public Action UpdatedSeasonNumber;
     [JsonIgnore] public Action UpdatedOwnedEmojis;
@@ -141,39 +140,6 @@ public class PlayerData
         }
 
         return false;
-    }
-
-    public List<RecoveryEntrie> RecoveringKitties
-    {
-        get { return recoveringKitties; }
-    }
-
-    public void AddRecoveringKittie(RecoveryEntrie _recoveryEntrie)
-    {
-        recoveringKitties.Add(_recoveryEntrie);
-        UpdatedRecoveringKitties?.Invoke();
-    }
-
-    public void RemoveRecoveringKittie(string _imageUrl)
-    {
-        RecoveryEntrie _entry = null;
-
-        foreach (var _recovery in recoveringKitties)
-        {
-            if (_recovery.KittyImageUrl == _imageUrl)
-            {
-                _entry = _recovery;
-                break;
-            }
-        }
-
-        if (_entry == null)
-        {
-            return;
-        }
-
-        recoveringKitties.Remove(_entry);
-        UpdatedRecoveringKitties?.Invoke();
     }
 
     public List<int> OwnedEquiptables
@@ -338,7 +304,11 @@ public class PlayerData
         }
     }
     
+    
+    // new system
+    
     public const string NAME_KEY = "username";
+    private const string KITTY_RECOVERY_KEY = "recover_date";
     private const string COMMON_SHARD = "commonShard";
     private const string UNCOMMON_SHARD = "uncommonShard";
     private const string RARE_SHARD = "rareShard";
@@ -348,21 +318,21 @@ public class PlayerData
     private const string VALUABLES_ENTITY_ID = "user_valuables";
 
     public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
-    public double CommonShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, COMMON_SHARD);
-    public double UncommonShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, UNCOMMON_SHARD);
+    public double CommonCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, COMMON_SHARD);
+    public double UncommonCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, UNCOMMON_SHARD);
     public double RareShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, RARE_SHARD);
     public double EpicShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, EPIC_SHARD);
     public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
     public double TotalCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
-
+    
     public double GetAmountOfCrystals(LuckyWheelRewardType _type)
     {
         switch (_type)
         {
             case LuckyWheelRewardType.Common:
-                return CommonShard;
+                return CommonCrystals;
             case LuckyWheelRewardType.Uncommon:
-                return UncommonShard;
+                return UncommonCrystals;
             case LuckyWheelRewardType.Rare:
                 return RareShard;
             case LuckyWheelRewardType.Epic:
@@ -372,5 +342,24 @@ public class PlayerData
         }
 
         throw new Exception("Unsupported type of shards: " + _type);
+    }
+
+    public bool IsKittyHurt(string _kittyId)
+    {
+        return BoomDaoUtility.Instance.GetEntityData(_kittyId) != default;
+    }
+
+    public DateTime GetKittyRecoveryDate(string _kittyId)
+    {
+        Dictionary<string, string> _data = BoomDaoUtility.Instance.GetEntityData(_kittyId);
+        DateTime _recoveryDate = default;
+
+        if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
+        {
+            Debug.Log("Kitty should recover: "+_timeString);
+            _recoveryDate = DateTime.Parse(_timeString);
+        }
+        
+        return _recoveryDate;
     }
 }

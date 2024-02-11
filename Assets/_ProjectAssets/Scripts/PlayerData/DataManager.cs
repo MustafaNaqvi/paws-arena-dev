@@ -86,7 +86,6 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedClaimedLevels += SaveClaimedLevels;
         PlayerData.UpdatedHasPass += SaveHasPass;
         PlayerData.UpdatedExp += SaveExp;
-        PlayerData.UpdatedRecoveringKitties += SaveRecoveringKittes;
         PlayerData.UpdatedEquiptables += SaveEquiptables;
         PlayerData.UpdatedSeasonNumber += SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis += SaveOwnedEmojis;
@@ -108,7 +107,6 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedClaimedLevels -= SaveClaimedLevels;
         PlayerData.UpdatedHasPass -= SaveHasPass;
         PlayerData.UpdatedExp -= SaveExp;
-        PlayerData.UpdatedRecoveringKitties -= SaveRecoveringKittes;
         PlayerData.UpdatedEquiptables -= SaveEquiptables;
         PlayerData.UpdatedSeasonNumber -= SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis -= SaveOwnedEmojis;
@@ -150,11 +148,6 @@ public class DataManager : MonoBehaviour
     private void SaveExp()
     {
         FirebaseManager.Instance.SaveValue(EXPERIENCE,PlayerData.Experience);
-    }
-
-    private void SaveRecoveringKittes()
-    {
-        FirebaseManager.Instance.SaveValue(RECOVERING_KITTIES, JsonConvert.SerializeObject(PlayerData.RecoveringKitties));
     }
 
     private void SaveEquiptables()

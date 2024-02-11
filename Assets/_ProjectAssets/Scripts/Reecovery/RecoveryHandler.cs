@@ -10,17 +10,15 @@ public class RecoveryHandler : MonoBehaviour
 
     private IEnumerator recoveryRoutine;
     public static int RecoveryInMinutes = 30;
-    private string kittyImageUrl;
 
-    public void ShowRecovery(DateTime _endDate,string _kittyImageUrl)
+    public void ShowRecovery(DateTime _endDate)
     {
-        kittyImageUrl = _kittyImageUrl;
         if (_endDate < DateTime.UtcNow)
         {
-            DataManager.Instance.PlayerData.RemoveRecoveringKittie(_kittyImageUrl);
             recoveryFillAmount.fillAmount = 1;
             return;
         }
+        
         if (recoveryHolder != null)
         {
             recoveryHolder.gameObject.SetActive(true);
@@ -39,7 +37,6 @@ public class RecoveryHandler : MonoBehaviour
         StopCoroutine(recoveryRoutine);
         recoveryRoutine = null;
         recoveryFillAmount.fillAmount = 1;
-        DataManager.Instance.PlayerData.RemoveRecoveringKittie(kittyImageUrl);
     }
 
     private IEnumerator RecoveryRoutine(DateTime _endDate)
@@ -63,7 +60,6 @@ public class RecoveryHandler : MonoBehaviour
     {
         if (recoveryHolder != null)
         {
-            DataManager.Instance.PlayerData.RemoveRecoveringKittie(kittyImageUrl);
             recoveryHolder.SetActive(false);
         }
     }
