@@ -29,6 +29,7 @@ public class LuckyWheelUI : MonoBehaviour
     {
         List<ActionParameter> _parameters = new()
         {
+            new ActionParameter { Key = "kitty_id", Value = GameState.selectedNFT.imageUrl},
             new ActionParameter { Key = "health", Value = PlayerManager.HealthAtEnd.ToString()},
             new ActionParameter { Key = "total_battle_xp", Value = DamageDealingDisplay.XpEarned.ToString()}
         };

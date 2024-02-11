@@ -15,9 +15,9 @@ namespace Boom.UI
         {
             button.onClick.AddListener(Handler);
 
-            BroadcastState.Register<WaitingForResponse>(AllowButtonInteractionHandler, true);
+            BroadcastState.Register<WaitingForResponse>(AllowButtonInteractionHandler, new() { invokeOnRegistration = true });
 
-            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(AllowButtonInteractionHandler, true);
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(AllowButtonInteractionHandler, new() { invokeOnRegistration = true });
         }
 
         //Unregister from events

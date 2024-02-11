@@ -43,8 +43,7 @@ namespace Boom.Tutorials
             //Register to action button click
             actionButton.onClick.AddListener(ActionButtonClickHandler);
 
-            //We register to user's Entity Data change we pass "invokeOnRegistration" as "true"
-            //so that it "EntityDataChangeHandler" handler gets also executed right on registration.
+            //We register LoginDataChangeHandler to MainDataTypes.LoginData change event to initialize userNameInputField with the user's username
             UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
         }
 
@@ -53,7 +52,7 @@ namespace Boom.Tutorials
             //Unregister to action button click
             actionButton.onClick.RemoveListener(ActionButtonClickHandler);
 
-            //We unregister from user's Entity Data change
+            //We unregister from MainDataTypes.LoginData change event
             UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
         }
 
@@ -90,8 +89,7 @@ namespace Boom.Tutorials
 
             //SECTION B: Action execution
 
-            //Here we execute the action by passing the actionId we want
-            //to execute, in this case it is "set_username"
+            //Here we execute the action by passing the actionId we wantto execute.
             actionLogText.text = $"Processing Action of id: \"{actionId}\" with arguments:\n{JsonConvert.SerializeObject(fields)}";
             var actionResult = await ActionUtil.ProcessAction(actionId, fields);
 
@@ -135,18 +133,8 @@ namespace Boom.Tutorials
             //If user is not logged in, return
             if (data.state != MainDataTypes.LoginData.State.LoggedIn) return;
 
-            //Try get user's principal
-            var principalResult = UserUtil.GetPrincipal();
-
-            //Handle any error from trying to get he user's principal
-            if (principalResult.IsErr)
-            {
-                $"{principalResult.AsErr()}".Error(typeof(TutorialActionSetUsername).Name);
-                return;
-            }
-
             //Temporally store the user principal
-            var principal = principalResult.AsOk().Value;
+            var principal = data.principal;
 
             //Try get the field "username" from the user's entity "user_profile"
             //If the entity or entity's field could not be found, then it will default the value to "None"

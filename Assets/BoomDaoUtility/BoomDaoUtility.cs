@@ -40,7 +40,7 @@ namespace BoomDaoWrapper
 
         private void OnEnable()
         {
-            BroadcastState.Register<WaitingForResponse>(AllowLogin, true);
+            BroadcastState.Register<WaitingForResponse>(AllowLogin);
         }
 
         private void OnDisable()
@@ -61,7 +61,7 @@ namespace BoomDaoWrapper
         {
             loginCallback = _callBack;
             Broadcast.Invoke<UserLoginRequest>();
-            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler, true);
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
         }
 
         private void LoginDataChangeHandler(MainDataTypes.LoginData _data)
@@ -148,6 +148,13 @@ namespace BoomDaoWrapper
 
         public UResult<MainDataTypes.LoginData, string> GetLoginData => UserUtil.GetLogInData();
         public UResult<Data<DataTypes.NftCollection>, string> GetNFTData => UserUtil.GetDataSelf<DataTypes.NftCollection>();
+
+        public string GetString(string _entityId,string _fieldName)
+        {
+            return EntityUtil.TryGetFieldAsText(UserUtil.GetPrincipal(), _entityId, _fieldName, out string _value) 
+                ? _value 
+                : string.Empty;
+        }
 
         #endregion
 

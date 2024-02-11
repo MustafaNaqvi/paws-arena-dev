@@ -29,7 +29,7 @@ public class BalanceWindow : Window
     {
         icpBalanceText.text = $"ICP: Loading...\nICRC: Loading...\nNFT Count: Loading...";
 
-        UserUtil.AddListenerDataChangeSelf<DataTypes.Token>(UpdateWindow, true);
+        UserUtil.AddListenerDataChangeSelf<DataTypes.Token>(UpdateWindow, new() { invokeOnRegistration = true });
         UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(UpdateWindow);
     }
     private void OnDestroy()

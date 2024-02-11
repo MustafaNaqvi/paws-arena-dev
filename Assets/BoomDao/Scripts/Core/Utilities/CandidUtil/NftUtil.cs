@@ -133,6 +133,18 @@ namespace Boom
                 return e.index == index;
             });
         }
+        public static bool HasAnyNft(string uid, string collectionId)
+        {
+            var result = TryGetCollection(uid, collectionId);
+            if (result.Tag == UResultTag.Err) return false;
+
+            var tokens = result.AsOk().tokens;
+            tokens ??= new();
+
+            if (tokens.Count == 0) return false;
+
+            return tokens.Count > 0;
+        }
         public static bool HasNft<T>(string uid, string collectionId, Func<DataTypes.NftCollection.Nft, T, bool> predicate, params T[] requirements)
         {
             var result = TryGetCollection(uid, collectionId);

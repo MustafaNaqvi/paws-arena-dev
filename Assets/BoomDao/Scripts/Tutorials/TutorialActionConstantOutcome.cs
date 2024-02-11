@@ -1,8 +1,8 @@
 namespace Boom.Tutorials
 {
+    using Boom;
     using Boom.Utility;
     using Boom.Values;
-    using Boom;
     using Candid;
     using Cysharp.Threading.Tasks;
     using System.Collections;
@@ -11,28 +11,25 @@ namespace Boom.Tutorials
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class TutorialActionTimeIntervalConstraint : MonoBehaviour
+    public class TutorialActionConstantOutcome : MonoBehaviour
     {
         #region FIELDS
 
-        //This is the text that display the user's  action tries left.
-        [SerializeField] TMP_Text triesLeftText;
-        //This is the text that display the action's return value (Outcomes or an error).
+        //This is the text that display the action return value (Outcomes or an error).
         [SerializeField] TMP_Text actionLogText;
-        //This is the button that triggers the action "match_outcome_won"
+        //This is the button that triggers the action "add_gem"
         [SerializeField] Button actionButton;
 
         //This is the a coroutine cache from displaying the logs. It is used to stop it when required.
         private Coroutine logCoroutine;
 
         //The action ID
-        string actionId = "match_outcome_won";
+        string actionId = "add_gem";
 
         #endregion
 
 
         #region MONO
-
         private void Awake()
         {
             //This is to clear out any unwanted listener
@@ -40,25 +37,17 @@ namespace Boom.Tutorials
 
             //Register to action button click
             actionButton.onClick.AddListener(ActionButtonClickHandler);
-
-            //Register to the user's actions state change event to be able to update the triesLeftText
-            UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(DataTypeActionStateChangeHandler);
         }
-        private void OnEnable()
-        {
-            actionLogText.text = "...";
-
-            UpdateTriesLeftText();
-        }
-
         private void OnDestroy()
         {
             //Unregister to action button click
             actionButton.onClick.RemoveListener(ActionButtonClickHandler);
-
-            UserUtil.RemoveListenerDataChangeSelf<DataTypes.ActionState>(DataTypeActionStateChangeHandler);
         }
 
+        private void OnEnable()
+        {
+            actionLogText.text = "...";
+        }
         #endregion
 
 
@@ -75,20 +64,13 @@ namespace Boom.Tutorials
         {
             if (logCoroutine != null) StopCoroutine(logCoroutine);
 
-            //SECTION A: We check if there is any try left to execute the action is handled
-            //automatically by "ActionUtil.ProcessAction". If the action make use of an TimeIntervalConstraint
-            //"ActionUtil.ProcessAction" will check if you have tries left to execute the action, otherwise,
-            //it will result on a error returned by "ActionUtil.ProcessAction".
+            //SECTION A: Action execution
 
-
-            //SECTION B: Action execution
-
-            //Here we execute the action by passing the actionId we want
-            //to execute, in this case it is "match_outcome_won"
+            //Here we execute the action by passing the actionId we want to execute.
             actionLogText.text = $"Processing Action of id: {actionId}";
             var actionResult = await ActionUtil.ProcessAction(actionId);
 
-            //SECTION C: Error handling
+            //SECTION B: Error handling
 
             //Here we handle the errors
             bool isError = actionResult.IsErr;
@@ -103,31 +85,31 @@ namespace Boom.Tutorials
                 return;
             }
 
-            //SECTION D: Cast action result to the OK return type (action outcomes)
+            //SECTION C: Cast action result to the OK return type (action outcomes)
 
             //This is the result if the execution of the action was successful
             var expectedResult = actionResult.AsOk();
 
-            //SECTION E: Break down the caller action outcome and console log them
+            //SECTION D: Break down the caller action outcome and console log them
 
             //We get the outcomes of the user who executed the action
             var callerOutcomes = expectedResult.callerOutcomes;
 
-            //We get the outcomes of the user who executed the action
-            var entityOutcomes = callerOutcomes.entityOutcomes;
+            //This are the entity outcomes of the user who executed the action
+            var entityOutcomes = callerOutcomes.entityOutcomes; 
 
             string message = "";
-            List<KeyValue<string, double>> incrementalOutcome = new();
+            List<KeyValue<string, double>> outcomesToDisplay = new();
 
             //We loop through all the entity outcomes
             foreach (var keyValue in entityOutcomes)
             {
-                var entityEdit = keyValue.Value;
+                var entityOutcome = keyValue.Value;
 
-                string entityId = entityEdit.eid;
+                string entityId = entityOutcome.eid;
 
                 //Try get the entity's config field's value
-                bool configEntityNameFound = entityEdit.GetConfigFieldAs<string>
+                bool configEntityNameFound = entityOutcome.GetConfigFieldAs<string>
                     //World Id
                     (BoomManager.Instance.WORLD_CANISTER_ID,
                     //Config's field name
@@ -146,7 +128,7 @@ namespace Boom.Tutorials
 
                 string editedFieldName = "amount";
 
-                bool fieldAmountFound = entityEdit.TryGetOutcomeFieldAsDouble(editedFieldName, out var amount);
+                bool fieldAmountFound = entityOutcome.TryGetOutcomeFieldAsDouble(editedFieldName, out var amount);
 
                 //If the amount field is not found on the entity we just display an error
                 if (fieldAmountFound == false)
@@ -156,10 +138,10 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                incrementalOutcome.Add(new(entityName, amount.Value));
+                outcomesToDisplay.Add(new(entityName, amount.Value));
             }
 
-            if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{incrementalOutcome.Reduce(e => $"> +{e.value} {e.key}", "\n")}";
+            if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{outcomesToDisplay.Reduce(e => $"> +{e.value} {e.key}", "\n")}";
 
             logCoroutine = StartCoroutine(DisplayTempLog(message));
         }
@@ -168,33 +150,11 @@ namespace Boom.Tutorials
 
 
         #region LOG
-
-        //This is to temporarily display the outcomes or errors
         IEnumerator DisplayTempLog(string message, float duration = 5f)
         {
             actionLogText.text = message;
             yield return new WaitForSeconds(duration);
             actionLogText.text = "...";
-        }
-
-        #endregion
-
-
-        #region ACTION STATE CHANGE HANDLERS
-
-        //We update the triesLeftText whenever the user's action state has changed
-        private void DataTypeActionStateChangeHandler(Data<DataTypes.ActionState> data)
-        {
-            UpdateTriesLeftText();
-        }
-        public void UpdateTriesLeftText()
-        {
-            if (ActionUtil.TryGetTriesDetails(actionId, out var triesDetails) == false)
-            {
-                "Could not fetch tries left".Warning();
-            }
-
-            triesLeftText.text = $"{triesDetails.maxTries}/{triesDetails.triesLeft}";
         }
         #endregion
     }

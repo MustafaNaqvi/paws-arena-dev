@@ -23,7 +23,7 @@ namespace Boom.Mono
 
         private void Start()
         {
-            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(EnableButtonHandler, checkOnStart);
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(EnableButtonHandler, new() { invokeOnRegistration = checkOnStart });
         }
 
         //Unregister from events

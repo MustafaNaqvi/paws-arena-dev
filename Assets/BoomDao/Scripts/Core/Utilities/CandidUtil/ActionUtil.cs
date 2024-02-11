@@ -13,6 +13,7 @@ namespace Boom
     using Boom.Patterns.Broadcasts;
     using Boom;
     using Candid.Extv2Boom;
+    using Boom.Tutorials;
 
 
     //TRANSFER ERROR TYPES
@@ -79,7 +80,7 @@ namespace Boom
             }
         }
 
-        //ACTION CONSTRAINS
+        //ACTION CONSTRAINTS
         public class ActionExecutionFailure : Base
         {
             public ActionExecutionFailure(string msg) : base(msg)
@@ -142,9 +143,9 @@ namespace Boom
             public List<MintNft> nfts;
             public List<TransferIcrc> tokens;
 
-            public Outcomes(string callerPrincipalId, string optionalTargetPrincipalId, List<ActionOutcomeOption> outcomes, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
+            public Outcomes(string uid, string callerPrincipalId, string optionalTargetPrincipalId, List<ActionOutcomeOption> outcomes, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
             {
-                this.uid = callerPrincipalId;
+                this.uid = uid;
                 this.entityOutcomes = new();
                 this.nfts = new();
                 this.tokens = new();
@@ -209,6 +210,9 @@ namespace Boom
                                         var val00 = update.AsDeleteField();
                                         fieldName = val00.FieldName;
 
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit00))
                                         {
                                             entityToEdit00 = new(wid, eid, new());
@@ -232,6 +236,9 @@ namespace Boom
                                         var val1 = update.AsSetText();
                                         fieldName = val1.FieldName;
                                         var fieldValue1 = val1.FieldValue;
+
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit1))
                                         {
@@ -257,6 +264,9 @@ namespace Boom
                                         fieldName = val10.FieldName;
                                         var fieldValue10 = val10.Value;
 
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit10))
                                         {
                                             entityToEdit10 = new(wid, eid, new());
@@ -280,6 +290,9 @@ namespace Boom
                                         var val11 = update.AsRemoveFromList();
                                         fieldName = val11.FieldName;
                                         var fieldValue11 = val11.Value;
+
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit11))
                                         {
@@ -305,6 +318,9 @@ namespace Boom
 
                                         fieldName = val2.FieldName;
                                         var fieldValue2 = val2.FieldValue;
+
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit2))
                                         {
@@ -361,6 +377,9 @@ namespace Boom
                                         fieldName = val3.FieldName;
                                         var fieldValue3 = val3.FieldValue;
 
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit3))
                                         {
                                             entityToEdit3 = new(wid, eid, new());
@@ -416,6 +435,9 @@ namespace Boom
                                         fieldName = val4.FieldName;
                                         var fieldValue4 = val4.FieldValue;
 
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit4))
                                         {
                                             entityToEdit4 = new(wid, eid, new());
@@ -470,6 +492,9 @@ namespace Boom
 
                                         fieldName = val5.FieldName;
                                         var fieldValue5 = val5.FieldValue;
+
+                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
                                         if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit5))
                                         {
@@ -548,15 +573,18 @@ namespace Boom
 
             hasTarget = !string.IsNullOrEmpty(actionReturn.TargetPrincipalId);
 
-            callerOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, callerOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
+            callerOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, callerOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
 
-            targetOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, targetOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
+            targetOutcomes = new(actionReturn.TargetPrincipalId, actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, targetOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
 
-            worldOutcomes = new(actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, worldOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
+            worldOutcomes = new(actionReturn.WorldPrincipalId, actionReturn.CallerPrincipalId, actionReturn.TargetPrincipalId, worldOutcomeResult, worldEntities, callerEntities, targetEntities, configs, args);
         }
     }//UTILS
+
     public static class ActionUtil
     {
+
+        //Validate Entity Constraint
 
         public static bool TryGetTriesDetails(string actionId, out (ulong maxTries, ulong triesLeft) details)
         {
@@ -635,6 +663,157 @@ namespace Boom
                 return true;
             }
         }
+
+        public static bool ValidateConstraint(string actionId, string sourcePrincipalId = "")
+        {
+
+            if(UserUtil.IsUserLoggedIn(out var loginData) == false)
+            {
+                $"User is not yet logged in".Warning(typeof(ActionUtil).Name);
+
+                return false;
+            }
+
+            var userPrincipaId = loginData.principal;
+
+            if (string.IsNullOrEmpty(sourcePrincipalId)) sourcePrincipalId = userPrincipaId;
+
+            SubAction subAction = null;
+
+            if(sourcePrincipalId == userPrincipaId)
+            {
+                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.callerAction, out subAction))
+                {
+                    ("Could not find caller subaction of action of id: " + actionId).Error();
+
+                    return false;
+                }
+            }
+            else if (sourcePrincipalId == BoomManager.Instance.WORLD_CANISTER_ID)
+            {
+                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.worldAction, out subAction))
+                {
+                    ("Could not find world subaction of action of id: " + actionId).Error();
+
+                    return false;
+                }
+            }
+            else
+            {
+                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.targetAction, out subAction))
+                {
+                    ("Could not find target subaction of action of id: " + actionId).Error();
+
+                    return false;
+                }
+            }
+
+            var entityConstraints = subAction.EntityConstraints;
+            var icrcConstraint = subAction.IcrcConstraint;
+            var nftConstraint = subAction.NftConstraint;
+
+
+            if(entityConstraints.Count > 0)
+            {
+                var dataResult = UserUtil.GetData<DataTypes.Entity>(sourcePrincipalId);
+
+                if (dataResult.IsErr)
+                {
+                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                    return false;
+                }
+
+                var data = dataResult.AsOk();
+
+                foreach (var constraint in entityConstraints)
+                {
+                    if (constraint.Check(data.elements) == false) return false;
+
+                    //switch (constraint)
+                    //{
+                    //    case EntityConstrainTypes.EqualToText info:
+                    //        if (info.Check(entityDataAsOk.elements) == false) return false;
+                    //        break;
+                    //    case EntityConstrainTypes.ContainsText info:
+                    //        break;
+                    //    case EntityConstrainTypes.EqualToNumber info:
+                    //        break;
+
+                    //    case EntityConstrainTypes.GreaterThanNumber info:
+                    //        break;
+                    //    case EntityConstrainTypes.LessThanNumber info:
+                    //        break;
+
+                    //    case EntityConstrainTypes.GreaterThanEqualToNumber info:
+                    //        break;
+                    //    case EntityConstrainTypes.LessThanEqualToNumber info:
+                    //        break;
+
+                    //    case EntityConstrainTypes.GreaterThanNowTimestamp info:
+                    //        break;
+                    //    case EntityConstrainTypes.LesserThanNowTimestamp info:
+                    //        break;
+
+                    //    case EntityConstrainTypes.ExistField info:
+                    //        break;
+                    //    case EntityConstrainTypes.Exist info:
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
+                }
+            }
+
+            if(icrcConstraint.Count > 0)
+            {
+                var dataResult = UserUtil.GetData<DataTypes.Token>(sourcePrincipalId);
+
+                if (dataResult.IsErr)
+                {
+                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                    return false;
+                }
+
+                var data = dataResult.AsOk();
+
+                foreach (var constraint in icrcConstraint)
+                {
+                    var tokenDetailsResult = TokenUtil.GetTokenDetails(sourcePrincipalId, constraint.Canister);
+
+                    if (tokenDetailsResult.IsErr)
+                    {
+                        $"{tokenDetailsResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                        return false;
+                    }
+
+                    var tokenDetails = tokenDetailsResult.AsOk();
+
+                    if (constraint.Amount > tokenDetails.token.baseUnitAmount.ConvertToDecimal(tokenDetails.configs.decimals)) return false;
+                }
+            }
+
+            //TODO: NFT CONSTRAINT MUST ALSO CHECK FOR NFT METADATA
+            if (nftConstraint.Count > 0)
+            {
+                var dataResult = UserUtil.GetData<DataTypes.NftCollection>(sourcePrincipalId);
+
+                if (dataResult.IsErr)
+                {
+                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                    return false;
+                }
+
+                var data = dataResult.AsOk();
+
+                foreach (var constraint in nftConstraint)
+                {
+                    if (NftUtil.HasAnyNft(sourcePrincipalId, constraint.Canister) == false) return false;
+                }
+            }
+
+            return true;
+        }
+
         //GENERIC CHECK BEFORE PROCESSING AN ACTION
 
         private static void UpdateActionData(string actionId, ulong intervalStartTs, ulong actionCount)
@@ -646,39 +825,42 @@ namespace Boom
             ));
         }
 
-
-        public static readonly Dictionary<string, int> actionsInProcess = new();
-
-        private static void IncrementActionProcessCount(string actionId)
+        public async static UniTask<UResult<Null, ActionErrType.Base>> HandlePosibleActionTransfers(string actionId)
         {
-            if (!actionsInProcess.TryAdd(actionId, 1))
+            if (ConfigUtil.TryGetActionPart(actionId, e => e.callerAction.IcrcConstraint, out var txConstraints))
             {
-                actionsInProcess[actionId] += 1;
-            }
-
-            Broadcast.Invoke<OnActionInProcessCountChange>(new OnActionInProcessCountChange(actionId));
-        }
-        private static void ReduceActionProcessCount(string actionId)
-        {
-            if (actionsInProcess.ContainsKey(actionId))
-            {
-                if (actionsInProcess[actionId] > 0)
+                //We loop through all the icrc constraint and make all the required icrc transfers.
+                foreach (var txConstraint in txConstraints)
                 {
-                    actionsInProcess[actionId] -= 1;
-                    if (actionsInProcess[actionId] > 0)
+                    var blockIndexResult = await ActionUtil.Transfer.TransferIcrc(txConstraint);
+
+                    //We handle any transfer error
+                    if (blockIndexResult.IsErr)
                     {
-                        actionsInProcess.Remove(actionId);
+                        var error = blockIndexResult.AsErr();
+
+                        if (error is TransferErrType.InsufficientBalance balanceError)
+                        {
+                            return new(new ActionErrType.InsufficientBalance(balanceError.content));
+                        }
+                        else if (error is TransferErrType.Transfer transferError)
+                        {
+                            return new(new ActionErrType.Transfer(transferError.content));
+                        }
+                        if (error is TransferErrType.LogIn loginError)
+                        {
+                            return new(new ActionErrType.Transfer(loginError.content));
+                        }
+                        else
+                        {
+                            return new(new ActionErrType.Other($"Other issue!\n\nUnkown..."));
+                        }
                     }
-                    Broadcast.Invoke<OnActionInProcessCountChange>(new OnActionInProcessCountChange(actionId));
                 }
-
             }
-        }
-        public static int GetActionProcessingCount(string actionId)
-        {
-            actionsInProcess.TryGetValue(actionId, out int count);
 
-            return count;
+            //SUCCESS
+            return new(new Null());
         }
 
 
@@ -690,7 +872,15 @@ namespace Boom
 
             args ??= new();
 
-            IncrementActionProcessCount(actionId);
+            BroadcastState.Invoke(new ActionExecutionState(actionId, true), false, actionId);
+
+            //If the action has ICRC constraints, we do the required transfers
+            var possibleTransfersResult = await HandlePosibleActionTransfers(actionId);
+
+            if (possibleTransfersResult.IsErr)
+            {
+                return new(possibleTransfersResult.AsErr());
+            }
 
             //
             var actionConfigResult = UserUtil.GetMainData<MainDataTypes.AllAction>();
@@ -713,48 +903,51 @@ namespace Boom
             }
 
             DataTypes.ActionState actionState = null;
-            if(actionConfig.callerAction.TimeConstraint != null)
+            if(actionConfig.callerAction != null)
             {
-                if(actionConfig.callerAction.TimeConstraint.actionTimeInterval != null)
+                if (actionConfig.callerAction.TimeConstraint != null)
                 {
-                    var _intervalDuration = actionConfig.callerAction.TimeConstraint.actionTimeInterval.IntervalDuration;
-                    var _actionsPerInterval = actionConfig.callerAction.TimeConstraint.actionTimeInterval.ActionsPerInterval;
-                    
-                    var actionStateResult = UserUtil.GetDataSelf<DataTypes.ActionState>();
-
-                    var actionStateAsOk = actionStateResult.AsOk();
-
-                    if (actionStateResult.IsErr)
+                    if (actionConfig.callerAction.TimeConstraint.actionTimeInterval != null)
                     {
-                        return new(new ActionErrType.Other(actionStateResult.AsErr()));
-                    }
-                    if (actionStateAsOk.elements.TryGetValue(actionId, out actionState))
-                    {
-                        if(_actionsPerInterval == 0)
-                        {
-                            return new(new ActionErrType.Other("actionsPerInterval limit is set to 0 so the action cannot be done"));
-                        }
+                        var _intervalDuration = actionConfig.callerAction.TimeConstraint.actionTimeInterval.IntervalDuration;
+                        var _actionsPerInterval = actionConfig.callerAction.TimeConstraint.actionTimeInterval.ActionsPerInterval;
 
-                        if (actionState.intervalStartTs + _intervalDuration < MainUtil.Now().MilliToNano())
+                        var actionStateResult = UserUtil.GetDataSelf<DataTypes.ActionState>();
+
+                        var actionStateAsOk = actionStateResult.AsOk();
+
+                        if (actionStateResult.IsErr)
                         {
-                            actionState.intervalStartTs = MainUtil.Now().MilliToNano();
-                            actionState.actionCount = 1;
+                            return new(new ActionErrType.Other(actionStateResult.AsErr()));
                         }
-                        else if (actionState.actionCount < _actionsPerInterval)
+                        if (actionStateAsOk.elements.TryGetValue(actionId, out actionState))
                         {
-                            ++actionState.actionCount;
-                        }
-                        else
-                        {
-                            return new(new ActionErrType.Other("actionCount has already reached actionsPerInterval limit for this time interval"));
-                        }
+                            if (_actionsPerInterval == 0)
+                            {
+                                return new(new ActionErrType.Other("actionsPerInterval limit is set to 0 so the action cannot be done"));
+                            }
+
+                            if (actionState.intervalStartTs + _intervalDuration < MainUtil.Now().MilliToNano())
+                            {
+                                actionState.intervalStartTs = MainUtil.Now().MilliToNano();
+                                actionState.actionCount = 1;
+                            }
+                            else if (actionState.actionCount < _actionsPerInterval)
+                            {
+                                ++actionState.actionCount;
+                            }
+                            else
+                            {
+                                return new(new ActionErrType.Other("actionCount has already reached actionsPerInterval limit for this time interval"));
+                            }
 
 
-                        UserUtil.UpdateDataSelf(actionState);
+                            UserUtil.UpdateDataSelf(actionState);
+                        }
                     }
                 }
-            }
 
+            }
 
             //
 
@@ -764,9 +957,9 @@ namespace Boom
 
             if (actionResponse.Tag == Result3Tag.Err)
             {
-                ReduceActionProcessCount(actionId);
+                BroadcastState.Invoke(new ActionExecutionState(actionId, false), false, actionId);
 
-                if(actionState != default)
+                if (actionState != default)
                 {
                     --actionState.actionCount;
                 }
@@ -938,88 +1131,29 @@ namespace Boom
 
             $"Action Processed Success, ActionId: {actionId}, outcome: {JsonConvert.SerializeObject(processedActionResponse)}".Log(nameof(ActionUtil));
 
-            ReduceActionProcessCount(actionId);
+            BroadcastState.Invoke(new ActionExecutionState(actionId, false), false, actionId);
 
             return new(processedActionResponse);
         }
 
         public static class Transfer
         {
-            //ICP
-            //public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcp(IcpTx tx)
-            //{
-            //    //CHECK LOGIN
-            //    var principalResult = UserUtil.GetPrincipal();
-
-            //    if (principalResult.Tag == UResultTag.Err)
-            //    {
-            //        return new(new TransferErrType.LogIn($"You cannot execute this function, you might not be logged in or maybe you are as anon.\n More details:\n{principalResult.AsErr()}"));
-
-            //    }
-            //    var principal = principalResult.AsOk().Value;
-
-            //    //CHECK USER BALANCE
-
-            //    var tokenDetailsResult = TokenUtil.GetTokenDetails(principal, Env.CanisterIds.ICP_LEDGER);
-
-            //    if (tokenDetailsResult.Tag == UResultTag.Err)
-            //    {
-            //        return new(new TransferErrType.Other(tokenDetailsResult.AsErr()));
-            //    }
-
-            //    var (token, metadata) = tokenDetailsResult.AsOk();
-
-            //    var requiredBaseUnitAmount = CandidUtil.ConvertToBaseUnit(tx.Amount, metadata.decimals);
-
-            //    if (token.baseUnitAmount < requiredBaseUnitAmount + metadata.fee)
-            //    {
-            //        return new(new TransferErrType.InsufficientBalance($"Not enough \"${Env.CanisterIds.ICP_LEDGER}\" currency. Current balance: {token.baseUnitAmount.ConvertToDecimal(metadata.decimals).NotScientificNotation()}, required balance: {tx.Amount}"));
-            //    }
-
-            //    //UPDATE LOCAL STATE
-            //    TokenUtil.DecrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
-
-            //    //SETUP INTERFACE
-            //    var tokenInterface = new IcpLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(Env.CanisterIds.ICP_LEDGER));
-
-            //    //SETUP ARGS
-            //    var toAddress = await CandidUtil.ToAddress(tx.ToPrincipal);
-            //    List<byte> addressBytes = CandidUtil.HexStringToByteArray(toAddress).ToList();
-            //    var arg = new TransferArgs
-            //    {
-            //        To = addressBytes,
-            //        Amount = new Candid.IcpLedger.Models.Tokens(requiredBaseUnitAmount),
-            //        Fee = new Candid.IcpLedger.Models.Tokens(metadata.fee),
-            //        CreatedAtTime = OptionalValue<TimeStamp>.NoValue(),
-            //        Memo = new ulong(),
-            //        FromSubaccount = new(),
-            //    };
-
-            //    //TRANSFER
-            //    $"Transfer to address: {toAddress},\n amount {tx.Amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
-            //    var result = await tokenInterface.Transfer(arg);
-
-            //    //CHECK SUCCESS
-            //    if (result.Tag == Candid.IcpLedger.Models.TransferResultTag.Ok)
-            //    {
-            //        var blockIndex = result.AsOk();
-            //        $"BlockIndex Transfer: {blockIndex}".Log();
-            //        return new(blockIndex);
-            //    }
-            //    else
-            //    {
-            //        //Due to failure restore to previews value
-            //        TokenUtil.IncrementTokenByBaseUnit(principal, (Env.CanisterIds.ICP_LEDGER, requiredBaseUnitAmount + metadata.fee));
-
-            //        return new(new TransferErrType.Transfer($"{result.AsErr().Tag}: {result.AsErr().Value}"));
-            //    }
-            //}
             //ICRC
             public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcrc(IcrcTx tx)
             {
-                //CHECK LOGIN
-                //if (tx.Canister == Env.CanisterIds.ICP_LEDGER) return new(new TransferErrType.Other($"You cannot use this function to transfer ICRC, try using \"{nameof(TransferIcrc)}\""));
+                return await TransferIcrc(tx.Amount, tx.ToPrincipal, tx.Canister);
+            }
 
+            public async static UniTask<UResult<ulong, TransferErrType.Base>> TransferIcrc(double amount, string toPrincipalId, string icrcCanisterId = "")
+            {
+                if (string.IsNullOrEmpty(toPrincipalId))
+                {
+                    return new(new TransferErrType.Other("You must specify an address to sent the tokens to!"));
+                }
+
+                if (string.IsNullOrEmpty(icrcCanisterId)) icrcCanisterId = Env.CanisterIds.ICP_LEDGER;
+
+                //CHECK LOGIN
                 var principalResult = UserUtil.GetPrincipal();
 
                 if (principalResult.Tag == UResultTag.Err)
@@ -1030,7 +1164,7 @@ namespace Boom
                 var principal = principalResult.AsOk().Value;
 
                 //CHECK USER BALANCE
-                var tokenDetailsResult = TokenUtil.GetTokenDetails(principal, tx.Canister);
+                var tokenDetailsResult = TokenUtil.GetTokenDetails(principal, icrcCanisterId);
 
                 if (tokenDetailsResult.Tag == UResultTag.Err)
                 {
@@ -1039,23 +1173,23 @@ namespace Boom
 
                 var (token, metadata) = tokenDetailsResult.AsOk();
 
-                var requiredBaseUnitAmount = CandidUtil.ConvertToBaseUnit(tx.Amount, metadata.decimals);
+                var requiredBaseUnitAmount = TokenUtil.ConvertToBaseUnit(amount, metadata.decimals);
 
                 if (token.baseUnitAmount < requiredBaseUnitAmount + metadata.fee)
                 {
-                    return new(new TransferErrType.InsufficientBalance($"Not enough \"${tx.Canister}\" currency. Current balance: {token.baseUnitAmount.ConvertToDecimal(metadata.decimals).NotScientificNotation()}, required balance: {tx.Amount}"));
+                    return new(new TransferErrType.InsufficientBalance($"Not enough \"${icrcCanisterId}\" currency. Current balance: {token.baseUnitAmount.ConvertToDecimal(metadata.decimals).NotScientificNotation()}, required balance: {amount}"));
                 }
 
                 //UPDATE LOCAL STATE
-                TokenUtil.DecrementTokenByBaseUnit(principal, (tx.Canister, requiredBaseUnitAmount + metadata.fee));
+                TokenUtil.DecrementTokenByBaseUnit(principal, (icrcCanisterId, requiredBaseUnitAmount + metadata.fee));
 
                 //SETUP INTERFACE
-                var tokenInterface = new IcrcLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(tx.Canister));
+                var tokenInterface = new IcrcLedgerApiClient(UserUtil.GetAgent().AsOk(), Principal.FromText(icrcCanisterId));
 
                 //SETUP ARGS
                 var arg = new Candid.IcrcLedger.Models.TransferArg(
                     new(),
-                    new(Principal.FromText(tx.ToPrincipal), new()),
+                    new(Principal.FromText(toPrincipalId), new()),
                     (UnboundedUInt)requiredBaseUnitAmount,
                     new((UnboundedUInt)metadata.fee),
                     new(),
@@ -1063,7 +1197,7 @@ namespace Boom
                     );
 
                 //TRANSFER
-                $"Transfer to principal: {tx.ToPrincipal},\n amount {tx.Amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
+                $"Transfer to principal: {toPrincipalId},\n amount {amount},\n baseUnitAmount: {requiredBaseUnitAmount},\n decimals: {metadata.decimals},\n fee: {metadata.fee}".Log(nameof(ActionUtil));
                 var result = await tokenInterface.Icrc1Transfer(arg);
 
                 //CHECK SUCCESS
@@ -1075,7 +1209,7 @@ namespace Boom
                 }
                 else
                 {   //Due to failure restore to previews value
-                    TokenUtil.IncrementTokenByBaseUnit(principal, (tx.Canister, requiredBaseUnitAmount + metadata.fee));
+                    TokenUtil.IncrementTokenByBaseUnit(principal, (icrcCanisterId, requiredBaseUnitAmount + metadata.fee));
 
                     return new(new TransferErrType.Transfer($"{result.AsErr().Tag}: {result.AsErr().Value}"));
                 }

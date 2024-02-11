@@ -62,7 +62,7 @@ namespace Boom.UI
             confirmListingButton.onClick.AddListener(ListNftHandler);
             cancelListingButton.onClick.AddListener(CancelMakeOfferPanel);
 
-            UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(UpdateWindow, true);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(UpdateWindow, new() { invokeOnRegistration = true });
             UserUtil.AddListenerMainDataChange<MainDataTypes.AllListings>(UpdateWindow);
 
 
@@ -311,7 +311,7 @@ namespace Boom.UI
 
 
             BroadcastState.Invoke(new WaitingForResponse(true));
-            (string collectionId, string nftIdentifier, string seller, ulong price) = ((string, string, string, ulong))customData;
+            (string collectionId, string nftIdentifier, string seller, ulong baseUnitprice) = ((string, string, string, ulong))customData;
 
             var loginDataResult = UserUtil.GetLogInData();
 
@@ -336,14 +336,14 @@ namespace Boom.UI
             }
             var tokenData = tokenDataResult.AsOk();
 
-            if (tokenData.token.baseUnitAmount < price)
+            if (tokenData.token.baseUnitAmount < baseUnitprice)
             {
-                WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You don't have enough ICP", $"Requirements:\n{$"{price.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nYou need to deposit some ICP"}"), 3);
+                WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You don't have enough ICP", $"Requirements:\n{$"{baseUnitprice.ConvertToDecimal(CandidUtil.ICP_DECIMALS)} ICP\n\nYou need to deposit some ICP"}"), 3);
                 return;
             }
             Extv2BoomApiClient collectionInterface = new(agent, Principal.FromText(collectionId));
 
-            var lockResult = await collectionInterface.Lock(nftIdentifier, price, accountIdentifier, new());
+            var lockResult = await collectionInterface.Lock(nftIdentifier, baseUnitprice, accountIdentifier, new());
 
             if (lockResult.Tag == Candid.Extv2Boom.Models.Result7Tag.Err)
             {
@@ -356,9 +356,9 @@ namespace Boom.UI
             Debug.Log("Lock success, msg: " + lockResult.AsOk());
 
             var addressToTransferTo = lockResult.AsOk();
-            Debug.Log("Transfer from: " + accountIdentifier + " Price: " + price);
+            Debug.Log("Transfer from: " + accountIdentifier + " Price: " + baseUnitprice);
 
-            var transferResult = await ActionUtil.Transfer.TransferIcrc(new Candid.World.Models.IcrcTx(CandidUtil.ConvertToDecimal(price, tokenData.configs.decimals), addressToTransferTo, Env.CanisterIds.ICP_LEDGER));
+            var transferResult = await ActionUtil.Transfer.TransferIcrc(TokenUtil.ConvertToDecimal(baseUnitprice, tokenData.configs.decimals), addressToTransferTo);
 
             if (transferResult.Tag == Values.UResultTag.Err)
             {

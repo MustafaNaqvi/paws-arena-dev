@@ -29,7 +29,7 @@ public class ShopWindow : Window
     {
         UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(UpdateWindow);
         UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(UpdateWindow);
-        UserUtil.AddListenerMainDataChange<MainDataTypes.AllConfigs>(UpdateWindow, true);
+        UserUtil.AddListenerMainDataChange<MainDataTypes.AllConfigs>(UpdateWindow, new() { invokeOnRegistration = true });
     }
 
     private void OnDestroy()
@@ -532,28 +532,6 @@ public class ShopWindow : Window
     {
         BroadcastState.Invoke(new WaitingForResponse(true));
 
-        var blockIndexResult = await ActionUtil.Transfer.TransferIcrc(icpConstraint);
-
-        if (blockIndexResult.IsErr)
-        {
-            var error = blockIndexResult.AsErr();
-            switch (error)
-            {
-                case TransferErrType.InsufficientBalance content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You don't have enough ICP", $"Requirements:\n{$"{icpConstraint.Amount} ICP\n\nYou need to deposit some ICP"}"), 3);
-                    break;
-                case TransferErrType.Transfer content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("Transfer error!", content.Content), 3);
-                    break;
-                case TransferErrType.LogIn content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You must login!", content.Content), 3);
-                    break;
-                default:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("Other issue!", "Unknown..."), 3);
-                    break;
-            }
-        }
-
         var actionResult = await ActionUtil.ProcessAction(actionId);
 
         //CHECK FOR ERR
@@ -611,29 +589,6 @@ public class ShopWindow : Window
             userBalance = token.baseUnitAmount.ConvertToDecimal(tokenConfigs.decimals);
         }
         $"Required ICRC: {icrcConstraint.Amount} Balance: {userBalance}".Log();
-
-
-        var blockIndexResult = await ActionUtil.Transfer.TransferIcrc(icrcConstraint);
-
-        if (blockIndexResult.IsErr)
-        {
-            var error = blockIndexResult.AsErr();
-            switch (error)
-            {
-                case TransferErrType.InsufficientBalance content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You don't have enough ICP", $"Requirements:\n{$"{icrcConstraint.Amount} ICP\n\nYou need to deposit some ICP"}"), 3);
-                    break;
-                case TransferErrType.Transfer content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("Transfer error!", content.Content), 3);
-                    break;
-                case TransferErrType.LogIn content:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("You must login!", content.Content), 3);
-                    break;
-                default:
-                    WindowManager.Instance.OpenWindow<InfoPopupWindow>(new InfoPopupWindow.WindowData("Other issue!", "Unknown..."), 3);
-                    break;
-            }
-        }
 
         var actionResult = await ActionUtil.ProcessAction(actionId);
 

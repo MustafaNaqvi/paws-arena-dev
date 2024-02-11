@@ -309,7 +309,6 @@ GameObject:
   - component: {fileID: 193184982}
   - component: {fileID: 193184981}
   - component: {fileID: 193184983}
-  - component: {fileID: 193184985}
   m_Layer: 5
   m_Name: Controller [Panel]
   m_TagString: Untagged
@@ -405,20 +404,6 @@ MonoBehaviour:
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!114 &193184984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 193184979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13f72406f440fc9428ae92f574966e68, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  actionLogText: {fileID: 255130386}
-  actionButton: {fileID: 1770581959}
---- !u!114 &193184985
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -985,7 +970,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: <WORLD_CANISTER_ID>k__BackingField
-      value: n52ey-tqaaa-aaaap-abwma-cai
+      value: x5yhf-xaaaa-aaaap-qb6gq-cai
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871021, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: m_RootOrder

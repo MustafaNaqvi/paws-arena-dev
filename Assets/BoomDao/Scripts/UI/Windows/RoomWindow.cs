@@ -33,7 +33,7 @@ public class RoomWindow : Window
 
     public override void Setup(object data)
     {
-        UserUtil.AddListenerMainDataChange<MainDataTypes.AllRoomData>(HandleListeningToUsers, true);
+        UserUtil.AddListenerMainDataChange<MainDataTypes.AllRoomData>(HandleListeningToUsers, new() { invokeOnRegistration = true });
 
         EntityUtil.TryGetFieldAsDouble("self", "item_b", "quantity", out var item_bQuantity);
         var testTokenAmount = TokenUtil.GetTokenAmountAsDecimal("self", "tvmv4-uqaaa-aaaap-abt5q-cai");
@@ -65,8 +65,8 @@ public class RoomWindow : Window
                 }
             }
 
-            UserUtil.AddListenerDataChange<DataTypes.Entity>(UpdateWindow, false, usersLeftToStartListentTo.ToArray());
-            UserUtil.AddListenerDataChange<DataTypes.Token>(UpdateWindow, false, usersLeftToStartListentTo.ToArray());
+            UserUtil.AddListenerDataChange<DataTypes.Entity>(UpdateWindow, default, usersLeftToStartListentTo.ToArray());
+            UserUtil.AddListenerDataChange<DataTypes.Token>(UpdateWindow, default, usersLeftToStartListentTo.ToArray());
 
             //Handle Unregistration
 

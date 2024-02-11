@@ -20,21 +20,6 @@ namespace Boom
             return bytes;
         }
 
-        public static ulong ConvertToBaseUnit(this double value, byte decimals)//Zero
-        {
-            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
-
-
-            return (ulong)(baseUnitCount * value);
-        }
-        public static double ConvertToDecimal(this ulong value, byte decimals)//Zero
-        {
-            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
-
-
-            return value / (double)baseUnitCount;
-        }
-
         public static bool MathAdd(string a, double b, out double returnVal)
         {
             returnVal = default;

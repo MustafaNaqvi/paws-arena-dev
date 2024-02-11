@@ -20,6 +20,15 @@ namespace Boom
             this.arg = arg;
         }
     }
+    public struct DataLoadingState<T> : IBroadcastState where T : DataTypes.Base
+    {
+        public bool isLoading;
+
+        public DataLoadingState(bool isLoading)
+        {
+            this.isLoading = isLoading;
+        }
+    }
     public struct FetchListings : IBroadcast { }
 
     public struct WaitingForResponse : IBroadcastState
@@ -56,13 +65,15 @@ namespace Boom
     #endregion
 
 
-    public struct OnActionInProcessCountChange : IBroadcast
+    public struct ActionExecutionState : IBroadcastState
     {
         public string actionId;
+        public bool inProcess;
 
-        public OnActionInProcessCountChange(string actionId)
+        public ActionExecutionState(string actionId, bool inProcess)
         {
             this.actionId = actionId;
+            this.inProcess = inProcess;
         }
     }
 
@@ -82,11 +93,11 @@ namespace Boom
             this.elements = new();
         }
 
-        public Data(string owner, Data<T> tokenData, Func<T, string> getKey, params T[] tokensUpdate)
+        public Data(string owner, Data<T> data, Func<T, string> getKey, params T[] tokensUpdate)
         {
             this.owner = owner;
-            tokenData.elements ??= new();
-            elements = tokenData.elements;
+            data.elements ??= new();
+            elements = data.elements;
 
             if (tokensUpdate == null) return;
 

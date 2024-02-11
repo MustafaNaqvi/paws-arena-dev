@@ -10,6 +10,8 @@
     using System.Text;
     using Unity.VisualScripting;
     using UnityEngine;
+    using static Boom.MainDataTypes.AllAction;
+
     // Ignore Spelling: Util
 
     public static class EntityFilterPredicate
@@ -420,7 +422,6 @@
             }
         }
 
-
         //Formulas
         private static readonly FormulaEvaluation formulaEvaluation = new();
 
@@ -591,10 +592,11 @@
             return formulaEvaluation.Evaluate(formulaWithVariableReplaced);
         }
 
-        internal static void ApplyEntityEdits(ProcessedActionResponse.Outcomes callerOutcomes)
+        internal static void ApplyEntityEdits(ProcessedActionResponse.Outcomes outcomes)
         {
-            var uid = callerOutcomes.uid;
-            var entityOutcomes = callerOutcomes.entityOutcomes;
+            var uid = outcomes.uid;
+            Debug.Log($"Apply outcomes to {uid}, outcomes: {outcomes.entityOutcomes}");
+            var entityOutcomes = outcomes.entityOutcomes;
 
             Dictionary<string, DataTypes.Entity> editedEntities = new();
 

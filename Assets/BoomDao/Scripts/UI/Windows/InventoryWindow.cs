@@ -28,7 +28,7 @@ public class InventoryWindow : Window
         //    Debug.Log($"Window of name {gameObject.name}, requires data, data cannot be null");
         //    return;
         //}
-        UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(UpdateWindow, true);
+        UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(UpdateWindow, new() { invokeOnRegistration = true });
     }
 
     private void OnDestroy()

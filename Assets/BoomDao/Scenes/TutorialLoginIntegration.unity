@@ -339,7 +339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: <WORLD_CANISTER_ID>k__BackingField
-      value: n52ey-tqaaa-aaaap-abwma-cai
+      value: x5yhf-xaaaa-aaaap-qb6gq-cai
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871021, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: m_RootOrder
@@ -988,7 +988,6 @@ MonoBehaviour:
   checkOnStart: 1
   equalTo: 1
   expectedState: 2
-  conditionMet: 0
   onConditionMetTrue:
     m_PersistentCalls:
       m_Calls: []
@@ -1147,6 +1146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: {fileID: 1650917899}
   noneInteractable: 0
+  loginState: 0
 --- !u!1 &1923582116
 GameObject:
   m_ObjectHideFlags: 0

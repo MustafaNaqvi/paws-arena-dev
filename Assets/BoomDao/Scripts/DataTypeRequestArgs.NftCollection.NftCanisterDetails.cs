@@ -7,6 +7,7 @@ namespace Boom
     using Candid.World.Models;
     using EdjCase.ICP.Agent.Agents;
     using EdjCase.ICP.Candid.Mapping;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using UnityEngine;
@@ -61,16 +62,16 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -98,16 +99,16 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -135,16 +136,16 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -179,16 +180,16 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -220,18 +221,14 @@ namespace Boom
             }
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
-
-                    return false;
+                    return true;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
-
-                    return false;
+                    return true;
                 }
 
                 if (field.TryParseValue<double>(out var value) == false)
@@ -264,16 +261,16 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -305,18 +302,18 @@ namespace Boom
             }
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
-                    return false;
+                    return true;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
-                    return false;
+                    return true;
                 }
 
                 if (field.TryParseValue<double>(out var value) == false)
@@ -344,16 +341,16 @@ namespace Boom
             }
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
                     return false;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
                     return false;
                 }
@@ -383,18 +380,18 @@ namespace Boom
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
 
-                if (entities.TryGetValue(Eid, out var entity) == false)
+                if (entities.TryGetValue(GetKey(), out var entity) == false)
                 {
-                    Debug.LogError("Failed when finding entity");
+                    //Debug.LogError($"Failed when finding entity id: {Eid} in:\n{JsonConvert.SerializeObject(entities)}");
 
-                    return false;
+                    return true;
                 }
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false)
                 {
-                    Debug.LogError("Failed when finding field");
+                    //Debug.LogError($"Failed when finding field name: {fieldName} of entity id: {Eid}");
 
-                    return false;
+                    return true;
                 }
 
                 if (field.TryParseValue<ulong>(out var value) == false)
@@ -425,7 +422,7 @@ namespace Boom
 
             public override bool Check(Dictionary<string, DataTypes.Entity> entities)
             {
-                if (entities.TryGetValue(Eid, out var entity) == false) return false;
+                if (entities.TryGetValue(GetKey(), out var entity) == false) return false;
 
                 if (entity.fields.TryGetValue(fieldName, out var field) == false) return false;
 

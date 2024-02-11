@@ -6,8 +6,7 @@ using EdjCase.ICP.Candid.Mapping;
 using EdjCase.ICP.Agent.Agents;
 using EdjCase.ICP.Candid.Models;
 using EdjCase.ICP.WebSockets;
-using Candid;
-using EdjCase.ICP.BLS;
+using Boom;
 
 public class WebSocketManager : MonoBehaviour
 {

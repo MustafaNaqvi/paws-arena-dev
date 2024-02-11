@@ -33,7 +33,7 @@ public class RoomsManagementWindow : Window
         roomsPanel.SetActive(false);
         emptyText.SetActive(false);
 
-        UserUtil.AddListenerMainDataChange<MainDataTypes.AllRoomData>(UpdateWindow, true);
+        UserUtil.AddListenerMainDataChange<MainDataTypes.AllRoomData>(UpdateWindow, new() { invokeOnRegistration = true });
 
         createRoom.onClick.AddListener(CreateRoomHandler);
     }

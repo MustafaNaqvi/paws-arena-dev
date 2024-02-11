@@ -34,7 +34,7 @@ public class LoginWindow : Window
     }
     public override void Setup(object data)
     {
-        UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(UpdateWindow, true);
+        UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(UpdateWindow, new() { invokeOnRegistration = true });
         UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(UpdateWindow);
         UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(UpdateWindow);
         UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(UpdateWindow);

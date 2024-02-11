@@ -1,4 +1,4 @@
-namespace Candid
+namespace Boom
 {
     using System;
     using System.Collections.Generic;
@@ -15,9 +15,9 @@ namespace Candid
     using Boom.Values;
     using UnityEngine;
     using Candid.IcrcLedger;
-    using Boom;
     using EdjCase.ICP.BLS;
     using Newtonsoft.Json;
+    using Candid;
 
     public class BoomManager : MonoBehaviour
     {
@@ -70,6 +70,8 @@ namespace Candid
         [SerializeField] bool multPlayerCollectionFetch;
 
         bool configsRequested;
+
+        [SerializeField, ShowOnly] string principalId;
         [SerializeField, ShowOnly] MainDataTypes.LoginData.State loginState;
         [SerializeField, ShowOnly] bool loginCompleted;
 
@@ -112,24 +114,25 @@ namespace Candid
 
             Broadcast.Register<FetchListings>(FetchHandler);
 
-            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler, true);
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler, new() { invokeOnRegistration = true });
 
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.Entity>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.ActionState>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.Token>(FetchHandler);
             UserUtil.AddListenerRequestData<DataTypeRequestArgs.NftCollection>(FetchHandler);
 
-            UserUtil.AddListenerDataChange<DataTypes.Entity>(SelfDataChangeHandler, false, WORLD_CANISTER_ID);
-            UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(SelfDataChangeHandler);
-            UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(SelfDataChangeHandler);
-            UserUtil.AddListenerDataChangeSelf<DataTypes.Token>(SelfDataChangeHandler);
-            UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(SelfDataChangeHandler);
+            UserUtil.AddListenerDataChange<DataTypes.Entity>(SelfDataChangeHandler, new() { invokeOnSet = true }, WORLD_CANISTER_ID);
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(SelfDataChangeHandler, new() { invokeOnSet = true });
+            UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(SelfDataChangeHandler, new() { invokeOnSet = true });
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Token>(SelfDataChangeHandler, new() { invokeOnSet = true });
+            UserUtil.AddListenerDataChangeSelf<DataTypes.NftCollection>(SelfDataChangeHandler, new() { invokeOnSet = true });
 
             InitializeCandidApis(CreateAgentWithRandomIdentity(), true).Forget();
         }
 
         private void LoginDataChangeHandler(MainDataTypes.LoginData data)
         {
+            principalId = data.principal;
             loginState = data.state;
         }
 
@@ -415,8 +418,6 @@ namespace Candid
         }
 
 
-
-
         #region Fetch
 
         private async UniTask FetchConfigs()
@@ -503,6 +504,9 @@ namespace Candid
                 {
                     UserUtil.UpdateData(user.Key, user.Value.ToArray());
                 });
+
+                //NEW
+                if(asOk.ContainsKey(principal)) HandleLoginCompletion();
             }
             else
             {
@@ -525,6 +529,9 @@ namespace Candid
                 {
                     UserUtil.UpdateData(user.Key, user.Value.ToArray());
                 });
+
+                //NEW
+                if (asOk.ContainsKey(principal)) HandleLoginCompletion();
             }
             else
             {
@@ -549,6 +556,9 @@ namespace Candid
                 {
                     UserUtil.UpdateData(user.Key, user.Value.Map(token => new DataTypes.Token(token.Key, token.Value)).ToArray());
                 });
+
+                //NEW
+                if (asOk.ContainsKey(principal)) HandleLoginCompletion();
             }
             else
             {
@@ -573,6 +583,9 @@ namespace Candid
                 {
                     UserUtil.UpdateData(user.Key, user.Value.ToArray());
                 });
+
+                //NEW
+                if (asOk.ContainsKey(principal)) HandleLoginCompletion();
             }
             else
             {

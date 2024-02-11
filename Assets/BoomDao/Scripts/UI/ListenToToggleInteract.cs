@@ -16,7 +16,7 @@ public class ListenToToggleInteract : MonoBehaviour
     {
         btn = GetComponent<Button>();
 
-        BroadcastState.Register<WaitingForResponse>(AllowButtonInteractionHandler, true);
+        BroadcastState.Register<WaitingForResponse>(AllowButtonInteractionHandler, new() { invokeOnRegistration = true });
     }
 
     private void OnDestroy()

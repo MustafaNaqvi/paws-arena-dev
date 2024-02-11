@@ -3,7 +3,6 @@ namespace Boom.Tutorials
     using Boom;
     using Boom.Utility;
     using Boom.Values;
-    using Candid;
     using Cysharp.Threading.Tasks;
     using System.Collections;
     using System.Collections.Generic;
@@ -11,10 +10,12 @@ namespace Boom.Tutorials
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class TutorialActionConstantOutcome : MonoBehaviour
+    public class TutorialPaymentEntity : MonoBehaviour
     {
         #region FIELDS
 
+        //This is the text that display inventory.
+        [SerializeField] TMP_Text inventoryText;
         //This is the text that display the action return value (Outcomes or an error).
         [SerializeField] TMP_Text actionLogText;
         //This is the button that triggers the action "add_gem"
@@ -24,7 +25,11 @@ namespace Boom.Tutorials
         private Coroutine logCoroutine;
 
         //The action ID
-        string actionId = "add_gem";
+        readonly string actionId = "trade_gem_for_gold";
+
+        string[] entitiesToDisplayOnTheInventory = new string[2] { "gem", "gold" };
+
+        string inventoryContent = "";
 
         #endregion
 
@@ -37,11 +42,24 @@ namespace Boom.Tutorials
 
             //Register to action button click
             actionButton.onClick.AddListener(ActionButtonClickHandler);
+
+            //We register LoginDataChangeHandler to MainDataTypes.LoginData change event to initialize userNameInputField with the user's username
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
+
+            //We register EntiyDataChangeHandler to the user's DataTypes.Entity change event to update inventoryContent field with the user's entities
+            UserUtil.AddListenerDataChangeSelf<DataTypes.Entity>(EntiyDataChangeHandler);
         }
+
         private void OnDestroy()
         {
             //Unregister to action button click
             actionButton.onClick.RemoveListener(ActionButtonClickHandler);
+
+            //We unregister from MainDataTypes.LoginData change event
+            UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
+
+            //We unregister from DataTypes.Entity change event
+            UserUtil.RemoveListenerDataChangeSelf<DataTypes.Entity>(EntiyDataChangeHandler);
         }
 
         private void OnEnable()
@@ -66,8 +84,7 @@ namespace Boom.Tutorials
 
             //SECTION A: Action execution
 
-            //Here we execute the action by passing the actionId we want
-            //to execute, in this case it is "add_gem"
+            //Here we execute the action by passing the actionId we wantto execute.
             actionLogText.text = $"Processing Action of id: {actionId}";
             var actionResult = await ActionUtil.ProcessAction(actionId);
 
@@ -97,7 +114,7 @@ namespace Boom.Tutorials
             var callerOutcomes = expectedResult.callerOutcomes;
 
             //This are the entity outcomes of the user who executed the action
-            var entityOutcomes = callerOutcomes.entityOutcomes; 
+            var entityOutcomes = callerOutcomes.entityOutcomes;
 
             string message = "";
             List<KeyValue<string, double>> outcomesToDisplay = new();
@@ -139,7 +156,10 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                outcomesToDisplay.Add(new(entityName, amount.Value));
+                if(amount.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
+                {
+                    outcomesToDisplay.Add(new(entityName, amount.Value));
+                }
             }
 
             if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{outcomesToDisplay.Reduce(e => $"> +{e.value} {e.key}", "\n")}";
@@ -157,6 +177,94 @@ namespace Boom.Tutorials
             yield return new WaitForSeconds(duration);
             actionLogText.text = "...";
         }
+        #endregion
+
+
+        #region USER DATA
+
+        private void LoginDataChangeHandler(MainDataTypes.LoginData data)
+        {
+            //If user is not logged in, return
+            if (data.state != MainDataTypes.LoginData.State.LoggedIn) return;
+
+            //Update Inventory UI
+            var entityDataResult = UserUtil.GetDataSelf<DataTypes.Entity>();
+
+            if (entityDataResult.IsErr)
+            {
+                $"{entityDataResult.AsErr()}".Error(typeof(TutorialPaymentEntity).Name);
+                return;
+            }
+
+            var entityDataAsOk = entityDataResult.AsOk();
+
+            EntiyDataChangeHandler(entityDataAsOk);
+        }
+
+        private void EntiyDataChangeHandler(Data<DataTypes.Entity> data)
+        {
+            //Update action button
+            actionButton.interactable = ActionUtil.ValidateConstraint(actionId);
+
+            string entitiesToDisplay = "";
+            //Get specified entities
+            foreach (var entityId in entitiesToDisplayOnTheInventory)
+            {
+                foreach (var keyValue in data.elements)
+                {
+                    var entity = keyValue.Value;
+
+                    if(entity.eid == entityId)
+                    {
+                        //Try get the entity's config field's value
+                        bool configEntityNameFound = ConfigUtil.GetConfigFieldAs<string>
+                            //World Id
+                            (BoomManager.Instance.WORLD_CANISTER_ID,
+                            //ConfigId. In this case we are looking for the config of an entity, therefore, we use the entityId
+                            entityId,
+                            //Config's field name
+                            "name",
+                            //result
+                            out string entityName,
+                            //default value of the result
+                            "None");
+
+                        //If config doesn't exist for the entity we just skip it
+                        if (configEntityNameFound == false)
+                        {
+                            $"Could not find the config field name of entityId: {entityId}".Warning();
+                            break;
+                        }
+
+
+                        string fieldName = "amount";
+
+                        bool fieldAmountFound = entity.TryGetFieldAsDouble(fieldName, out var amount);
+
+                        //If the amount field is not found on the entity we just display an error
+                        if (fieldAmountFound == false)
+                        {
+                            $"Could not find the entity field's name : {fieldName},  of entityId: {entityId}".Warning();
+                            break;
+                        }
+
+                        entitiesToDisplay += $"> {entityName} x {amount}\n";
+
+                        break;
+                    }
+                }
+            }
+
+            inventoryContent = entitiesToDisplay;
+
+            UpdateInventoryText();
+        }
+
+        private void UpdateInventoryText()
+        {
+            inventoryText.text = $"Inventory\n-------\n{inventoryContent}";
+        }
+
         #endregion
     }
 }

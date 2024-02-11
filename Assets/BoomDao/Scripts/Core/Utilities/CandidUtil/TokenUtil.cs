@@ -3,9 +3,25 @@ namespace Boom
     using Boom.Utility;
     using Boom.Values;
     using System.Linq;
+    using UnityEngine;
 
     public static class TokenUtil
     {
+        public static ulong ConvertToBaseUnit(this double value, byte decimals)//Zero
+        {
+            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
+
+
+            return (ulong)(baseUnitCount * value);
+        }
+        public static double ConvertToDecimal(this ulong value, byte decimals)//Zero
+        {
+            var baseUnitCount = decimals == 0 ? 0 : (ulong)Mathf.Pow(10, decimals);
+
+
+            return value / (double)baseUnitCount;
+        }
+
         public static double GetTokenAmountAsDecimal(string uid, string canisterId)
         {
             var currentBaseUnitAmount = UserUtil.GetPropertyFromType<DataTypes.Token, ulong>(uid, canisterId, e => e.baseUnitAmount, 0);
@@ -17,7 +33,7 @@ namespace Boom
             }
 
             //RETURN IN DECIMAL
-            return CandidUtil.ConvertToDecimal(currentBaseUnitAmount, tokenConfig.decimals);
+            return ConvertToDecimal(currentBaseUnitAmount, tokenConfig.decimals);
         }
         public static double GetTokenAmountAsBaseUnit(string uid, string canisterId)
         {

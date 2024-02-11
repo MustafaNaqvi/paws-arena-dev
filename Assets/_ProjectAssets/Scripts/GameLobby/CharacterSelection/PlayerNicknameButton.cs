@@ -1,98 +1,62 @@
-using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using Photon.Pun;
-using System;
+using BoomDaoWrapper;
 using UnityEngine;
 
 public class PlayerNicknameButton : MonoBehaviour
 {
-    public event Action<string> OnPlayerNameUpdated;
+    private const string NAME_ENTITY_ID = "user_profile";
+    private const string NAME_KEY = "username";
+    private const string SET_NAME_ACTION_ID = "setPlayerName";
+    
+    [SerializeField] private TMPro.TextMeshProUGUI nicknameText;
+    [SerializeField] private InputModal inputModal;
 
-    [SerializeField]
-    private TMPro.TextMeshProUGUI nicknameText;
-    [SerializeField]
-    private InputModal inputModal;
-    [SerializeField]
-    private NFTSelection_LoadingManager screenLoadingManager;
-
-
-    private async void Start()
+    private void Start()
     {
-        //screenLoadingManager.AddLoadingReason("Grabbing account information...");
-        string nickname = await TryGetNickname(() => { });
-
+        string _nickname = BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
+        
         nicknameText.text = "";
-        if (!string.IsNullOrEmpty(nickname.Trim()))
+        if (!string.IsNullOrEmpty(_nickname.Trim()))
         {
-            SetPlayerName(nickname);
+            SetPlayerName(_nickname);
         }
         else
         {
             EnableEdit(false);
         }
-
-        //screenLoadingManager.StopLoadingReason("Grabbing account information...");
-        OnPlayerNameUpdated?.Invoke(nicknameText.text);
     }
 
-    public void EnableEdit(bool isCancelable)
+    private void EnableEdit(bool _isCancelable)
     {
-        inputModal.Show("Nickname", "Nickname", isCancelable, (nickname) =>
-        {
-            SendNewNicknameToServer(nickname);
-        });
+        inputModal.Show("Nickname", "Nickname", _isCancelable, SaveNewName);
     }
-
-    private async UniTask<string> TryGetNickname(Action onError)
+    
+    private void SaveNewName(string _nickname)
     {
-        try
-        {
-            string resp = await NetworkManager.GETRequestCoroutine("/user/nickname",
-            (code, err) =>
+        BoomDaoUtility.Instance.ExecuteActionWithParameter(
+            SET_NAME_ACTION_ID,
+            new List<ActionParameter>(){ new() {Key = NAME_KEY, Value = _nickname}}, _outcomes =>
             {
-                Debug.LogWarning($"Failed getting nickname {err} : {code}");
-                onError?.Invoke();
-            }, true);
+                HandleSetNameFinished(_outcomes, _nickname);
+            });
+    }
 
-            return resp;
-        }
-        catch (UnityWebRequestException ex)
+    private void HandleSetNameFinished(List<ActionOutcome> _outcomes, string _newName)
+    {
+        if (_outcomes.Count>0)
         {
-            Debug.LogWarning($"Failed getting nickname form server {ex.ResponseCode} : {ex.Text}");
-            return "";
+            SetPlayerName(_newName);
+            inputModal.Hide();
+        }
+        else
+        {
+            inputModal.SetError("Failed to save name on chain");
         }
     }
 
-    private async void SendNewNicknameToServer(string nickname)
+    private void SetPlayerName(string _newName)
     {
-        try
-        {
-            await NetworkManager.POSTRequest("/user/nickname", $"\"{nickname}\"", (resp) =>
-            {
-                Debug.Log($"Saved nickname {nickname}");
-                SetPlayerName(nickname);
-                inputModal.Hide();
-            }, (code, err) =>
-            {
-                Debug.LogWarning($"Failed saving nickname {err} : {code}");
-            }, true);
-        }
-        catch (UnityWebRequestException err)
-        {
-            Debug.LogWarning($"Problem setting nickname {err.ResponseCode} : {err.Text}");
-            if (err.ResponseCode == 0)
-            {
-                inputModal.SetError("We cannot reach the server :(");
-            }
-            else
-            {
-                inputModal.SetError(err.Text);
-            }
-        }
-    }
-
-    public void SetPlayerName(string value)
-    {
-        GameState.nickname = PhotonNetwork.NickName = nicknameText.text = value;
-        OnPlayerNameUpdated?.Invoke(value);
+        GameState.nickname = PhotonNetwork.NickName = nicknameText.text = _newName;
     }
 }

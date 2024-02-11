@@ -222,7 +222,7 @@ namespace Boom
             Broadcast.Unregister<FetchDataReq<T>>(action);
         }
 
-        public static void AddListenerDataChange<T>(this System.Action<Data<T>> action, bool invokeOnRegistration = false, params string[] uids) where T : DataTypes.Base
+        public static void AddListenerDataChange<T>(this System.Action<Data<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default, params string[] uids) where T : DataTypes.Base
         {
             if (IsUserLoggedIn(out var loginData))
             {
@@ -230,14 +230,14 @@ namespace Boom
                 {
                     string _uid = uid == loginData.principal ? "self" : uid;
 
-                    BroadcastState.Register<Data<T>>(action, invokeOnRegistration, _uid);
+                    BroadcastState.Register<Data<T>>(action, broadcastSetting, _uid);
                 }
 
                 return;
             }
 
             foreach (var uid in uids)
-                BroadcastState.Register<Data<T>>(action, invokeOnRegistration, uid);
+                BroadcastState.Register<Data<T>>(action, broadcastSetting, uid);
         }
         public static void RemoveListenerDataChange<T>(this System.Action<Data<T>> action, params string[] uids) where T : DataTypes.Base
         {
@@ -257,13 +257,58 @@ namespace Boom
                 BroadcastState.Unregister<Data<T>>(action, uid);
         }
 
-        public static void AddListenerDataChangeSelf<T>(this System.Action<Data<T>> action, bool invokeOnRegistration = false) where T : DataTypes.Base
+        public static void AddListenerDataChangeSelf<T>(this System.Action<Data<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default) where T : DataTypes.Base
         {
-            AddListenerDataChange<T>(action, invokeOnRegistration, "self");
+            AddListenerDataChange<T>(action, broadcastSetting, "self");
         }
         public static void RemoveListenerDataChangeSelf<T>(this System.Action<Data<T>> action) where T : DataTypes.Base
         {
             RemoveListenerDataChange<T>(action, "self");
+        }
+
+
+        public static void AddListenerDataTypeLoadingStateChange<T>(this System.Action<DataLoadingState<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default, params string[] uids) where T : DataTypes.Base
+        {
+            if (IsUserLoggedIn(out var loginData))
+            {
+                foreach (var uid in uids)
+                {
+                    string _uid = uid == loginData.principal ? "self" : uid;
+
+                    BroadcastState.Register<DataLoadingState<T>>(action, broadcastSetting, _uid);
+                }
+
+                return;
+            }
+
+            foreach (var uid in uids)
+                BroadcastState.Register<DataLoadingState<T>>(action, broadcastSetting, uid);
+        }
+        public static void RemoveListenerDataTypeLoadingStateChange<T>(this System.Action<DataLoadingState<T>> action, params string[] uids) where T : DataTypes.Base
+        {
+            if (IsUserLoggedIn(out var loginData))
+            {
+                foreach (var uid in uids)
+                {
+                    string _uid = uid == loginData.principal ? "self" : uid;
+
+                    BroadcastState.Unregister<DataLoadingState<T>>(action, _uid);
+                }
+
+                return;
+            }
+
+            foreach (var uid in uids)
+                BroadcastState.Unregister<DataLoadingState<T>>(action, uid);
+        }
+
+        public static void AddListenerDataTypeLoadingStateChangeSelf<T>(this System.Action<DataLoadingState<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default) where T : DataTypes.Base
+        {
+            AddListenerDataTypeLoadingStateChange<T>(action, broadcastSetting, "self");
+        }
+        public static void RemoveListenerDataTypeLoadingStateChangeSelf<T>(this System.Action<DataLoadingState<T>> action) where T : DataTypes.Base
+        {
+            RemoveListenerDataTypeLoadingStateChange<T>(action, "self");
         }
 
         //CLEAR
@@ -338,7 +383,6 @@ namespace Boom
                 return;
             }
 
-            var loadingDataType = "";
             if (arg.uids.Length == 0)
             {
                 arg.uids = new string[1] { loginData.principal };
@@ -348,56 +392,47 @@ namespace Boom
             {
                 case DataTypeRequestArgs.Entity e:
 
-                    loadingDataType = nameof(DataTypes.Entity);
-
-                    QueueLoadingType(loginData.principal, loadingDataType, arg.uids);
-
                     Broadcast.Invoke<FetchDataReq<DataTypeRequestArgs.Entity>>(new FetchDataReq<DataTypeRequestArgs.Entity>(e));
+
+                    foreach (var uid in arg.uids)
+                    {
+                        string _uid = uid != loginData.principal ? uid : "self";
+                        BroadcastState.Invoke(new DataLoadingState<DataTypes.Entity>(true), false, $"{_uid}");
+                    }
                     break;
 
                 case DataTypeRequestArgs.ActionState e:
 
-                    loadingDataType = nameof(DataTypes.ActionState);
-
-                    QueueLoadingType(loginData.principal, loadingDataType, arg.uids);
-
                     Broadcast.Invoke<FetchDataReq<DataTypeRequestArgs.ActionState>>(new FetchDataReq<DataTypeRequestArgs.ActionState>(e));
+
+                    foreach (var uid in arg.uids)
+                    {
+                        string _uid = uid != loginData.principal ? uid : "self";
+                        BroadcastState.Invoke(new DataLoadingState<DataTypes.ActionState>(true), false, $"{_uid}");
+                    }
                     break;
 
                 case DataTypeRequestArgs.Token e:
 
-                    loadingDataType = nameof(DataTypes.Token);
-
-                    QueueLoadingType(loginData.principal, loadingDataType, arg.uids);
-
                     Broadcast.Invoke<FetchDataReq<DataTypeRequestArgs.Token>>(new FetchDataReq<DataTypeRequestArgs.Token>(e));
+
+                    foreach (var uid in arg.uids)
+                    {
+                        string _uid = uid != loginData.principal ? uid : "self";
+                        BroadcastState.Invoke(new DataLoadingState<DataTypes.Token>(true), false, $"{_uid}");
+                    }
                     break;
 
                 case DataTypeRequestArgs.NftCollection e:
 
-                    loadingDataType = nameof(DataTypes.NftCollection);
-
-                    QueueLoadingType(loginData.principal, loadingDataType, arg.uids);
-
                     Broadcast.Invoke<FetchDataReq<DataTypeRequestArgs.NftCollection>>(new FetchDataReq<DataTypeRequestArgs.NftCollection>(e));
-                    break;
-            }
 
-            static void QueueLoadingType(string selfPrincipal, string loadingDataType, string[] uids)
-            {
-                foreach (var uid in uids)
-                {
-                    string _uid = uid != selfPrincipal ? uid : "self";
-                    //Debug.Log($"*** Start Loading   |   uid: {_uid.SimplifyAddress()}   |   type: {loadingDataType}");
-
-                    if (!loadingData.TryGetValue(_uid, out HashSet<string> loadingDataTypes))
+                    foreach (var uid in arg.uids)
                     {
-                        loadingDataTypes = new HashSet<string>();
-                        loadingData.Add(_uid, loadingDataTypes);
+                        string _uid = uid != loginData.principal ? uid : "self";
+                        BroadcastState.Invoke(new DataLoadingState<DataTypes.NftCollection>(true), false, $"{_uid}");
                     }
-
-                    loadingDataTypes.Add(loadingDataType);
-                }
+                    break;
             }
         }
 
@@ -442,6 +477,17 @@ namespace Boom
 
             if (uid == loginData.principal) uid = "self";
 
+            //
+
+            BroadcastState.Invoke(new DataLoadingState<T>(false), false, $"{uid}");
+
+            //
+
+            if (BroadcastState.GetUpdateCount<Data<T>>(uid) == 0)
+            {
+                BroadcastState.Set<Data<T>>(new(uid, new(), e => e.GetKey(), newVals), uid);
+                return;
+            }
 
             BroadcastState.ForceInvoke<Data<T>>(e =>
             {
@@ -449,41 +495,6 @@ namespace Boom
                 //            $"Before Update of: {typeof(T).Name}\nCurrent Keys:\n{e.data.elements.Reduce(k => $"* {k.Key}, value: {JsonConvert.SerializeObject(k.Value)}", ",\n")}".Log(nameof(UserUtil));
                 ////#endif
                 ///
-
-                var loadingDataType = "";
-
-                switch (newVals)
-                {
-
-                    case DataTypes.Entity[]:
-
-                        loadingDataType = nameof(DataTypes.Entity);
-                        break;
-
-                    case DataTypes.ActionState[]:
-
-                        loadingDataType = nameof(DataTypes.ActionState);
-                        break;
-
-                    case DataTypes.Token[]:
-
-                        loadingDataType = nameof(DataTypes.Token);
-                        break;
-
-                    case DataTypes.NftCollection[]:
-
-                        loadingDataType = nameof(DataTypes.NftCollection);
-                        break;
-                }
-
-                //Debug.Log($"*** End Loading   |   uid: {uid.SimplifyAddress()}   |    type: {loadingDataType}");
-
-                if (loadingData.TryGetValue(uid, out var dependencies))
-                {
-                    if (dependencies.Contains(loadingDataType)) dependencies.Remove(loadingDataType);
-                    if (dependencies.Count == 0) loadingData.Remove(uid);
-                }
-
 
                 return new(uid, e, k => k.GetKey(), newVals);
 
@@ -501,14 +512,7 @@ namespace Boom
         {
             if (IsUserDataManipulable(out var loginData) == false)
             {
-                "Issue getting loginData!".Error();
-
-                return false;
-            }
-
-            if ((loginData.state == MainDataTypes.LoginData.State.LoggedIn || loginData.state == MainDataTypes.LoginData.State.FetchingUserData) == false)
-            {
-                "You cannot check shared data as an anon user!".Error();
+                //"Issue getting loginData!".Error();
 
                 return false;
             }
@@ -534,40 +538,16 @@ namespace Boom
 
         public static bool IsDataLoading<T>(params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserDataManipulable(out var loginData) == false)
+            string selfPrincipal = GetPrincipal().AsOkorDefault().Value;
+
+            for (int i = 0; i < uids.Length; i++)
             {
-                Debug.LogError("Issue getting loginData!");
+                var uid = uids[i];
+                if (uid == selfPrincipal) uid = "self";
 
-                return false;
-            }
-
-            //if (loginData.state != MainDataTypes.LoginData.State.LoggedIn)
-            //{
-            //    Debug.LogError("You cannot check shared data as an anon user!");
-
-            //    return false;
-            //}
-
-            var loadingDataType = typeof(T).Name;
-
-            if (uids.Length == 0)
-            {
-                foreach (var loadingTypes in loadingData.Values)
+                if (BroadcastState.TryRead<DataLoadingState<T>>(out var loadingState, $"{uid}"))
                 {
-                    if (loadingTypes.Contains(loadingDataType)) return true;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < uids.Length; i++)
-                {
-                    var uid = uids[i];
-                    if (uids[i] == loginData.principal) uid = "self";
-
-                    if (loadingData.TryGetValue(uid, out var loadingTypes))
-                    {
-                        if (loadingTypes.Contains(loadingDataType)) return true;
-                    }
+                    if (loadingState.isLoading) return true;
                 }
             }
 
@@ -583,29 +563,84 @@ namespace Boom
 
         public static UResult<Data<T>, string> GetData<T>(string uid) where T : DataTypes.Base
         {
-            if (IsUserLoggedIn(out var loginData) == false)
+
+            if (IsUserLoggedIn(out var loginData))
             {
-                return new("Issue getting loginData!");
-            }
+                if (uid == loginData.principal) uid = "self";
 
-            if (loginData.state != MainDataTypes.LoginData.State.LoggedIn)
+                if (BroadcastState.TryRead<Data<T>>(out var val, uid) == false)
+                {
+                    return new($"Data could not be found for DataType: {typeof(T).Name}");
+                }
+
+                return new(val);
+            }
+            else
             {
-                return new("You cannot get shared data as an anon user!");
+                if(loginData.state != MainDataTypes.LoginData.State.FetchingUserData) return new("You cannot get shared data as an anon user!");
+
+                if (loginData.principal == uid) uid = "self";
+                if (string.IsNullOrEmpty(uid)) uid = "self";
+
+
+                if (BroadcastState.TryRead<Data<T>>(out var val, uid) == false)
+                {
+                    uid = "self";
+
+                    if (BroadcastState.TryRead<Data<T>>(out val, uid) == false)
+                    {
+                        return new($"Data could not be found for DataType: {typeof(T).Name}");
+                    }
+                }
+
+                return new(val);
             }
-
-            if (uid == loginData.principal) uid = "self";
-
-            if (BroadcastState.TryRead<Data<T>>(out var val, uid) == false)
-            {
-                return new($"Data could not be found for DataType: {typeof(T).Name}");
-            }
-
-            return new(val);
         }
 
         public static UResult<Data<T>, string> GetDataSelf<T>() where T : DataTypes.Base
         {
             return GetData<T>("self");
+        }
+
+
+        public static UResult<(Data<DataTypes.Entity> entityData, Data<DataTypes.Token> tokenData, Data<DataTypes.NftCollection> nftData, Data<DataTypes.ActionState> actionStateData), string> GetAllData(string uid)
+        {
+            var entityDataResult = GetData<DataTypes.Entity>(uid);
+
+            if (entityDataResult.IsErr) return new($"{entityDataResult.AsErr()}");
+
+            var entityDataAsOk = entityDataResult.AsOk();
+
+            //
+
+            var tokenDataResult = GetData<DataTypes.Token>(uid);
+
+            if (tokenDataResult.IsErr) return new($"{tokenDataResult.AsErr()}");
+
+            var tokenDataAsOk = tokenDataResult.AsOk();
+
+            //
+
+            var nftDataResult = GetData<DataTypes.NftCollection>(uid);
+
+            if (nftDataResult.IsErr) return new($"{nftDataResult.AsErr()}");
+
+            var nftDataAsOk = nftDataResult.AsOk();
+
+            //
+
+            var sctionStateDataResult = GetData<DataTypes.ActionState>(uid);
+
+            if (sctionStateDataResult.IsErr) return new($"{sctionStateDataResult.AsErr()}");
+
+            var actionStateDataAsOk = sctionStateDataResult.AsOk();
+
+            return new((entityDataAsOk, tokenDataAsOk, nftDataAsOk, actionStateDataAsOk));
+        }
+
+        public static UResult<(Data<DataTypes.Entity> entityData, Data<DataTypes.Token> tokenData, Data<DataTypes.NftCollection> nftData, Data<DataTypes.ActionState> actionStateData), string> GetAllDataSelf()
+        {
+            return GetAllData("self");
         }
 
         //
@@ -716,9 +751,9 @@ namespace Boom
 
         #region DataTypes Main
 
-        public static void AddListenerMainDataChange<T>(this System.Action<T> action, bool invokeOnRegistration = false) where T : MainDataTypes.Base, new()
+        public static void AddListenerMainDataChange<T>(this System.Action<T> action, BroadcastState.BroadcastSetting broadcastSetting = default) where T : MainDataTypes.Base, new()
         {
-            BroadcastState.Register<T>(action, invokeOnRegistration);
+            BroadcastState.Register<T>(action, broadcastSetting);
         }
         public static void RemoveListenerMainDataChange<T>(this System.Action<T> action) where T : MainDataTypes.Base, new()
         {

@@ -9,6 +9,13 @@ namespace Boom.Patterns.Broadcasts
 
     public static class BroadcastState
     {
+        public struct BroadcastSetting
+        {
+            //Allows you to call back with the current data the method upon registration.
+            public bool invokeOnRegistration;
+            //Allows you to call the method when setting data
+            public bool invokeOnSet;
+        }
         private delegate void BroadcastDelegate(IBroadcastState broadcast);
         private class BroadcastInfo
         {
@@ -16,11 +23,13 @@ namespace Boom.Patterns.Broadcasts
             {
                 public int hash;
                 public BroadcastDelegate reference;
+                public bool invokeOnSet;
                 //Construct
-                public DelegateInfo(int hash, BroadcastDelegate reference)
+                public DelegateInfo(int hash, BroadcastDelegate reference, bool invokeOnSet)
                 {
                     this.hash = hash;
                     this.reference = reference;
+                    this.invokeOnSet = invokeOnSet;
                 }
             }
 
@@ -36,12 +45,12 @@ namespace Boom.Patterns.Broadcasts
                     this.listeners = new();
                 }
 
-                public void Register<T>(Action<T> listener, bool invokeOnRegistration = false) where T : IBroadcastState, new()
+                public void Register<T>(Action<T> listener, BroadcastSetting broadcastSetting) where T : IBroadcastState, new()
                 {
                     int handlerHashCode = listener.GetHashCode();
-                    listeners.AddFirst(new DelegateInfo(handlerHashCode, CreateBroadcastDelegate(listener)));
+                    listeners.AddFirst(new DelegateInfo(handlerHashCode, CreateBroadcastDelegate(listener), broadcastSetting.invokeOnSet));
 
-                    if (invokeOnRegistration)
+                    if (broadcastSetting.invokeOnRegistration)
                     {
                         if (msg.IsInit)
                         {
@@ -68,6 +77,20 @@ namespace Boom.Patterns.Broadcasts
                     }
                 }
 
+                public void Set(IBroadcastState msg)
+                {
+                    ++updateCount;
+
+                    this.msg.Value = msg;
+
+                    LinkedListNode<DelegateInfo> runner = listeners.First;
+
+                    while (runner != null)
+                    {
+                        if(runner.Value.invokeOnSet) runner.Value.reference.Invoke(this.msg.Value);
+                        runner = runner.Next;
+                    }
+                }
                 public bool Invoke(IBroadcastState msg, bool force)
                 {
                     void _Invoke()
@@ -130,7 +153,7 @@ namespace Boom.Patterns.Broadcasts
                 broadcastGroups = new();
             }
 
-            public void Register<T>(Action<T> listener, bool invokeOnRegistration = false, string tag = "main") where T : IBroadcastState, new()
+            public void Register<T>(Action<T> listener, BroadcastSetting broadcastSetting, string tag = "main") where T : IBroadcastState, new()
             {
                 if(!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
                 {
@@ -138,7 +161,7 @@ namespace Boom.Patterns.Broadcasts
                     broadcastGroups.Add(tag, broadcastGroup);
                 }
 
-                broadcastGroup.Register<T>(listener, invokeOnRegistration);
+                broadcastGroup.Register<T>(listener, broadcastSetting);
             }
             public void Unregister(int handlerHashCode, string tag)
             {
@@ -146,6 +169,16 @@ namespace Boom.Patterns.Broadcasts
                 {
                     broadcastGroup.Unregister(handlerHashCode);
                 }
+            }
+
+            public void Set(IBroadcastState msg, string tag)
+            {
+                if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
+                {
+                    broadcastGroup = new();
+                    broadcastGroups.Add(tag, broadcastGroup);
+                }
+                broadcastGroup.Set(msg);
             }
 
             public bool Invoke(IBroadcastState msg, bool force, string tag)
@@ -265,20 +298,20 @@ namespace Boom.Patterns.Broadcasts
         }
         private static readonly Dictionary<ushort, BroadcastInfo> events = new();
 
-        public static void Register<T>(Action<T> listener, bool invokeOnRegistration = false, string tag = "main") where T : IBroadcastState, new()
+        public static void Register<T>(Action<T> listener, BroadcastSetting broadcastSetting = default, string tag = "main") where T : IBroadcastState, new()
         {
             string typeName = typeof(T).FullName;
             ushort key = HashUtil.ToHash16(typeName);
 
             if (events.TryGetValue(key, out BroadcastInfo broadcast))
             {
-                if (broadcast.TypeName == typeName) broadcast.Register(listener, invokeOnRegistration, tag);
+                if (broadcast.TypeName == typeName) broadcast.Register(listener, broadcastSetting, tag);
                 else $"> Broadcast: There was conflict with two events type {typeName} trying to register on {broadcast.TypeName} because both generate same hash".Warning(nameof(BroadcastState));
             }
             else
             {
                 broadcast = new BroadcastInfo(typeName);
-                broadcast.Register(listener, invokeOnRegistration, tag);
+                broadcast.Register(listener, broadcastSetting, tag);
                 events.Add(key, broadcast);
             }
         }
@@ -326,6 +359,20 @@ namespace Boom.Patterns.Broadcasts
 
             if (events.TryGetValue(key, out BroadcastInfo targets)) return targets.IsInit(tag);
             else return false;
+        }
+
+        public static void Set<T>(T msg, string tag = "main") where T : IBroadcastState, new()
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+            if (events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                targets.Set(msg, tag);
+                return;
+            }
+
+            targets = new BroadcastInfo(typeof(T).FullName);
+            targets.Set(msg, tag);
+            events.Add(key, targets);
         }
 
         public static bool Invoke<T>(T msg, bool force = false, string tag = "main") where T : IBroadcastState, new()
