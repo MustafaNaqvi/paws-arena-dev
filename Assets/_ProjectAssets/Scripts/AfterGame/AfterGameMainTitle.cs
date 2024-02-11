@@ -1,7 +1,6 @@
-using Photon.Pun;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +9,7 @@ namespace com.colorfulcoding.AfterGame
 {
     public class AfterGameMainTitle : MonoBehaviour
     {
+        private const string BATTLE_LOST_ACTION_KEY = "battle_outcome_lost";
         public GameObject winTitle;
         public GameObject loseTitle;
         public GameObject drawTitle;
@@ -25,9 +25,6 @@ namespace com.colorfulcoding.AfterGame
 
         [Header("Cat Stand")]
         public SpriteRenderer standGlow;
-        public Color standWinColor;
-        public Color standLoseColor;
-        public Color standDrawColor;
 
         [SerializeField] private LuckyWheelUI luckyWheelUI;
         [SerializeField] private GameObject leaveButton;
@@ -76,6 +73,11 @@ namespace com.colorfulcoding.AfterGame
             }
             else if (checkIfIWon < 0)
             {
+                List<ActionParameter> _parameters = new()
+                {
+                    new ActionParameter { Key = PlayerData.EARNED_XP_KEY, Value = DamageDealingDisplay.XpEarned.ToString()}
+                };
+                BoomDaoUtility.Instance.ExecuteActionWithParameter(BATTLE_LOST_ACTION_KEY,_parameters,null);
                 EventsManager.OnLostGame?.Invoke();
                 loseTitle.SetActive(true);
                 bg.GetComponent<Image>().color = loseColor;

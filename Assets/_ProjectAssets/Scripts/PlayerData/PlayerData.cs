@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [Serializable]
 public class PlayerData
 {
+    public const string EARNED_XP_KEY = "earnedXp";
     private float snacks;
     private float jugOfMilk;
     private float glassOfMilk;
