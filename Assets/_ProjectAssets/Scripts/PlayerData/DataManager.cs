@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -12,11 +11,6 @@ public class DataManager : MonoBehaviour
     private const string SNACKS = "Snacks";
     private const string JUG_OF_MILK = "JugOfMilk";
     private const string GLASS_OF_MILK = "GlassOfMilk";
-    private const string COMMON_CRISTAL = "Crystals/CommonCrystal";
-    private const string UNCOMMON_CRISTAL = "Crystals/UncommonCrystal";
-    private const string RARE_CRISTAL = "Crystals/RareCrystal";
-    private const string EPIC_CRISTAL = "Crystals/EpicCrystal";
-    private const string LEGENDARY_CRISTAL = "Crystals/LegendaryCrystal";
     private const string CRAFTING_PROCESS = "CraftingProcess";
     private const string EXPERIENCE = "Experience";
     private const string CLAIMED_LEVELS = "ClaimedLevelRewards";
@@ -88,11 +82,6 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedSnacks += SaveSnacks;
         PlayerData.UpdatedJugOfMilk += SaveJugOfMilk;
         PlayerData.UpdatedGlassOfMilk += SaveGlassOfMilk;
-        PlayerData.Crystals.UpdatedCommonCrystal += SaveCommonCristal;
-        PlayerData.Crystals.UpdatedUncommonCrystal += SaveUncommonCristal;
-        PlayerData.Crystals.UpdatedRareCrystal += SaveRareCristal;
-        PlayerData.Crystals.UpdatedEpicCrystal += SaveEpicCristal;
-        PlayerData.Crystals.UpdatedLegendaryCrystal += SaveLegendaryCristal;
         PlayerData.UpdatedCraftingProcess += SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels += SaveClaimedLevels;
         PlayerData.UpdatedHasPass += SaveHasPass;
@@ -115,11 +104,6 @@ public class DataManager : MonoBehaviour
         PlayerData.UpdatedSnacks -= SaveSnacks;
         PlayerData.UpdatedJugOfMilk -= SaveJugOfMilk;
         PlayerData.UpdatedGlassOfMilk -= SaveGlassOfMilk;
-        PlayerData.Crystals.UpdatedCommonCrystal -= SaveCommonCristal;
-        PlayerData.Crystals.UpdatedUncommonCrystal -= SaveUncommonCristal;
-        PlayerData.Crystals.UpdatedRareCrystal -= SaveRareCristal;
-        PlayerData.Crystals.UpdatedEpicCrystal -= SaveEpicCristal;
-        PlayerData.Crystals.UpdatedLegendaryCrystal -= SaveLegendaryCristal;
         PlayerData.UpdatedCraftingProcess -= SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels -= SaveClaimedLevels;
         PlayerData.UpdatedHasPass -= SaveHasPass;
@@ -146,31 +130,6 @@ public class DataManager : MonoBehaviour
     private void SaveGlassOfMilk()
     {
         FirebaseManager.Instance.SaveValue(GLASS_OF_MILK, PlayerData.GlassOfMilk);
-    }
-
-    private void SaveCommonCristal()
-    {
-        FirebaseManager.Instance.SaveValue(COMMON_CRISTAL, PlayerData.Crystals.CommonCrystal);
-    }
-
-    private void SaveUncommonCristal()
-    {
-        FirebaseManager.Instance.SaveValue(UNCOMMON_CRISTAL, PlayerData.Crystals.UncommonCrystal);
-    }
-
-    private void SaveRareCristal()
-    {
-        FirebaseManager.Instance.SaveValue(RARE_CRISTAL, PlayerData.Crystals.RareCrystal);
-    }
-
-    private void SaveEpicCristal()
-    {
-        FirebaseManager.Instance.SaveValue(EPIC_CRISTAL, PlayerData.Crystals.EpicCrystal);
-    }
-
-    private void SaveLegendaryCristal()
-    {
-        FirebaseManager.Instance.SaveValue(LEGENDARY_CRISTAL, PlayerData.Crystals.LegendaryCrystal);
     }
 
     private void SaveCraftingProcess()

@@ -1,3 +1,4 @@
+using System.Globalization;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
@@ -9,36 +10,28 @@ public class CrystalsTotalDisplay : MonoBehaviour, IPointerEnterHandler, IPointe
 
     private void OnEnable()
     {
-        DataManager.Instance.PlayerData.Crystals.UpdatedCommonCrystal += Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedUncommonCrystal += Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedRareCrystal += Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedLegendaryCrystal += Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedEpicCrystal += Show;
+        PlayerData.OnUpdatedShards += Show;
 
         Show();
     }
 
     private void OnDisable()
     {
-        DataManager.Instance.PlayerData.Crystals.UpdatedCommonCrystal -= Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedUncommonCrystal -= Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedRareCrystal -= Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedLegendaryCrystal -= Show;
-        DataManager.Instance.PlayerData.Crystals.UpdatedEpicCrystal -= Show;
+        PlayerData.OnUpdatedShards -= Show;
     }
 
     private void Show()
     {
-        display.text = DataManager.Instance.PlayerData.Crystals.TotalCrystalsAmount.ToString();
-        glowDisplay.text = DataManager.Instance.PlayerData.Crystals.TotalCrystalsAmount.ToString();
+        display.text = DataManager.Instance.PlayerData.TotalCrystals.ToString(CultureInfo.InvariantCulture);
+        glowDisplay.text = DataManager.Instance.PlayerData.TotalCrystals.ToString(CultureInfo.InvariantCulture);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerEnter(PointerEventData _eventData)
     {
         glowDisplay.gameObject.SetActive(true);
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void OnPointerExit(PointerEventData _eventData)
     {
         glowDisplay.gameObject.SetActive(false);
     }

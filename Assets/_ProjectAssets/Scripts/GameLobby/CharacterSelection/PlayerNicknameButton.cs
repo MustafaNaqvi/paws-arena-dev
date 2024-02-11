@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerNicknameButton : MonoBehaviour
 {
-    private const string NAME_ENTITY_ID = "user_profile";
-    private const string NAME_KEY = "username";
     private const string SET_NAME_ACTION_ID = "setPlayerName";
     
     [SerializeField] private TMPro.TextMeshProUGUI nicknameText;
@@ -14,7 +12,7 @@ public class PlayerNicknameButton : MonoBehaviour
 
     private void Start()
     {
-        string _nickname = BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
+        string _nickname = DataManager.Instance.PlayerData.Username;
         
         nicknameText.text = "";
         if (!string.IsNullOrEmpty(_nickname.Trim()))
@@ -36,7 +34,7 @@ public class PlayerNicknameButton : MonoBehaviour
     {
         BoomDaoUtility.Instance.ExecuteActionWithParameter(
             SET_NAME_ACTION_ID,
-            new List<ActionParameter>(){ new() {Key = NAME_KEY, Value = _nickname}}, _outcomes =>
+            new List<ActionParameter>(){ new() {Key = PlayerData.NAME_KEY, Value = _nickname}}, _outcomes =>
             {
                 HandleSetNameFinished(_outcomes, _nickname);
             });

@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public enum ItemType
+public enum LuckyWheelRewardType
 {
     Gift = 0,
     Common = 1,

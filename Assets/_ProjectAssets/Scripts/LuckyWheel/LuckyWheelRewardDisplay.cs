@@ -9,9 +9,9 @@ public class LuckyWheelRewardDisplay : MonoBehaviour
     [SerializeField] private Vector3 shakingScale;
     [SerializeField] private GameObject shadowHolder;
     [SerializeField] private Transform cristalHolder;
-    [SerializeField] private ItemType rewardType;
+    [SerializeField] private LuckyWheelRewardType rewardType;
 
-    public ItemType RewardType => rewardType;
+    public LuckyWheelRewardType RewardType => rewardType;
 
     private IEnumerator shakingRoutine;
 

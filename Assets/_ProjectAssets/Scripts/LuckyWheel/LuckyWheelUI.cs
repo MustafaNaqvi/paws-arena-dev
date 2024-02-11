@@ -42,25 +42,22 @@ public class LuckyWheelUI : MonoBehaviour
         }
         foreach (var _reward in _rewards)
         {
+            
             switch (_reward.Name)
             {
                 case "xp":
                     DataManager.Instance.PlayerData.Experience += _reward.Value;
                     break;
                 case "Common Shard":
-                    DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
                 case "Rare Shard":
-                    DataManager.Instance.PlayerData.Crystals.RareCrystal++;
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
                 case "Epic Shard":
-                    DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
                 case "Legendary Shard":
-                    DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
                 case "Gift":
@@ -124,24 +121,25 @@ public class LuckyWheelUI : MonoBehaviour
 
     private void Claim(LuckyWheelRewardSO _reward)
     {
+        //todo increase amount of crystals
         switch (_reward.Type)
         {
-            case ItemType.Common:
-                DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
+            case LuckyWheelRewardType.Common:
+                // DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
                 break;
-            case ItemType.Uncommon:
-                DataManager.Instance.PlayerData.Crystals.UncommonCrystal++;
+            case LuckyWheelRewardType.Uncommon:
+                // DataManager.Instance.PlayerData.Crystals.UncommonCrystal++;
                 break;
-            case ItemType.Rare:
-                DataManager.Instance.PlayerData.Crystals.RareCrystal++;
+            case LuckyWheelRewardType.Rare:
+                // DataManager.Instance.PlayerData.Crystals.RareCrystal++;
                 break;
-            case ItemType.Epic:
-                DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
+            case LuckyWheelRewardType.Epic:
+                // DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
                 break;
-            case ItemType.Legendary:
-                DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
+            case LuckyWheelRewardType.Legendary:
+                // DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
                 break;
-            case ItemType.Gift:
+            case LuckyWheelRewardType.Gift:
                 EquipmentData = equipments.CraftItem();
                 DataManager.Instance.PlayerData.AddOwnedEquipment(EquipmentData.Id);
                 break;
@@ -162,6 +160,7 @@ public class LuckyWheelUI : MonoBehaviour
 
     private void Respin()
     {
+        //todo remove previous reward
         if (DataManager.Instance.PlayerData.Snacks< currentRespinPrice)
         {
             insuficiantSnacksForRespin.SetActive(true);

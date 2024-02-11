@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using BoomDaoWrapper;
 
 [Serializable]
 public class PlayerData
@@ -9,7 +10,6 @@ public class PlayerData
     private float snacks;
     private float jugOfMilk;
     private float glassOfMilk;
-    private CrystalsData crystals = new ();
     private CraftingProcess craftingProcess;
     private bool hasPass;
     private double experience;
@@ -25,6 +25,7 @@ public class PlayerData
     private string guildId = string.Empty;
     private int points;
 
+    public static Action OnUpdatedShards;
     [JsonIgnore] public Action UpdatedSnacks;
     [JsonIgnore] public Action UpdatedJugOfMilk;
     [JsonIgnore] public Action UpdatedGlassOfMilk;
@@ -74,12 +75,6 @@ public class PlayerData
             UpdatedGlassOfMilk?.Invoke();
         }
 
-    }
-
-    public CrystalsData Crystals
-    {
-        get => crystals;
-        set => crystals = value;
     }
 
     public CraftingProcess CraftingProcess
@@ -341,5 +336,41 @@ public class PlayerData
             points = value;
             UpdatedPoints?.Invoke();
         }
+    }
+    
+    public const string NAME_KEY = "username";
+    private const string COMMON_SHARD = "commonShard";
+    private const string UNCOMMON_SHARD = "uncommonShard";
+    private const string RARE_SHARD = "rareShard";
+    private const string EPIC_SHARD = "epicShard";
+    private const string LEGENDARY_SHARD = "legendaryShard";
+    private const string NAME_ENTITY_ID = "user_profile";
+    private const string VALUABLES_ENTITY_ID = "user_valuables";
+
+    public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
+    public double CommonShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, COMMON_SHARD);
+    public double UncommonShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, UNCOMMON_SHARD);
+    public double RareShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, RARE_SHARD);
+    public double EpicShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, EPIC_SHARD);
+    public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
+    public double TotalCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
+
+    public double GetAmountOfCrystals(LuckyWheelRewardType _type)
+    {
+        switch (_type)
+        {
+            case LuckyWheelRewardType.Common:
+                return CommonShard;
+            case LuckyWheelRewardType.Uncommon:
+                return UncommonShard;
+            case LuckyWheelRewardType.Rare:
+                return RareShard;
+            case LuckyWheelRewardType.Epic:
+                return EpicShard;
+            case LuckyWheelRewardType.Legendary:
+                return LegendaryShard;
+        }
+
+        throw new Exception("Unsupported type of shards: " + _type);
     }
 }

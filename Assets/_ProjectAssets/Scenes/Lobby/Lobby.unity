@@ -11038,7 +11038,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 43
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -52992,6 +52992,7 @@ GameObject:
   - component: {fileID: 776638050285918481}
   - component: {fileID: 776638050285918480}
   - component: {fileID: 776638050285918482}
+  - component: {fileID: 776638050285918483}
   m_Layer: 5
   m_Name: PurpleHolder
   m_TagString: Untagged
@@ -53102,6 +53103,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &776638050285918483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776638050285918478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167ce710beda841901dfaaf066f0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDisplay: {fileID: 776638050329181081}
+  type: 4
 --- !u!1 &776638050329181079
 GameObject:
   m_ObjectHideFlags: 0
@@ -54874,11 +54889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7adfb99eaf90d5418221bff9876303c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limeAmountDisplay: {fileID: 776638049959541727}
-  greenAmountDisplay: {fileID: 776638050454231361}
-  blueAmountDisplay: {fileID: 776638051074063485}
-  purpleAmountDisplay: {fileID: 776638050329181081}
-  orangeAmountDisplay: {fileID: 776638050159517786}
   commonButton: {fileID: 776638051762583601}
   uncommonButton: {fileID: 776638051265083670}
   rareButton: {fileID: 776638051785091487}
@@ -55636,6 +55646,7 @@ GameObject:
   - component: {fileID: 776638051265083669}
   - component: {fileID: 776638051265083668}
   - component: {fileID: 776638051265083670}
+  - component: {fileID: 776638051265083671}
   m_Layer: 5
   m_Name: GreenHolder
   m_TagString: Untagged
@@ -55746,6 +55757,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &776638051265083671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776638051265083666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167ce710beda841901dfaaf066f0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDisplay: {fileID: 776638050454231361}
+  type: 2
 --- !u!1 &776638051363961247
 GameObject:
   m_ObjectHideFlags: 0
@@ -56316,6 +56341,7 @@ GameObject:
   - component: {fileID: 776638051481435315}
   - component: {fileID: 776638051481435314}
   - component: {fileID: 776638051481435316}
+  - component: {fileID: 776638051481435317}
   m_Layer: 5
   m_Name: OrangeHolder
   m_TagString: Untagged
@@ -56426,6 +56452,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &776638051481435317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776638051481435312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167ce710beda841901dfaaf066f0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDisplay: {fileID: 776638050159517786}
+  type: 5
 --- !u!1 &776638051522669779
 GameObject:
   m_ObjectHideFlags: 0
@@ -56825,6 +56865,7 @@ GameObject:
   - component: {fileID: 776638051762583600}
   - component: {fileID: 776638051762583599}
   - component: {fileID: 776638051762583601}
+  - component: {fileID: 776638051762583602}
   m_Layer: 5
   m_Name: LimeHolder
   m_TagString: Untagged
@@ -56935,6 +56976,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &776638051762583602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776638051762583597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167ce710beda841901dfaaf066f0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDisplay: {fileID: 776638049959541727}
+  type: 1
 --- !u!1 &776638051785091483
 GameObject:
   m_ObjectHideFlags: 0
@@ -56947,6 +57002,7 @@ GameObject:
   - component: {fileID: 776638051785091486}
   - component: {fileID: 776638051785091485}
   - component: {fileID: 776638051785091487}
+  - component: {fileID: 776638051785091488}
   m_Layer: 5
   m_Name: RareHolder
   m_TagString: Untagged
@@ -57057,6 +57113,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &776638051785091488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776638051785091483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41167ce710beda841901dfaaf066f0c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amountDisplay: {fileID: 776638051074063485}
+  type: 3
 --- !u!1 &1064260995341367042 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6767056327456873015, guid: 1a105fbcb7fdfea4590c4aab27b4b393, type: 3}

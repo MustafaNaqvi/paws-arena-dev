@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class CraftingProcess
 {
-    public ItemType Ingridiant;
+    public LuckyWheelRewardType Ingridiant;
     public DateTime DateStarted;
 
     [JsonIgnore] public static Action OnFinishedCrafting;
@@ -40,26 +40,7 @@ public class CraftingProcess
     {
         CraftingRecepieSO _recepie = CraftingRecepieSO.Get(Ingridiant);
         DataManager.Instance.PlayerData.CraftingProcess = null;
-        switch (_recepie.EndProduct)
-        {
-            case ItemType.Common:
-                DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
-                break;
-            case ItemType.Uncommon:
-                DataManager.Instance.PlayerData.Crystals.UncommonCrystal++;
-                break;
-            case ItemType.Rare:
-                DataManager.Instance.PlayerData.Crystals.RareCrystal++;
-                break;
-            case ItemType.Epic:
-                DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
-                break;
-            case ItemType.Legendary:
-                DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
-                break;
-            default:
-                throw new Exception("Don't know how to handle end resultat in recepie for :" + _recepie.EndProduct);
-        }
+        //todo increase amount of crystals? 
         OnFinishedCrafting?.Invoke();
     }
 }

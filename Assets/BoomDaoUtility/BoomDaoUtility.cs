@@ -154,6 +154,13 @@ namespace BoomDaoWrapper
             return EntityUtil.TryGetFieldAsText(UserUtil.GetPrincipal(), _entityId, _fieldName, out string _value) 
                 ? _value 
                 : string.Empty;
+        }   
+        
+        public double GetDouble(string _entityId,string _fieldName)
+        {
+            return EntityUtil.TryGetFieldAsDouble(UserUtil.GetPrincipal(), _entityId, _fieldName, out double _value) 
+                ? _value 
+                : 0;
         }
 
         #endregion

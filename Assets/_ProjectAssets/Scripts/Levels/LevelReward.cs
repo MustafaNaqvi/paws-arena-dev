@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 
 [Serializable]
@@ -12,22 +11,23 @@ public class LevelReward
 
     public void Claim()
     {
+        //todo when reward is crystal increase amount Type of crystals
         switch (Type)
         {
             case LevelRewardType.CommonShard:
-                DataManager.Instance.PlayerData.Crystals.CommonCrystal += Parameter1;
+                // DataManager.Instance.PlayerData.Crystals.CommonCrystal += Parameter1;
                 break;
             case LevelRewardType.UncommonShard:
-                DataManager.Instance.PlayerData.Crystals.UncommonCrystal += Parameter1;
+                // DataManager.Instance.PlayerData.Crystals.UncommonCrystal += Parameter1;
                 break;
             case LevelRewardType.RareShard:
-                DataManager.Instance.PlayerData.Crystals.RareCrystal += Parameter1;
+                // DataManager.Instance.PlayerData.Crystals.RareCrystal += Parameter1;
                 break;
             case LevelRewardType.EpicShard:
-                DataManager.Instance.PlayerData.Crystals.EpicCrystal += Parameter1;
+                // DataManager.Instance.PlayerData.Crystals.EpicCrystal += Parameter1;
                 break;
             case LevelRewardType.LegendaryShard:
-                DataManager.Instance.PlayerData.Crystals.LegendaryCrystal += Parameter1;
+                // DataManager.Instance.PlayerData.Crystals.LegendaryCrystal += Parameter1;
                 break;
             case LevelRewardType.Snack:
                 DataManager.Instance.PlayerData.Snacks += Parameter1;
