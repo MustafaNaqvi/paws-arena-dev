@@ -119,28 +119,18 @@ namespace BoomDaoWrapper
 
             foreach (var _keyValue in _entityOutcomes)
             {
-                Debug.Log($"{_keyValue.Key},{_keyValue.Value}");
                 var _entityEdit = _keyValue.Value;
                 string _entityId = _entityEdit.eid;
-                bool _configEntityNameFound =
-                    _entityEdit.GetConfigFieldAs(BoomManager.Instance.WORLD_CANISTER_ID, NAME_KEY, out string _entityName, DEFAULT_KEY);
-
-                if (_configEntityNameFound == false)
-                {
-                     Debug.LogWarning($"Could not find the config field name of entityId: {_entityId}");
-                    continue;
-                }
-
                 bool _fieldAmountFound = _entityEdit.TryGetOutcomeFieldAsDouble(AMOUNT_KEY, out var _amount);
-                Debug.Log(_fieldAmountFound);
                 if (_fieldAmountFound == false)
                 {
                     break;
                 }
 
-                _incrementalOutcomes.Add(new ActionOutcome {Name = _entityName,Value = _amount.Value});
+                _incrementalOutcomes.Add(new ActionOutcome {Name = _entityId,Value = _amount.Value});
             }
 
+            Debug.Log("---- Returned list");
             return _incrementalOutcomes;
         }
 
@@ -170,6 +160,11 @@ namespace BoomDaoWrapper
             return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(),_entityId, out DataTypes.Entity _entityData) 
                 ? _entityData.fields 
                 : default;
+        }
+
+        public void RemoveEntity(string _entityId)
+        {
+            //todo delete entity
         }
         
         private void OnEntityDataChangeHandler(Data<DataTypes.Entity> _changedEntities)

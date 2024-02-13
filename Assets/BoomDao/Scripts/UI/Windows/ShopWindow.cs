@@ -209,7 +209,7 @@ public class ShopWindow : Window
             }
             else if (actionType == "verifyNftBurn")
             {
-                if (!ConfigUtil.TryGetActionPart<ActionResult>(actionId, e => e.callerAction.ActionResult, out var actionResult))
+                if (!ConfigUtil.TryGetActionPart(actionId, e => e.callerAction.Outcomes, out var outcomes))
                 {
                     ("Could not find action result of action of id: " + actionId).Error();
 
@@ -230,7 +230,7 @@ public class ShopWindow : Window
                 }
 
                 var txConstraint = txConstraints[0];
-                var possibleOutcomes = actionResult.Outcomes[0].PossibleOutcomes;
+                var possibleOutcomes = outcomes[0].PossibleOutcomes;
 
                 string possibleOutcoemsContent = possibleOutcomes.Filter(e =>
                 {
@@ -266,7 +266,7 @@ public class ShopWindow : Window
             }
             else if (actionType == "verifyNftHold")
             {
-                if (!ConfigUtil.TryGetActionPart<ActionResult>(actionId, e => e.callerAction.ActionResult, out var actionResult))
+                if (!ConfigUtil.TryGetActionPart(actionId, e => e.callerAction.Outcomes, out var outcomes))
                 {
                     ("Could not find action result of action of id: " + actionId).Error();
 
@@ -287,7 +287,7 @@ public class ShopWindow : Window
                 }
 
                 var txConstraint = txConstraints[0];
-                var possibleOutcomes = actionResult.Outcomes[0].PossibleOutcomes;
+                var possibleOutcomes = outcomes[0].PossibleOutcomes;
 
                 string possibleOutcoemsContent = possibleOutcomes.Filter(e =>
                 {

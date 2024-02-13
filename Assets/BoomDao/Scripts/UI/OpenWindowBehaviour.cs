@@ -5,19 +5,19 @@ public class OpenWindowBehaviour : MonoBehaviour
 {
     [SerializeField] string windowName;
     [SerializeField] int sortingOrder = 0;
-    [SerializeField] bool openOnAwake;
-    private Window window;
+    [SerializeField] bool onpenOnStart;
+    [SerializeField, ShowOnly] Window window;
 
-    private void Awake()
+    private void Start()
     {
-        if (openOnAwake)
+        if (onpenOnStart)
         {
             Open();
         }
     }
     private void OnDestroy()
     {
-        if (openOnAwake)
+        if (onpenOnStart)
         {
             Close();
         }
@@ -26,11 +26,11 @@ public class OpenWindowBehaviour : MonoBehaviour
     public void Open()
     {
         if (window) return;
-        WindowManager.Instance.OpenWindow(windowName, null, sortingOrder);
+        window = WindowManager.Instance.OpenWindow(windowName, null, sortingOrder);
     }
     public void Close()
     {
         if (window == null) return;
-        Destroy(window.gameObject);
+        window.Close();
     }
 }

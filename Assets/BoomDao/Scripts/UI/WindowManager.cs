@@ -21,8 +21,6 @@ namespace Boom.UI
 
         protected override void Awake()
         {
-            var canvas = GetComponent<Canvas>();
-            if (canvas) canvas.sortingOrder = 1000;
             base.Awake();
         }
 
@@ -153,7 +151,7 @@ namespace Boom.UI
 
             var window = baseWindow;
 
-            if(orderLayer != null)
+            if (orderLayer != null)
             {
                 var canvas = window.GetComponent<Canvas>();
                 if (canvas)

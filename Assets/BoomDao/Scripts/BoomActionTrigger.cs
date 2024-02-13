@@ -34,6 +34,8 @@ namespace Boom.Mono
 
         [field: SerializeField] public UnityEvent<ActionErrType.Base> OnActionResponseError = new();
 
+        public string ActionName { get => actionName;}
+
         public void Trigger()
         {
             _Trigger();
@@ -44,7 +46,7 @@ namespace Boom.Mono
             var _args = args.Map(e => new Field(e.FieldName, e.FieldValue)).ToList();
 
             //Process action
-            var result = await ActionUtil.ProcessAction(actionName, _args);
+            var result = await ActionUtil.ProcessAction(ActionName, _args);
 
 
             //Handle events

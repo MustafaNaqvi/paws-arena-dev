@@ -1038,6 +1038,7 @@ GameObject:
   - component: {fileID: 1127214577}
   - component: {fileID: 1127214576}
   - component: {fileID: 1127214579}
+  - component: {fileID: 1127214580}
   m_Layer: 5
   m_Name: Logout [Button]
   m_TagString: Untagged
@@ -1161,6 +1162,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1127214576}
+--- !u!114 &1127214580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127214574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148adc4abf5e3c74d818c7c5b2171bd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionsIds:
+  - buy_gold_icp
+  userIdEntityData: 0
+  userIdTokenData: 0
+  userIdNftData: 0
+  worldIdEntityData: 0
+  worldIdTokenData: 0
+  worldIdNftData: 0
+  onDependenciesValid:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1127214576}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDependenciesInvalid:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1150571151
 GameObject:
   m_ObjectHideFlags: 0

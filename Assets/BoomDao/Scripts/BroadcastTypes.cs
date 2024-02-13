@@ -28,6 +28,11 @@ namespace Boom
         {
             this.isLoading = isLoading;
         }
+
+        public int MaxSavedStatesCount()
+        {
+            return 0;
+        }
     }
     public struct FetchListings : IBroadcast { }
 
@@ -41,6 +46,11 @@ namespace Boom
             this.value = disable;
             this.waitingMessage = waitingMessage;
         }
+
+        public int MaxSavedStatesCount()
+        {
+            return 0;
+        }
     }
 
     #region MarketPlace
@@ -52,6 +62,11 @@ namespace Boom
         {
             this.isListing = isListing;
         }
+
+        public int MaxSavedStatesCount()
+        {
+            return 0;
+        }
     }
     public struct PurchasingNftState : IBroadcastState
     {
@@ -60,6 +75,11 @@ namespace Boom
         public PurchasingNftState(bool isPurchasing)
         {
             this.isPurchasing = isPurchasing;
+        }
+
+        public int MaxSavedStatesCount()
+        {
+            return 0;
         }
     }
     #endregion
@@ -74,6 +94,11 @@ namespace Boom
         {
             this.actionId = actionId;
             this.inProcess = inProcess;
+        }
+
+        public int MaxSavedStatesCount()
+        {
+            return 0;
         }
     }
 
@@ -126,6 +151,11 @@ namespace Boom
         public void Clear()
         {
             elements = new();
+        }
+
+        public int MaxSavedStatesCount()
+        {
+            return 1;
         }
     }
 }

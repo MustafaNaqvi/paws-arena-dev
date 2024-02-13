@@ -3,16 +3,12 @@ namespace Boom
 {
     using Boom.Patterns.Broadcasts;
     using Boom.Utility;
-    using Candid;
     using Candid.World.Models;
     using EdjCase.ICP.Agent.Agents;
-    using EdjCase.ICP.Candid.Mapping;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.Scripting;
-    using static Boom.EntityFieldEdit.Numeric;
 
     public class NftCollectionToFetch
     {
@@ -493,20 +489,20 @@ namespace Boom
     }
     public class SubAction
     {
-        public List<ActionOutcome> Outcomes { get; set; }
-
+ 
         public bool HasConstraint { get; set; }
 
         public TimeConstraint TimeConstraint { get; set; }
         public List<EntityConstrainTypes.Base> EntityConstraints { get; set; }
         public List<IcrcTx> IcrcConstraint { get; set; }
         public List<NftTx> NftConstraint { get; set; }
-        public ActionResult ActionResult { get; set; }
+
+        public List<ActionOutcome> Outcomes { get; set; }
 
         public SubAction(Candid.World.Models.SubAction subAction)
         {
             HasConstraint = subAction.ActionConstraint.HasValue;
-            Outcomes = subAction.ActionResult.Outcomes;
+            Outcomes = subAction.ActionResult == null? new() : subAction.ActionResult.Outcomes;
 
             if (HasConstraint)
             {
@@ -590,8 +586,12 @@ namespace Boom
                     }
                 });
             }
-
-            ActionResult = subAction.ActionResult;
+            else
+            {
+                EntityConstraints = new();
+                IcrcConstraint = new();
+                NftConstraint = new();
+            }
         }
     }
 
@@ -930,6 +930,11 @@ namespace Boom
             protected Base()
             {
             }
+
+            public int MaxSavedStatesCount()
+            {
+                return 0;
+            }
         }
 
 
@@ -1087,11 +1092,11 @@ namespace Boom
         {
             public enum State
             {
-                Logedout,
+                None,
                 LoginRequested,
                 FetchingUserData,
                 LoggedIn,
-                LoggedInAsAnon,
+                Logedout,
             }
             public IAgent agent;
             public string principal;
@@ -1100,7 +1105,7 @@ namespace Boom
             public long updateTs;
             public LoginData()
             {
-                this.state = State.Logedout;
+                this.state = State.None;
             }
             public LoginData(LoginData loginData, State state)
             {
@@ -1149,7 +1154,7 @@ namespace Boom
                 updateTs = MainUtil.Now();
 
                 //
-                if (UserUtil.IsUserLoggedIn(out var loginData) == false)
+                if (UserUtil.IsLoggedIn(out var loginData) == false)
                 {
                     return;
                 }

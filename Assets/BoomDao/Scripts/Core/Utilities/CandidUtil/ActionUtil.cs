@@ -1,6 +1,5 @@
 namespace Boom
 {
-    using Candid;
     using Cysharp.Threading.Tasks;
     using Boom.Values;
     using System.Collections.Generic;
@@ -11,9 +10,7 @@ namespace Boom
     using Candid.IcrcLedger;
     using Newtonsoft.Json;
     using Boom.Patterns.Broadcasts;
-    using Boom;
     using Candid.Extv2Boom;
-    using Boom.Tutorials;
 
 
     //TRANSFER ERROR TYPES
@@ -583,9 +580,24 @@ namespace Boom
 
     public static class ActionUtil
     {
+        public static bool ActionsInProcess(params string[] actionIds)
+        {
+            foreach (var actionDependency in actionIds)
+            {
+                if (BroadcastState.TryRead(out ActionExecutionState state, actionDependency))
+                {
+                    if (state.inProcess)
+                    {
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         //Validate Entity Constraint
-
         public static bool TryGetTriesDetails(string actionId, out (ulong maxTries, ulong triesLeft) details)
         {
             details = (0, 0);
@@ -630,12 +642,21 @@ namespace Boom
                 return true;
             }
 
-
-
-            var intervalStartTs = UserUtil.GetPropertyFromTypeSelf<DataTypes.ActionState, ulong>(actionId, e => e.intervalStartTs, 0);
-            var actionCount = UserUtil.GetPropertyFromTypeSelf<DataTypes.ActionState, ulong>(actionId, e => e.actionCount, 0);
-
             var actionsPerInterval = subAction.TimeConstraint.actionTimeInterval.ActionsPerInterval;
+
+            var actionStateResult = UserUtil.GetElementOfTypeSelf<DataTypes.ActionState>(actionId);
+
+            if (actionStateResult.IsErr)
+            {
+                details = (actionsPerInterval, actionsPerInterval);
+
+                return true;
+            }
+
+            var actionStateAsOk = actionStateResult.AsOk();
+
+            var intervalStartTs = actionStateAsOk.intervalStartTs;
+            var actionCount = actionStateAsOk.actionCount;
 
             if (actionsPerInterval == 0)
             {
@@ -664,171 +685,183 @@ namespace Boom
             }
         }
 
-        public static bool ValidateConstraint(string actionId, string sourcePrincipalId = "")
+        private static UResult<Null, string> ValidateConstraint(string actionId, bool tryIncrementActionExecutionCount, string optionalTargetPrincipalId = "")
         {
 
-            if(UserUtil.IsUserLoggedIn(out var loginData) == false)
+            if(UserUtil.IsLoggedIn(out var loginData) == false)
             {
-                $"User is not yet logged in".Warning(typeof(ActionUtil).Name);
+                $"User is not yet logged in!".Warning(typeof(ActionUtil).Name);
 
-                return false;
+                return new("User is not yet logged in!");
             }
 
             var userPrincipaId = loginData.principal;
 
-            if (string.IsNullOrEmpty(sourcePrincipalId)) sourcePrincipalId = userPrincipaId;
 
-            SubAction subAction = null;
+            LinkedList<KeyValue<string, SubAction>> subActions = new();
 
-            if(sourcePrincipalId == userPrincipaId)
+
+            if (!ConfigUtil.TryGetAction(BoomManager.Instance.WORLD_CANISTER_ID, actionId, out var action))
             {
-                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.callerAction, out subAction))
-                {
-                    ("Could not find caller subaction of action of id: " + actionId).Error();
+                $"Could not find action of id: {actionId}".Error();
 
-                    return false;
-                }
-            }
-            else if (sourcePrincipalId == BoomManager.Instance.WORLD_CANISTER_ID)
-            {
-                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.worldAction, out subAction))
-                {
-                    ("Could not find world subaction of action of id: " + actionId).Error();
-
-                    return false;
-                }
-            }
-            else
-            {
-                if (!ConfigUtil.TryGetActionPart<SubAction>(actionId, e => e.targetAction, out subAction))
-                {
-                    ("Could not find target subaction of action of id: " + actionId).Error();
-
-                    return false;
-                }
+                return new($"Could not find action of id: {actionId}");
             }
 
-            var entityConstraints = subAction.EntityConstraints;
-            var icrcConstraint = subAction.IcrcConstraint;
-            var nftConstraint = subAction.NftConstraint;
+            if (action.callerAction != null) subActions.AddLast(new KeyValue<string, SubAction>(userPrincipaId, action.callerAction));
 
+            if (action.worldAction != null) subActions.AddLast(new KeyValue<string, SubAction>(BoomManager.Instance.WORLD_CANISTER_ID, action.worldAction));
 
-            if(entityConstraints.Count > 0)
+            if (action.targetAction != null)
             {
-                var dataResult = UserUtil.GetData<DataTypes.Entity>(sourcePrincipalId);
-
-                if (dataResult.IsErr)
+                if (string.IsNullOrEmpty(optionalTargetPrincipalId))
                 {
-                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
-                    return false;
+                    $"Action of ID: {actionId}, has target subaction, you are not specifying the optionalTargetPrincipalId".Error(typeof(ActionUtil).Name);
+                    return new("Action of ID: {actionId}, has target subaction, you are not specifying the optionalTargetPrincipalId");
                 }
 
-                var data = dataResult.AsOk();
-
-                foreach (var constraint in entityConstraints)
-                {
-                    if (constraint.Check(data.elements) == false) return false;
-
-                    //switch (constraint)
-                    //{
-                    //    case EntityConstrainTypes.EqualToText info:
-                    //        if (info.Check(entityDataAsOk.elements) == false) return false;
-                    //        break;
-                    //    case EntityConstrainTypes.ContainsText info:
-                    //        break;
-                    //    case EntityConstrainTypes.EqualToNumber info:
-                    //        break;
-
-                    //    case EntityConstrainTypes.GreaterThanNumber info:
-                    //        break;
-                    //    case EntityConstrainTypes.LessThanNumber info:
-                    //        break;
-
-                    //    case EntityConstrainTypes.GreaterThanEqualToNumber info:
-                    //        break;
-                    //    case EntityConstrainTypes.LessThanEqualToNumber info:
-                    //        break;
-
-                    //    case EntityConstrainTypes.GreaterThanNowTimestamp info:
-                    //        break;
-                    //    case EntityConstrainTypes.LesserThanNowTimestamp info:
-                    //        break;
-
-                    //    case EntityConstrainTypes.ExistField info:
-                    //        break;
-                    //    case EntityConstrainTypes.Exist info:
-                    //        break;
-                    //    default:
-                    //        break;
-                    //}
-                }
+                subActions.AddLast(new KeyValue<string, SubAction>(optionalTargetPrincipalId, action.targetAction));
             }
 
-            if(icrcConstraint.Count > 0)
+            var runner = subActions.First;
+
+            while(runner != null)
             {
-                var dataResult = UserUtil.GetData<DataTypes.Token>(sourcePrincipalId);
+                var principalId = runner.Value.key;
+                var subAction = runner.Value.value;
+                //
+                var actionExpirationTimestampConstraint = subAction.TimeConstraint == null? null : subAction.TimeConstraint.actionExpirationTimestamp;
+                var actionTimeIntervalConstraint = subAction.TimeConstraint == null ? null : subAction.TimeConstraint.actionTimeInterval;
+                var entityConstraints = subAction.EntityConstraints;
+                var icrcConstraint = subAction.IcrcConstraint;
+                var nftConstraint = subAction.NftConstraint;
 
-                if (dataResult.IsErr)
+                //ACION EXPIRATION CONSTRAINT
+                if(actionExpirationTimestampConstraint != null)
                 {
-                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
-                    return false;
-                }
-
-                var data = dataResult.AsOk();
-
-                foreach (var constraint in icrcConstraint)
-                {
-                    var tokenDetailsResult = TokenUtil.GetTokenDetails(sourcePrincipalId, constraint.Canister);
-
-                    if (tokenDetailsResult.IsErr)
+                    if (actionExpirationTimestampConstraint.HasValue)
                     {
-                        $"{tokenDetailsResult.AsErr()}".Error(typeof(ActionUtil).Name);
-                        return false;
+                        if (actionExpirationTimestampConstraint.GetValueOrDefault() <= (ulong)MainUtil.Now()) return new("Action is expired");
+                    }
+                }
+
+                //ACTION TIME INTERVAL COSNTRAINT
+                if (actionTimeIntervalConstraint != null)
+                {
+                    var actionStateResult = UserUtil.GetElementOfType<DataTypes.ActionState>(principalId, actionId);
+
+                    if (actionStateResult.IsOk)
+                    {
+                        var actionStateAsOk = actionStateResult.AsOk();
+
+                        var intervalStartTs = actionStateAsOk.intervalStartTs;
+                        var actionCount = actionStateAsOk.actionCount;
+
+
+                        var actionsPerInterval = subAction.TimeConstraint.actionTimeInterval.ActionsPerInterval;
+
+                        if (actionsPerInterval == 0)
+                        {
+                            return new("Action per interval is equal to 0");
+                        }
+
+                        var intervalDuration = subAction.TimeConstraint.actionTimeInterval.IntervalDuration;
+
+                        var timeConstrainToCompareWith = intervalStartTs.NanoToMilliseconds() + intervalDuration.NanoToMilliseconds();
+
+                        if (((timeConstrainToCompareWith < MainUtil.Now()) || (actionCount < actionsPerInterval)) == false)
+                        {
+                            return new("You dont have tries left");
+                        }
+                        else
+                        {
+                            if (tryIncrementActionExecutionCount)
+                            {
+                                if (timeConstrainToCompareWith < MainUtil.Now())
+                                {
+                                    actionStateAsOk.intervalStartTs = MainUtil.Now().MilliToNano();
+                                    actionStateAsOk.actionCount = 1;
+
+                                    BroadcastState.ForceInvoke<Data<DataTypes.ActionState>>(e=>e,principalId == userPrincipaId ? "self" : principalId);
+                                }
+                                else if (actionCount < actionsPerInterval)
+                                {
+                                    ++actionStateAsOk.actionCount;
+
+                                    BroadcastState.ForceInvoke<Data<DataTypes.ActionState>>(e => e, principalId == userPrincipaId ? "self" : principalId);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                //ENTITY CONSTRAINTS
+                if (entityConstraints.Count > 0)
+                {
+                    var dataResult = UserUtil.GetData<DataTypes.Entity>(principalId);
+
+                    if (dataResult.IsErr)
+                    {
+                        $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                        return new(dataResult.AsErr());
                     }
 
-                    var tokenDetails = tokenDetailsResult.AsOk();
+                    var data = dataResult.AsOk();
 
-                    if (constraint.Amount > tokenDetails.token.baseUnitAmount.ConvertToDecimal(tokenDetails.configs.decimals)) return false;
+                    foreach (var constraint in entityConstraints)
+                    {
+                        if (constraint.Check(data.elements) == false) return new("Failure to validate entity constraint");
+                    }
                 }
+
+                //TOKEN CONSTRAINTS
+                if (icrcConstraint.Count > 0)
+                {
+                    foreach (var constraint in icrcConstraint)
+                    {
+                        var tokenDetailsResult = TokenUtil.GetTokenDetails(principalId, constraint.Canister);
+
+                        if (tokenDetailsResult.IsErr)
+                        {
+                            $"{tokenDetailsResult.AsErr()}".Error(typeof(ActionUtil).Name);
+                            return new($"{tokenDetailsResult.AsErr()}");
+                        }
+
+                        var tokenDetails = tokenDetailsResult.AsOk();
+
+                        if (constraint.Amount > tokenDetails.token.baseUnitAmount.ConvertToDecimal(tokenDetails.configs.decimals)) return new("Insuficient funds");
+                    }
+                }
+
+                //NFT CONSTRAINTS
+                //TODO: NFT CONSTRAINT MUST ALSO CHECK FOR NFT METADATA
+                if (nftConstraint.Count > 0)
+                {
+                    foreach (var constraint in nftConstraint)
+                    {
+                        if (NftUtil.HasAnyNft(principalId, constraint.Canister) == false) return new($"You don't have nft from collection of id: {constraint.Canister}");
+                    }
+                }
+
+                //
+                runner = runner.Next;
             }
 
-            //TODO: NFT CONSTRAINT MUST ALSO CHECK FOR NFT METADATA
-            if (nftConstraint.Count > 0)
-            {
-                var dataResult = UserUtil.GetData<DataTypes.NftCollection>(sourcePrincipalId);
-
-                if (dataResult.IsErr)
-                {
-                    $"{dataResult.AsErr()}".Error(typeof(ActionUtil).Name);
-                    return false;
-                }
-
-                var data = dataResult.AsOk();
-
-                foreach (var constraint in nftConstraint)
-                {
-                    if (NftUtil.HasAnyNft(sourcePrincipalId, constraint.Canister) == false) return false;
-                }
-            }
-
-            return true;
+            return new(new Null());
         }
 
-        //GENERIC CHECK BEFORE PROCESSING AN ACTION
-
-        private static void UpdateActionData(string actionId, ulong intervalStartTs, ulong actionCount)
+        public static bool ValidateConstraint(string actionId, string optionalTargetPrincipalId = "")
         {
-            UserUtil.UpdateDataSelf(new DataTypes.ActionState(
-                actionId,
-                actionCount,
-                intervalStartTs
-            ));
+            return ValidateConstraint(actionId, false, optionalTargetPrincipalId).IsOk;
         }
 
-        public async static UniTask<UResult<Null, ActionErrType.Base>> HandlePosibleActionTransfers(string actionId)
+        private async static UniTask<UResult<bool, ActionErrType.Base>> HandlePosibleActionTransfers(string actionId)
         {
+            bool hasTxConstraints = false;
             if (ConfigUtil.TryGetActionPart(actionId, e => e.callerAction.IcrcConstraint, out var txConstraints))
             {
+                hasTxConstraints = txConstraints.Count > 0;
                 //We loop through all the icrc constraint and make all the required icrc transfers.
                 foreach (var txConstraint in txConstraints)
                 {
@@ -860,7 +893,7 @@ namespace Boom
             }
 
             //SUCCESS
-            return new(new Null());
+            return new(hasTxConstraints);
         }
 
 
@@ -872,15 +905,24 @@ namespace Boom
 
             args ??= new();
 
+            if (ActionsInProcess(actionId)) return new(new ActionErrType.Other("Action in progress"));
+
+            //TODO: try pass target principal ID
+            var validateActionResult = ValidateConstraint(actionId, true, "");
+
+            if (validateActionResult.IsErr) return new(new ActionErrType.Other(validateActionResult.AsErr()));
+
             BroadcastState.Invoke(new ActionExecutionState(actionId, true), false, actionId);
 
             //If the action has ICRC constraints, we do the required transfers
-            var possibleTransfersResult = await HandlePosibleActionTransfers(actionId);
+            var hasTxConstraintsResult = await HandlePosibleActionTransfers(actionId);
 
-            if (possibleTransfersResult.IsErr)
+            if (hasTxConstraintsResult.IsErr)
             {
-                return new(possibleTransfersResult.AsErr());
+                return new(hasTxConstraintsResult.AsErr());
             }
+
+            var hasTxConstraints = hasTxConstraintsResult.AsOk();
 
             //
             var actionConfigResult = UserUtil.GetMainData<MainDataTypes.AllAction>();
@@ -902,76 +944,34 @@ namespace Boom
                 return new(new ActionErrType.Other($"Failure to find action config of actionId: {actionId}"));
             }
 
-            DataTypes.ActionState actionState = null;
-            if(actionConfig.callerAction != null)
-            {
-                if (actionConfig.callerAction.TimeConstraint != null)
-                {
-                    if (actionConfig.callerAction.TimeConstraint.actionTimeInterval != null)
-                    {
-                        var _intervalDuration = actionConfig.callerAction.TimeConstraint.actionTimeInterval.IntervalDuration;
-                        var _actionsPerInterval = actionConfig.callerAction.TimeConstraint.actionTimeInterval.ActionsPerInterval;
-
-                        var actionStateResult = UserUtil.GetDataSelf<DataTypes.ActionState>();
-
-                        var actionStateAsOk = actionStateResult.AsOk();
-
-                        if (actionStateResult.IsErr)
-                        {
-                            return new(new ActionErrType.Other(actionStateResult.AsErr()));
-                        }
-                        if (actionStateAsOk.elements.TryGetValue(actionId, out actionState))
-                        {
-                            if (_actionsPerInterval == 0)
-                            {
-                                return new(new ActionErrType.Other("actionsPerInterval limit is set to 0 so the action cannot be done"));
-                            }
-
-                            if (actionState.intervalStartTs + _intervalDuration < MainUtil.Now().MilliToNano())
-                            {
-                                actionState.intervalStartTs = MainUtil.Now().MilliToNano();
-                                actionState.actionCount = 1;
-                            }
-                            else if (actionState.actionCount < _actionsPerInterval)
-                            {
-                                ++actionState.actionCount;
-                            }
-                            else
-                            {
-                                return new(new ActionErrType.Other("actionCount has already reached actionsPerInterval limit for this time interval"));
-                            }
-
-
-                            UserUtil.UpdateDataSelf(actionState);
-                        }
-                    }
-                }
-
-            }
-
-            //
-
 
             //Execute Action
             Result3 actionResponse = await BoomManager.Instance.WorldApiClient.ProcessAction(new ActionArg(actionId, args));
 
+
             if (actionResponse.Tag == Result3Tag.Err)
             {
-                BroadcastState.Invoke(new ActionExecutionState(actionId, false), false, actionId);
+                //Reset action state to prev state
+                //TODO: MUST HANDLE REDO FOR WORLD AND TARGET AS WELL
+                UserUtil.RequestDataSelf<DataTypeRequestArgs.ActionState>();
 
-                if (actionState != default)
+                CoroutineManagerUtil.DelayAction(() =>
                 {
-                    --actionState.actionCount;
-                }
+                    BroadcastState.Invoke(new ActionExecutionState(actionId, false), false, actionId);
+
+                }, 5, BoomManager.Instance.transform);
 
                 return new(new ActionErrType.Other(actionResponse.AsErr()));
             }
 
-            var okVal = actionResponse.AsOk();
+            var actionResponseAsOk = actionResponse.AsOk();
 
-            var formulaDep = EntityUtil.GetFormulaDependencies(okVal);
+            if (hasTxConstraints) await UniTask.Delay(10 * 1000);
 
-            ProcessedActionResponse processedActionResponse = new(okVal, formulaDep.worldEntities, formulaDep.callerEntities, formulaDep.targetEntities, formulaDep.configs, args);
+
+            var formulaDep = EntityUtil.GetFormulaDependencies(actionResponseAsOk);
+
+            ProcessedActionResponse processedActionResponse = new(actionResponseAsOk, formulaDep.worldEntities, formulaDep.callerEntities, formulaDep.targetEntities, formulaDep.configs, args);
 
             if (BoomManager.Instance.BoomDaoGameType == BoomManager.GameType.SinglePlayer)
             {
@@ -1056,77 +1056,14 @@ namespace Boom
                     }
                 }
 
-                if (outcomeUids.Count > 0)
-                {
-                    CoroutineManagerUtil.DelayAction(() =>
-                    {
-                        UserUtil.RequestData(new DataTypeRequestArgs.Entity(outcomeUids.ToArray()));
-                    }, 20f, BoomManager.Instance.transform);
-                }
+                //if (outcomeUids.Count > 0)
+                //{
+                //    CoroutineManagerUtil.DelayAction(() =>
+                //    {
+                //        UserUtil.RequestData(new DataTypeRequestArgs.Entity(outcomeUids.ToArray()));
+                //    }, 20f, BoomManager.Instance.transform);
+                //}
             }
-            //else
-            //{
-            //    //CALLER OUTCOMES
-            //    if (processedActionResponse.callerOutcomes != null)
-            //    {
-            //        if (processedActionResponse.callerOutcomes.entityOutcomes.Count > 0)
-            //        {
-            //            EntityUtil.ApplyEntityEdits(processedActionResponse.callerOutcomes);
-            //        }
-
-            //        //NFTS
-            //        if (processedActionResponse.callerOutcomes.nfts.Count > 0)
-            //        {
-            //            NftUtil.TryAddMintedNft(processedActionResponse.callerOutcomes.uid, processedActionResponse.callerOutcomes.nfts.ToArray());
-            //        }
-
-            //        //TOKENS
-            //        if (processedActionResponse.callerOutcomes.tokens.Count > 0)
-            //        {
-            //            TokenUtil.IncrementTokenByDecimal(processedActionResponse.callerOutcomes.uid, processedActionResponse.callerOutcomes.tokens.Map<TransferIcrc, (string canister, double decimalAmount)>(e => (e.Canister, e.Quantity)).ToArray());
-            //        }
-            //    }
-            //    //TARGET OUTCOMES
-            //    if (processedActionResponse.targetOutcomes != null)
-            //    {
-            //        if (processedActionResponse.targetOutcomes.entityOutcomes.Count > 0)
-            //        {
-            //            EntityUtil.ApplyEntityEdits(processedActionResponse.targetOutcomes);
-            //        }
-
-            //        //NFTS
-            //        if (processedActionResponse.targetOutcomes.nfts.Count > 0)
-            //        {
-            //            NftUtil.TryAddMintedNft(processedActionResponse.targetOutcomes.uid, processedActionResponse.targetOutcomes.nfts.ToArray());
-            //        }
-
-            //        //TOKENS
-            //        if (processedActionResponse.targetOutcomes.tokens.Count > 0)
-            //        {
-            //            TokenUtil.IncrementTokenByDecimal(processedActionResponse.targetOutcomes.uid, processedActionResponse.targetOutcomes.tokens.Map<TransferIcrc, (string canister, double decimalAmount)>(e => (e.Canister, e.Quantity)).ToArray());
-            //        }
-            //    }
-            //    //WORLD OUTCOMES
-            //    if (processedActionResponse.worldOutcomes != null)
-            //    {
-            //        if (processedActionResponse.worldOutcomes.entityOutcomes.Count > 0)
-            //        {
-            //            EntityUtil.ApplyEntityEdits(processedActionResponse.worldOutcomes);
-            //        }
-
-            //        //NFTS
-            //        if (processedActionResponse.worldOutcomes.nfts.Count > 0)
-            //        {
-            //            NftUtil.TryAddMintedNft(processedActionResponse.worldOutcomes.uid, processedActionResponse.worldOutcomes.nfts.ToArray());
-            //        }
-
-            //        //TOKENS
-            //        if (processedActionResponse.worldOutcomes.tokens.Count > 0)
-            //        {
-            //            TokenUtil.IncrementTokenByDecimal(processedActionResponse.worldOutcomes.uid, processedActionResponse.worldOutcomes.tokens.Map<TransferIcrc, (string canister, double decimalAmount)>(e => (e.Canister, e.Quantity)).ToArray());
-            //        }
-            //    }
-            //}
 
 
             $"Action Processed Success, ActionId: {actionId}, outcome: {JsonConvert.SerializeObject(processedActionResponse)}".Log(nameof(ActionUtil));
@@ -1135,6 +1072,8 @@ namespace Boom
 
             return new(processedActionResponse);
         }
+
+
 
         public static class Transfer
         {
@@ -1219,16 +1158,11 @@ namespace Boom
             {
                 //CHECK LOGIN
 
-                var getLoginTypeResult = UserUtil.GetLoginType();
+                var isLoggedIn = UserUtil.IsLoggedIn();
 
-                if (getLoginTypeResult == UserUtil.LoginType.None)
+                if (isLoggedIn == false)
                 {
                     return new(new TransferErrType.LogIn("You must log in"));
-                }
-
-                if (getLoginTypeResult == UserUtil.LoginType.Anon)
-                {
-                    return new(new TransferErrType.LogIn("You cannot execute this function as anon"));
                 }
 
                 var uid = UserUtil.GetPrincipal().AsOk().Value;

@@ -37,12 +37,15 @@ namespace Boom.Patterns.Broadcasts
             {
                 private int updateCount;
                 private InitValue<IBroadcastState> msg;
+                private LinkedList<IBroadcastState> oldSavedStates;
+
                 private readonly LinkedList<DelegateInfo> listeners;
                 public bool IsInit { get { return msg.IsInit; } }
 
                 public BroadcastGroup()
                 {
                     this.listeners = new();
+                    oldSavedStates = null;
                 }
 
                 public void Register<T>(Action<T> listener, BroadcastSetting broadcastSetting) where T : IBroadcastState, new()
@@ -91,6 +94,7 @@ namespace Boom.Patterns.Broadcasts
                         runner = runner.Next;
                     }
                 }
+
                 public bool Invoke(IBroadcastState msg, bool force)
                 {
                     void _Invoke()
@@ -128,6 +132,7 @@ namespace Boom.Patterns.Broadcasts
                         return true;
                     }
                 }
+
                 public void Clear()
                 {
                     updateCount = 0;
@@ -140,6 +145,35 @@ namespace Boom.Patterns.Broadcasts
                 }
 
                 public int GetUpdateCount() { return updateCount; }
+
+
+                public bool SaveState()
+                {
+                    if (msg.IsInit == false) return false;
+
+                    if (oldSavedStates == null) oldSavedStates = new();
+
+                    if (msg.Value.MaxSavedStatesCount() <= oldSavedStates.Count)
+                    {
+                        oldSavedStates.RemoveLast();
+                    }
+
+                    oldSavedStates.AddFirst(msg.Value);
+
+                    return true;
+                }
+
+                public bool RollBackInvoke(bool force)
+                {
+                    var latestSavedState = oldSavedStates.First;
+
+                    if (latestSavedState == null) return false;
+                    oldSavedStates.RemoveFirst();
+
+                    Invoke(latestSavedState.Value, force);
+
+                    return true;
+                }
             }
 
             private readonly string typeName;
@@ -211,6 +245,32 @@ namespace Boom.Patterns.Broadcasts
                 return broadcastGroup.GetUpdateCount();
             }
 
+            //
+
+            public bool SaveState(string tag)
+            {
+                if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
+                {
+                    return false;
+                }
+
+                broadcastGroup.SaveState();
+                return true;
+            }
+
+            public bool RollBackInvoke(bool force, string tag)
+            {
+                if (!broadcastGroups.TryGetValue(tag, out BroadcastGroup broadcastGroup))
+                {
+                    return false;
+                }
+
+                broadcastGroup.RollBackInvoke(force);
+
+                return true;
+            }
+
+            //
 
             public bool IsInit(string tag)
             {
@@ -295,6 +355,7 @@ namespace Boom.Patterns.Broadcasts
                 }
                 return LogicContainer;
             }
+
         }
         private static readonly Dictionary<ushort, BroadcastInfo> events = new();
 
@@ -353,6 +414,7 @@ namespace Boom.Patterns.Broadcasts
             return targets.GetUpdateCount(tag);
 
         }
+
         public static bool WasInit<T>(string tag = "main") where T : IBroadcastState, new()
         {
             ushort key = HashUtil.ToHash16(typeof(T).FullName);
@@ -397,6 +459,35 @@ namespace Boom.Patterns.Broadcasts
             }
             return Invoke(refactor(new()), force, tag);
         }
+
+        //
+
+        public static bool SaveState<T>(string tag = "main")
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+
+            if (events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                return targets.SaveState(tag);
+            }
+
+            return false;
+        }
+
+        public static bool RollBackInvoke<T>(bool force = false, string tag = "main")
+        {
+            ushort key = HashUtil.ToHash16(typeof(T).FullName);
+
+            if (events.TryGetValue(key, out BroadcastInfo targets))
+            {
+                return targets.RollBackInvoke(force, tag);
+            }
+
+            return false;
+        }
+
+        //
+
         public static void Clear<T>(string tag = "main") where T : IBroadcastState, new()
         {
             ushort key = HashUtil.ToHash16(typeof(T).FullName);

@@ -97,43 +97,8 @@ namespace Boom
 
             return new(result.AsOk().agent);
         }
-        /// <summary>
-        /// If LoginData is ever initialized this function will return a result as an Ok, being this true if Login Data is from an User
-        /// Otherwise it will return a result as an Err, being this an error message
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsLoggedIn(out LoginType loginType)
-        {
-            loginType = LoginType.None;
 
-            var getLogInDataResult = UserUtil.GetLogInData();
-
-            if (getLogInDataResult.Tag == UResultTag.Err)
-            {
-                return false;
-            }
-
-            var asOk = getLogInDataResult.AsOk();
-
-            if (asOk.state == MainDataTypes.LoginData.State.LoggedIn)
-            {
-                loginType = LoginType.User;
-                return true;
-            }
-            else if (asOk.state == MainDataTypes.LoginData.State.LoggedInAsAnon)
-            {
-                loginType = LoginType.Anon;
-                return true;
-            }
-
-            return false;
-        }
-        public static LoginType GetLoginType()
-        {
-            IsLoggedIn(out LoginType loginType);
-            return loginType;
-        }
-        public static bool IsUserDataManipulable(out MainDataTypes.LoginData loginData)
+        public static bool IsDataManipulable(out MainDataTypes.LoginData loginData)
         {
             loginData = default;
 
@@ -154,7 +119,8 @@ namespace Boom
 
             return false;
         }
-        public static bool IsUserLoggedIn(out MainDataTypes.LoginData loginData)
+
+        public static bool IsLoggedIn(out MainDataTypes.LoginData loginData)
         {
             loginData = default;
 
@@ -175,37 +141,11 @@ namespace Boom
 
             return false;
         }
-        public static bool IsUserLoggedIn()
+
+        public static bool IsLoggedIn()
         {
-            return IsLoggedIn(out LoginType loginType) && loginType == LoginType.User;
+            return IsLoggedIn(out var data) && data.state == MainDataTypes.LoginData.State.LoggedIn;
         }
-        public static bool IsAnonLoggedIn(out MainDataTypes.LoginData loginData)
-        {
-            loginData = default;
-
-
-            var getLogInDataResult = UserUtil.GetLogInData();
-
-            if (getLogInDataResult.Tag == UResultTag.Err)
-            {
-                return false;
-            }
-
-            var asOk = getLogInDataResult.AsOk();
-
-            if (asOk.state == MainDataTypes.LoginData.State.LoggedInAsAnon)
-            {
-                loginData = getLogInDataResult.AsOk();
-                return true;
-            }
-
-            return false;
-        }
-        public static bool IsAnonLoggedIn()
-        {
-            return IsLoggedIn(out LoginType loginType) && loginType == LoginType.Anon;
-        }
-
         #endregion
 
         #region DataTypes
@@ -224,7 +164,7 @@ namespace Boom
 
         public static void AddListenerDataChange<T>(this System.Action<Data<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default, params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserLoggedIn(out var loginData))
+            if (IsLoggedIn(out var loginData))
             {
                 foreach (var uid in uids)
                 {
@@ -241,7 +181,7 @@ namespace Boom
         }
         public static void RemoveListenerDataChange<T>(this System.Action<Data<T>> action, params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserLoggedIn(out var loginData))
+            if (IsLoggedIn(out var loginData))
             {
                 foreach (var uid in uids)
                 {
@@ -269,7 +209,7 @@ namespace Boom
 
         public static void AddListenerDataTypeLoadingStateChange<T>(this System.Action<DataLoadingState<T>> action, BroadcastState.BroadcastSetting broadcastSetting = default, params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserLoggedIn(out var loginData))
+            if (IsLoggedIn(out var loginData))
             {
                 foreach (var uid in uids)
                 {
@@ -286,7 +226,7 @@ namespace Boom
         }
         public static void RemoveListenerDataTypeLoadingStateChange<T>(this System.Action<DataLoadingState<T>> action, params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserLoggedIn(out var loginData))
+            if (IsLoggedIn(out var loginData))
             {
                 foreach (var uid in uids)
                 {
@@ -376,7 +316,7 @@ namespace Boom
         /// <param name="loadingMessage">This is the message you want to display when waiting for the data to be fetched</param>
         public static void RequestData(DataTypeRequestArgs.Base arg)
         {
-            if (IsUserDataManipulable(out var loginData) == false)
+            if (IsDataManipulable(out var loginData) == false)
             {
                 Debug.LogError("You cannot fetch shared data as an anon user!");
 
@@ -461,7 +401,7 @@ namespace Boom
             if (newVals != null) $">>> DATA of type {typeof(T).Name}, key: {uid}, has been edited.\nKeys to store:\n{newVals.Reduce(e => $"* {e.GetKey()}, value: {JsonConvert.SerializeObject(e)}", ",\n")}".Log(nameof(UserUtil));
             //#endif
 
-            if (IsUserDataManipulable(out var loginData) == false)
+            if (IsDataManipulable(out var loginData) == false)
             {
                 Debug.LogError("Issue getting loginData!");
 
@@ -510,7 +450,7 @@ namespace Boom
 
         public static bool IsDataValid<T>(params string[] uids) where T : DataTypes.Base
         {
-            if (IsUserDataManipulable(out var loginData) == false)
+            if (IsDataManipulable(out var loginData) == false)
             {
                 //"Issue getting loginData!".Error();
 
@@ -564,7 +504,7 @@ namespace Boom
         public static UResult<Data<T>, string> GetData<T>(string uid) where T : DataTypes.Base
         {
 
-            if (IsUserLoggedIn(out var loginData))
+            if (IsLoggedIn(out var loginData))
             {
                 if (uid == loginData.principal) uid = "self";
 

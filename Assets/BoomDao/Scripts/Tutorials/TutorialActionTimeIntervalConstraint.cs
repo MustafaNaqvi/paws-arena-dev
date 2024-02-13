@@ -3,13 +3,13 @@ namespace Boom.Tutorials
     using Boom.Utility;
     using Boom.Values;
     using Boom;
-    using Candid;
     using Cysharp.Threading.Tasks;
     using System.Collections;
     using System.Collections.Generic;
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
+    using System;
 
     public class TutorialActionTimeIntervalConstraint : MonoBehaviour
     {
@@ -41,20 +41,24 @@ namespace Boom.Tutorials
             //Register to action button click
             actionButton.onClick.AddListener(ActionButtonClickHandler);
 
+            //We register LoginDataChangeHandler to MainDataTypes.LoginData change event to initialize userNameInputField with the user's username
+            UserUtil.AddListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
+
             //Register to the user's actions state change event to be able to update the triesLeftText
             UserUtil.AddListenerDataChangeSelf<DataTypes.ActionState>(DataTypeActionStateChangeHandler);
         }
         private void OnEnable()
         {
             actionLogText.text = "...";
-
-            UpdateTriesLeftText();
         }
 
         private void OnDestroy()
         {
             //Unregister to action button click
             actionButton.onClick.RemoveListener(ActionButtonClickHandler);
+
+            //We unregister from MainDataTypes.LoginData change event
+            UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
 
             UserUtil.RemoveListenerDataChangeSelf<DataTypes.ActionState>(DataTypeActionStateChangeHandler);
         }
@@ -116,7 +120,7 @@ namespace Boom.Tutorials
             var entityOutcomes = callerOutcomes.entityOutcomes;
 
             string message = "";
-            List<KeyValue<string, double>> incrementalOutcome = new();
+            List<KeyValue<string, double>> outcomesToDisplay = new();
 
             //We loop through all the entity outcomes
             foreach (var keyValue in entityOutcomes)
@@ -155,10 +159,13 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                incrementalOutcome.Add(new(entityName, amount.Value));
+                if (amount.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
+                {
+                    outcomesToDisplay.Add(new(entityName, amount.Value));
+                }
             }
 
-            if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{incrementalOutcome.Reduce(e => $"> +{e.value} {e.key}", "\n")}";
+            if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{outcomesToDisplay.Reduce(e => $"> +{e.value} {e.key}", "\n")}";
 
             logCoroutine = StartCoroutine(DisplayTempLog(message));
         }
@@ -179,7 +186,15 @@ namespace Boom.Tutorials
         #endregion
 
 
-        #region ACTION STATE CHANGE HANDLERS
+        #region HANDLERS
+
+
+        private void LoginDataChangeHandler(MainDataTypes.LoginData data)
+        {
+            if (data.state != MainDataTypes.LoginData.State.LoggedIn) return;
+
+            UpdateTriesLeftText();
+        }
 
         //We update the triesLeftText whenever the user's action state has changed
         private void DataTypeActionStateChangeHandler(Data<DataTypes.ActionState> data)

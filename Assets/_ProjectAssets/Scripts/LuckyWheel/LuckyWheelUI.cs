@@ -31,6 +31,7 @@ public class LuckyWheelUI : MonoBehaviour
         {
             new ActionParameter { Key = PlayerData.EARNED_XP_KEY, Value = DamageDealingDisplay.XpEarned.ToString()}
         };
+        Debug.Log("Fetching rewards");
         BoomDaoUtility.Instance.ExecuteActionWithParameter(BATTLE_WON_ACTION_KEY,_parameters, OnGotRewards);
     }
     
@@ -40,23 +41,32 @@ public class LuckyWheelUI : MonoBehaviour
         {
             return;
         }
+
+        Debug.Log("Amount of rewards: "+_rewards.Count);
         foreach (var _reward in _rewards)
         {
+            Debug.Log(_reward.Name);
+            Debug.Log(_reward.Value);
+        }
+        
+        foreach (var _reward in _rewards)
+        {
+            Debug.Log("----"+_reward.Name);
             switch (_reward.Name)
             {
-                case "Common Shard":
+                case "commonShard":
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
-                case "Rare Shard":
+                case "rareShard":
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
-                case "Epic Shard":
+                case "epicShard":
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
-                case "Legendary Shard":
+                case "legendaryShard":
                     choosenReward = LuckyWheelRewardSO.Get(_reward.Name);
                     break;
-                case "Gift":
+                case "gift":
                     Debug.Log("Received gift");
                     choosenReward = LuckyWheelRewardSO.Get(1);
                     break;

@@ -3,7 +3,6 @@ namespace Boom.Tutorials
     using Boom;
     using Boom.Utility;
     using Boom.Values;
-    using Candid;
     using Cysharp.Threading.Tasks;
     using System.Collections;
     using System.Collections.Generic;
@@ -138,7 +137,10 @@ namespace Boom.Tutorials
                     break;
                 }
 
-                outcomesToDisplay.Add(new(entityName, amount.Value));
+                if (amount.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
+                {
+                    outcomesToDisplay.Add(new(entityName, amount.Value));
+                }
             }
 
             if (string.IsNullOrEmpty(message)) message = $"Rewards:\n\n{outcomesToDisplay.Reduce(e => $"> +{e.value} {e.key}", "\n")}";

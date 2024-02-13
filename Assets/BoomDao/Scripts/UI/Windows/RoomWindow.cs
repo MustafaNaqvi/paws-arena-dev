@@ -39,7 +39,7 @@ public class RoomWindow : Window
         var testTokenAmount = TokenUtil.GetTokenAmountAsDecimal("self", "tvmv4-uqaaa-aaaap-abt5q-cai");
 
         
-        if (UserUtil.IsUserLoggedIn(out var loginData))
+        if (UserUtil.IsLoggedIn(out var loginData))
         {
             //selfInfoText.text = $"> YOU: {loginData.principal.SimplifyAddress()}\n- Item B: {item_bQuantity}\n- Token Amount: {testTokenAmount}";
         }
@@ -133,7 +133,7 @@ public class RoomWindow : Window
             {
                 var currentRoom = data.currentRoom;
 
-                if (UserUtil.IsUserLoggedIn(out var loginData))
+                if (UserUtil.IsLoggedIn(out var loginData))
                 {
                     if (currentRoom.users.Contains(loginData.principal))
                     {

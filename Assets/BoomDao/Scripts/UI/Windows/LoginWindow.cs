@@ -115,9 +115,9 @@ public class LoginWindow : Window
         if (loginDataResult.IsOk && !isLoading)
         {
             var loginData = loginDataResult.AsOk();
-            var loginType = UserUtil.GetLoginType();
+            var isLoggedIn = UserUtil.IsLoggedIn();
 
-            if(loginType == UserUtil.LoginType.User)
+            if(isLoggedIn)
             {
                 var isUserDataLoaded =
                     UserUtil.IsDataValidSelf<DataTypes.Entity>() &&

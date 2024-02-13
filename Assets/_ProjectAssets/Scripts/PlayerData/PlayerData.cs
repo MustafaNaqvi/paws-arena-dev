@@ -339,8 +339,12 @@ public class PlayerData
 
         if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
         {
-            Debug.Log("Kitty should recover: "+_timeString);
             _recoveryDate = DateTime.Parse(_timeString);
+            if (_recoveryDate<=DateTime.UtcNow)
+            {
+                _recoveryDate = default;
+                BoomDaoUtility.Instance.RemoveEntity(_kittyId);
+            }
         }
         
         return _recoveryDate;
@@ -348,7 +352,6 @@ public class PlayerData
 
     private void CalculateLevel()
     {
-        Debug.Log("Players experience: "+Experience);
         CalculateLevel(Experience, out var _level, out var _expForNextLevel, out var _experienceOnCurrentLevel);
     
         Level = _level;

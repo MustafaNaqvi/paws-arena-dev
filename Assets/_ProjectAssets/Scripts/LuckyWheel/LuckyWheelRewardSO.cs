@@ -48,7 +48,9 @@ public class LuckyWheelRewardSO : ScriptableObject
     public static LuckyWheelRewardSO Get(string _name)
     {
         LoadAllRewards();
-        return allRewards.First(element => element.Name == _name);
+        return allRewards.First(element => 
+            Utilities.RemoveWhitespacesUsingRegex(element.Name).ToLower() == Utilities.RemoveWhitespacesUsingRegex
+        (_name).ToLower());
     }
     private static void LoadAllRewards()
     {

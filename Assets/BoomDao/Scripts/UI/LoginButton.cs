@@ -36,14 +36,14 @@ namespace Boom.UI
         private void AllowButtonInteractionHandler(WaitingForResponse response)
         {
             noneInteractable = response.value;
-            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.LoggedInAsAnon;
+            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.Logedout;
         }
         //Handle whether or not the button must be disabled
         private void EnableButtonHandler(MainDataTypes.LoginData data)
         {
             loginState = data.state;
             button.gameObject.SetActive(data.state != MainDataTypes.LoginData.State.LoggedIn);
-            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.LoggedInAsAnon;
+            button.interactable = !noneInteractable && loginState == MainDataTypes.LoginData.State.Logedout;
         }
 
         //Execute Login Request

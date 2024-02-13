@@ -595,7 +595,6 @@
         internal static void ApplyEntityEdits(ProcessedActionResponse.Outcomes outcomes)
         {
             var uid = outcomes.uid;
-            Debug.Log($"Apply outcomes to {uid}, outcomes: {outcomes.entityOutcomes}");
             var entityOutcomes = outcomes.entityOutcomes;
 
             Dictionary<string, DataTypes.Entity> editedEntities = new();

@@ -239,15 +239,9 @@ namespace Boom
 
         void OnLoginCompleted(string json)
         {
-            var isLoggedIn = UserUtil.IsLoggedIn(out UserUtil.LoginType loginType);
+            var isLoggedIn = UserUtil.IsLoggedIn();
 
             if (isLoggedIn == false)
-            {
-                CreateAgentUsingIdentityJson(json, false).Forget();
-                return;
-            }
-
-            if (isLoggedIn && loginType == UserUtil.LoginType.Anon)
             {
                 CreateAgentUsingIdentityJson(json, false).Forget();
                 return;
@@ -340,7 +334,7 @@ namespace Boom
 
 
                 //Set Login Data
-                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.LoggedInAsAnon));
+                UserUtil.UpdateMainData(new MainDataTypes.LoginData(agent, userPrincipal, userAccountIdentity, MainDataTypes.LoginData.State.Logedout));
             }
             else
             {
@@ -749,7 +743,7 @@ namespace Boom
 
         private void FetchRoomData()
         {
-            if (UserUtil.IsUserLoggedIn(out var loginData) == false)
+            if (UserUtil.IsLoggedIn(out var loginData) == false)
             {
                 return;
             }
@@ -818,7 +812,7 @@ namespace Boom
         }
         private void FetchHandler(UserLoginRequest arg)
         {
-            if (UserUtil.IsLoginRequestedPending() || UserUtil.IsUserLoggedIn()) return;
+            if (UserUtil.IsLoginRequestedPending() || UserUtil.IsLoggedIn()) return;
 
             UserUtil.SetAsLoginIn();
             BroadcastState.Invoke(new WaitingForResponse(true));

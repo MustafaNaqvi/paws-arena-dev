@@ -53,7 +53,7 @@ public class BalanceWindow : Window
 
     private void UpdateWindow(Data<DataTypes.Token> obj)
     {
-        if (!UserUtil.IsUserLoggedIn(out var loginData))
+        if (!UserUtil.IsLoggedIn(out var loginData))
         {
             icpBalanceText.text = $"ICP: {0}\nICRC: {0}\nNFT Count: {0}";
 
