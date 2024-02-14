@@ -39,7 +39,8 @@ namespace Boom
                     var temp = GameObject.FindObjectOfType<BoomManager>();
                     instance = temp;
                 }
-
+                
+                Debug.Log(instance);
                 return instance;
             }
         }

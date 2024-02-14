@@ -13,11 +13,11 @@ public class PlayerData
     private float glassOfMilk;
     private CraftingProcess craftingProcess;
     private bool hasPass;
-    private List<ClaimedReward> claimedLevelRewards = new ();
+    private List<ClaimedReward> claimedLevelRewards = new();
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
-    private Challenges challenges = new ();
+    private Challenges challenges = new();
     private string guildId = string.Empty;
     private int points;
 
@@ -35,8 +35,22 @@ public class PlayerData
 
     public void SetStartingValues()
     {
-        ownedEquiptables = new List<int>() { 0, 25, 60, 74, 95 };
-        ownedEmojis = new List<int>() {0,1,2,3,4};
+        ownedEquiptables = new List<int>()
+        {
+            0,
+            25,
+            60,
+            74,
+            95
+        };
+        ownedEmojis = new List<int>()
+        {
+            0,
+            1,
+            2,
+            3,
+            4
+        };
     }
 
     public float Snacks
@@ -181,7 +195,7 @@ public class PlayerData
         set => challenges = value;
     }
 
-    
+
     public string GuildId
     {
         get => guildId;
@@ -194,8 +208,9 @@ public class PlayerData
 
     [JsonIgnore] public string PlayerId => FirebaseManager.Instance.PlayerId;
     [JsonIgnore] public bool IsInGuild => !string.IsNullOrEmpty(GuildId);
-    
-    [JsonIgnore] public GuildData Guild
+
+    [JsonIgnore]
+    public GuildData Guild
     {
         get
         {
@@ -206,7 +221,7 @@ public class PlayerData
 
             GuildData _guild;
             try
-            { 
+            {
                 _guild = DataManager.Instance.GameData.Guilds[guildId];
             }
             catch
@@ -214,27 +229,29 @@ public class PlayerData
                 GuildId = string.Empty;
                 return null;
             }
-            if (_guild==null)
+
+            if (_guild == null)
             {
                 GuildId = string.Empty;
                 return null;
             }
+
             bool _isStillInGuild = false;
             foreach (var _player in _guild.Players)
             {
-                if (_player.Id==FirebaseManager.Instance.PlayerId)
+                if (_player.Id == FirebaseManager.Instance.PlayerId)
                 {
                     _isStillInGuild = true;
                 }
             }
-            
+
 
             if (!_isStillInGuild)
             {
                 GuildId = string.Empty;
                 return null;
             }
-            
+
             _guild.ReorderPlayersByPoints();
             return _guild;
         }
@@ -249,7 +266,7 @@ public class PlayerData
             UpdatedPoints?.Invoke();
         }
     }
-    
+
     // new system
     public static Action OnUpdatedShards;
     public static Action OnUpdatedExp;
@@ -257,7 +274,7 @@ public class PlayerData
     public const string NAME_KEY = "username";
     public const string KITTY_RECOVERY_KEY = "recoveryDate";
     public const string KITTY_KEY = "kitty_id";
-    
+
     private const string COMMON_SHARD = "commonShard";
     private const string XP = "xp";
     private const string AMOUNT_KEY = "amount";
@@ -266,22 +283,21 @@ public class PlayerData
     private const string EPIC_SHARD = "epicShard";
     private const string LEGENDARY_SHARD = "legendaryShard";
     private const string NAME_ENTITY_ID = "user_profile";
-    private const string VALUABLES_ENTITY_ID = "user_valuables";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
     public int ExperienceForNextLevel { get; private set; }
 
     public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
-    public double CommonCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, COMMON_SHARD);
-    public double UncommonCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, UNCOMMON_SHARD);
-    public double RareShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, RARE_SHARD);
-    public double EpicShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, EPIC_SHARD);
-    public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
-    public double TotalCrystals => BoomDaoUtility.Instance.GetDouble(VALUABLES_ENTITY_ID, LEGENDARY_SHARD);
+    public double CommonShard => BoomDaoUtility.Instance.GetDouble(COMMON_SHARD, AMOUNT_KEY);
+    public double UncommonShard => BoomDaoUtility.Instance.GetDouble(UNCOMMON_SHARD, AMOUNT_KEY);
+    public double RareShard => BoomDaoUtility.Instance.GetDouble(RARE_SHARD, AMOUNT_KEY);
+    public double EpicShard => BoomDaoUtility.Instance.GetDouble(EPIC_SHARD, AMOUNT_KEY);
+    public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(LEGENDARY_SHARD, AMOUNT_KEY);
+    public double TotalCrystals => CommonShard + UncommonShard + RareShard + EpicShard + LegendaryShard;
 
-    public double Experience => BoomDaoUtility.Instance.GetDouble(XP,AMOUNT_KEY);
-    
+    public double Experience => BoomDaoUtility.Instance.GetDouble(XP, AMOUNT_KEY);
+
     public void SubscribeEvents()
     {
         BoomDaoUtility.OnDataUpdated += RiseEvent;
@@ -302,7 +318,14 @@ public class PlayerData
                 CalculateLevel();
                 OnUpdatedExp?.Invoke();
                 break;
-            default: 
+            case COMMON_SHARD:
+            case UNCOMMON_SHARD:
+            case RARE_SHARD:
+            case EPIC_SHARD:
+            case LEGENDARY_SHARD:
+                OnUpdatedShards?.Invoke();
+                break;
+            default:
                 Debug.Log($"{_key} got updated!, add handler?");
                 break;
         }
@@ -313,9 +336,9 @@ public class PlayerData
         switch (_type)
         {
             case LuckyWheelRewardType.Common:
-                return CommonCrystals;
+                return CommonShard;
             case LuckyWheelRewardType.Uncommon:
-                return UncommonCrystals;
+                return UncommonShard;
             case LuckyWheelRewardType.Rare:
                 return RareShard;
             case LuckyWheelRewardType.Epic:
@@ -340,25 +363,25 @@ public class PlayerData
         if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
         {
             _recoveryDate = DateTime.Parse(_timeString);
-            if (_recoveryDate<=DateTime.UtcNow)
+            if (_recoveryDate <= DateTime.UtcNow)
             {
                 _recoveryDate = default;
                 BoomDaoUtility.Instance.RemoveEntity(_kittyId);
             }
         }
-        
+
         return _recoveryDate;
     }
 
     private void CalculateLevel()
     {
         CalculateLevel(Experience, out var _level, out var _expForNextLevel, out var _experienceOnCurrentLevel);
-    
+
         Level = _level;
         ExperienceForNextLevel = _expForNextLevel;
         ExperienceOnCurrentLevel = _experienceOnCurrentLevel;
     }
-    
+
     public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
     {
         double _experience = _exp;
@@ -377,7 +400,7 @@ public class PlayerData
                 _calculatedLevel++;
                 _experience -= _calculatedExpForNextLevel;
                 _calculatedExpForNextLevel = _calculatedExpForNextLevel +
-                                   (_calculatedExpForNextLevel * ((float)DataManager.Instance.GameData.LevelBaseScaler / 100));
+                                             (_calculatedExpForNextLevel * ((float)DataManager.Instance.GameData.LevelBaseScaler / 100));
             }
         }
 
