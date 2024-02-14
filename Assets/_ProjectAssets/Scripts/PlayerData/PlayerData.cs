@@ -274,15 +274,17 @@ public class PlayerData
     public const string NAME_KEY = "username";
     public const string KITTY_RECOVERY_KEY = "recoveryDate";
     public const string KITTY_KEY = "kitty_id";
+    
+    public const string UNCOMMON_SHARD = "uncommonShard";
+    public const string RARE_SHARD = "rareShard";
+    public const string EPIC_SHARD = "epicShard";
+    public const string LEGENDARY_SHARD = "legendaryShard";
+    public const string COMMON_SHARD = "commonShard";
+    
+    public const string NAME_ENTITY_ID = "user_profile";
 
-    private const string COMMON_SHARD = "commonShard";
     private const string XP = "xp";
     private const string AMOUNT_KEY = "amount";
-    private const string UNCOMMON_SHARD = "uncommonShard";
-    private const string RARE_SHARD = "rareShard";
-    private const string EPIC_SHARD = "epicShard";
-    private const string LEGENDARY_SHARD = "legendaryShard";
-    private const string NAME_ENTITY_ID = "user_profile";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }

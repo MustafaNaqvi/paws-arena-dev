@@ -11,6 +11,7 @@ public class LuckyWheelRewardSO : ScriptableObject
     [field: SerializeField] public Sprite Sprite { get; private set; }
     [field: SerializeField] public int Chances { get; private set; }
     [field: SerializeField] public string Name { get; private set; }
+    [field: SerializeField] public string Key { get; private set; }
     [field: SerializeField] public float MinRotation { get; private set; }
     [field: SerializeField] public float MaxRotation { get; private set; }
 
@@ -45,12 +46,12 @@ public class LuckyWheelRewardSO : ScriptableObject
         return allRewards.First(element => element.Id == _id);
     }
     
-    public static LuckyWheelRewardSO Get(string _name)
+    public static LuckyWheelRewardSO Get(string _key)
     {
         LoadAllRewards();
         return allRewards.First(element => 
             Utilities.RemoveWhitespacesUsingRegex(element.Name).ToLower() == Utilities.RemoveWhitespacesUsingRegex
-        (_name).ToLower());
+        (_key).ToLower());
     }
     private static void LoadAllRewards()
     {

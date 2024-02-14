@@ -40,7 +40,6 @@ namespace Boom
                     instance = temp;
                 }
                 
-                Debug.Log(instance);
                 return instance;
             }
         }

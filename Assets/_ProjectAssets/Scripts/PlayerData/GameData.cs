@@ -19,6 +19,7 @@ public class GameData
 
     public bool HasSeasonEnded => DateTime.UtcNow > SeasonEnds;
 
+
     public int SeasonNumber
     {
         get

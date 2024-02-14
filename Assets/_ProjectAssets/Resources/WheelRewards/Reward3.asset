@@ -18,5 +18,6 @@ MonoBehaviour:
   <Sprite>k__BackingField: {fileID: 21300000, guid: 2f0b64b6fb26e944eb707460d74f529e, type: 3}
   <Chances>k__BackingField: 5
   <Name>k__BackingField: Epic Shard
+  <Key>k__BackingField: epicShard
   <MinRotation>k__BackingField: 100
   <MaxRotation>k__BackingField: 125
