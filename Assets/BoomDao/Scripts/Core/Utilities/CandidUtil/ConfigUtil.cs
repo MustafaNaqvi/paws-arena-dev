@@ -129,7 +129,7 @@ namespace Boom
             return TryGetConfig(worldId, entity.Eid, out entityConfig);
         }
 
-        public static bool GetConfigFieldAs<T>(string worldId, string configId, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryGetConfigFieldAs<T>(string worldId, string configId, string fieldName, out T outValue, T defaultValue = default)
         {
             outValue = defaultValue;
 
@@ -154,15 +154,15 @@ namespace Boom
 
             return true;
         }
-        public static bool GetConfigFieldAs<T>(this DataTypes.Entity entity, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryGetConfigFieldAs<T>(this DataTypes.Entity entity, string fieldName, out T outValue, T defaultValue = default)
         {
-            return GetConfigFieldAs(entity.wid, entity.eid, fieldName, out outValue, defaultValue);
+            return TryGetConfigFieldAs(entity.wid, entity.eid, fieldName, out outValue, defaultValue);
         }
-        public static bool GetConfigFieldAs<T>(this EntityOutcome newEntityValues, string worldId, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryGetConfigFieldAs<T>(this EntityOutcome newEntityValues, string worldId, string fieldName, out T outValue, T defaultValue = default)
         {
-            return GetConfigFieldAs(worldId, newEntityValues.eid, fieldName, out outValue, defaultValue);
+            return TryGetConfigFieldAs(worldId, newEntityValues.eid, fieldName, out outValue, defaultValue);
         }
-        public static bool GetConfigFieldAs<T>(this MainDataTypes.AllConfigs.Config config, string fieldName, out T outValue, T defaultValue = default)
+        public static bool TryGetConfigFieldAs<T>(this MainDataTypes.AllConfigs.Config config, string fieldName, out T outValue, T defaultValue = default)
         {
             outValue = defaultValue;
             if (!config.fields.TryGetValue(fieldName, out var value)) return false;

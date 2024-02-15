@@ -127,7 +127,7 @@ namespace Boom.Tutorials
                 string entityId = entityOutcome.eid;
 
                 //Try get the entity's config field's value
-                bool configEntityNameFound = entityOutcome.GetConfigFieldAs<string>
+                bool configEntityNameFound = entityOutcome.TryGetConfigFieldAs<string>
                     //World Id
                     (BoomManager.Instance.WORLD_CANISTER_ID,
                     //Config's field name
@@ -217,7 +217,7 @@ namespace Boom.Tutorials
                     if(entity.eid == entityId)
                     {
                         //Try get the entity's config field's value
-                        bool configEntityNameFound = ConfigUtil.GetConfigFieldAs<string>
+                        bool configEntityNameFound = ConfigUtil.TryGetConfigFieldAs<string>
                             //World Id
                             (BoomManager.Instance.WORLD_CANISTER_ID,
                             //ConfigId. In this case we are looking for the config of an entity, therefore, we use the entityId

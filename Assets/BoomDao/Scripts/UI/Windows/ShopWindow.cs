@@ -131,7 +131,7 @@ public class ShopWindow : Window
                     double amount = (double)e.GetValue();
                     string name = e.GetKey();
 
-                    if (ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Eid, "name", out var configName)) name = configName;
+                    if (ConfigUtil.TryGetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Eid, "name", out var configName)) name = configName;
 
                     return $"{name} x {amount}\n\n";
                 }, "\n");
@@ -247,7 +247,7 @@ public class ShopWindow : Window
                     var asUpdateEntity = k.Option.AsUpdateEntity();
                     var asIncrementNumber = asUpdateEntity.Updates.First(e => e.Tag == UpdateEntityTypeTag.IncrementNumber);
 
-                    ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
+                    ConfigUtil.TryGetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
 
                     return $"{configName} x {(asIncrementNumber.AsIncrementNumber().FieldValue.Tag == IncrementNumber.FieldValueInfoTag.Number? asIncrementNumber.AsIncrementNumber().FieldValue.Value : "some formula")}";
                 });
@@ -304,7 +304,7 @@ public class ShopWindow : Window
                     var asUpdateEntity = k.Option.AsUpdateEntity();
                     var asIncrementNumber = asUpdateEntity.Updates.First(e => e.Tag == UpdateEntityTypeTag.IncrementNumber);
 
-                    ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
+                    ConfigUtil.TryGetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, asUpdateEntity.Eid, "name", out var configName, asUpdateEntity.Eid);
 
                     return $"{configName} x {(asIncrementNumber.AsIncrementNumber().FieldValue.Tag == IncrementNumber.FieldValueInfoTag.Number ? asIncrementNumber.AsIncrementNumber().FieldValue.Value : "some formula")}";
                 });
@@ -690,7 +690,7 @@ public class ShopWindow : Window
             else if (quantity.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment) displayValue = $"+ {quantity.Value}";
             else displayValue = $"- {quantity.Value}";
 
-            if (!ConfigUtil.GetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
+            if (!ConfigUtil.TryGetConfigFieldAs<string>(BoomManager.Instance.WORLD_CANISTER_ID, e.Value.eid, "name", out var configName)) return;
 
             if (e.Value.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, out var config)) inventoryElements.Add($"{configName} {displayValue}");
             else inventoryElements.Add($"{e.Value.GetKey()} {displayValue}");

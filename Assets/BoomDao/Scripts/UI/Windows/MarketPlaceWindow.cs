@@ -398,7 +398,7 @@ namespace Boom.UI
             {
                 nftConfigs.Iterate(e =>
                 {
-                    if (!e.GetConfigFieldAs<string>("canister", out var _canisterId))
+                    if (!e.TryGetConfigFieldAs<string>("canister", out var _canisterId))
                     {
                         Debug.LogError($"config of tag \"nft\" doesn't have field \"canister\"");
 
@@ -407,20 +407,20 @@ namespace Boom.UI
 
                     if (_canisterId != collectionId) return;
 
-                    if (!e.GetConfigFieldAs<string>("name", out var collectionName))
+                    if (!e.TryGetConfigFieldAs<string>("name", out var collectionName))
                     {
                         Debug.LogWarning($"config of tag \"nft\" doesn't have field \"collectionName\"");
                     }
-                    if (!e.GetConfigFieldAs<string>("description", out var description))
+                    if (!e.TryGetConfigFieldAs<string>("description", out var description))
                     {
                         Debug.LogWarning($"config of tag \"nft\" doesn't have field \"description\"");
                     }
-                    if (!e.GetConfigFieldAs<string>("urlLogo", out var urlLogo))
+                    if (!e.TryGetConfigFieldAs<string>("urlLogo", out var urlLogo))
                     {
                         Debug.LogWarning($"config of tag \"nft\" doesn't have field \"urlLogo\"");
                     }
 
-                    if (!e.GetConfigFieldAs<bool>("isStandard", out var isStandard))
+                    if (!e.TryGetConfigFieldAs<bool>("isStandard", out var isStandard))
                     {
                         Debug.LogError($"config of tag \"nft\" doesn't have field \"isStandard\"");
 

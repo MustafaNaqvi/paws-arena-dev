@@ -19,7 +19,7 @@ namespace Boom
     using Newtonsoft.Json;
     using Candid;
 
-    public class BoomManager : MonoBehaviour
+    public class BoomManager : Singleton<BoomManager>
     {
         [SerializeField] bool enableBoomLogs = true;
         [field: SerializeField] public string WORLD_HUB_CANISTER_ID { private set; get; } = "fgpem-ziaaa-aaaag-abi2q-cai";
@@ -27,22 +27,6 @@ namespace Boom
         [field: SerializeField] public string WORLD_COLLECTION_CANISTER_ID { private set; get; } = "6uvic-diaaa-aaaap-abgca-cai";
 
         public enum GameType { SinglePlayer, Multiplayer, WebsocketMultiplayer }
-
-        // Instance
-        private static BoomManager instance;
-        public static BoomManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    var temp = GameObject.FindObjectOfType<BoomManager>();
-                    instance = temp;
-                }
-                
-                return instance;
-            }
-        }
 
         //Cache
         [field: SerializeField] public GameType BoomDaoGameType { private set; get; } = GameType.SinglePlayer;
@@ -75,9 +59,8 @@ namespace Boom
         [SerializeField, ShowOnly] MainDataTypes.LoginData.State loginState;
         [SerializeField, ShowOnly] bool loginCompleted;
 
-        private void Awake()
+        protected override void _Awake()
         {
-
             BroadcastState.Invoke(new WaitingForResponse(true));
 
             IAgent CreateAgentWithRandomIdentity(bool useLocalHost = false)
@@ -185,7 +168,7 @@ namespace Boom
 
 
 
-        private void OnDestroy()
+        protected override void _OnDestroy()
         {
             Broadcast.Unregister<UserLoginRequest>(FetchHandler);
 
@@ -610,7 +593,7 @@ namespace Boom
                 {
                     foreach (var tokenMetadata in tokensMetadata)
                     {
-                        if (tokenMetadata.GetConfigFieldAs<string>("canister", out var canisterId))
+                        if (tokenMetadata.TryGetConfigFieldAs<string>("canister", out var canisterId))
                         {
                             var tokenCanisterId = canisterId;
 
@@ -627,14 +610,14 @@ namespace Boom
 
                             if (ConfigUtil.TryGetConfig(WORLD_CANISTER_ID, e =>
                             {
-                                e.GetConfigFieldAs<string>("canister", out var _canister, "");
+                                e.TryGetConfigFieldAs<string>("canister", out var _canister, "");
 
                                 return _canister == tokenCanisterId;
                             }, out var tokenConfig))
                             {
-                                tokenConfig.GetConfigFieldAs("description", out var description, "");
+                                tokenConfig.TryGetConfigFieldAs("description", out var description, "");
 
-                                tokenConfig.GetConfigFieldAs("url_logo", out var urlLogo, "");
+                                tokenConfig.TryGetConfigFieldAs("url_logo", out var urlLogo, "");
 
                                 tokens.Add(new MainDataTypes.AllTokenConfigs.TokenConfig(tokenCanisterId, name, symbol, decimals, _fee, description, urlLogo));
                             }
@@ -670,27 +653,27 @@ namespace Boom
                     $"Collections Config fetched {JsonConvert.SerializeObject(nftConfigs)}".Log();
                     nftConfigs.Iterate(e =>
                     {
-                        if (!e.GetConfigFieldAs<string>("name", out var collectionName))
+                        if (!e.TryGetConfigFieldAs<string>("name", out var collectionName))
                         {
                             $"config of tag \"nft\" doesn't have field \"collectionName\"".Warning();
                         }
-                        if (!e.GetConfigFieldAs<string>("description", out var description))
+                        if (!e.TryGetConfigFieldAs<string>("description", out var description))
                         {
                             $"config of tag \"nft\" doesn't have field \"description\"".Warning();
                         }
-                        if (!e.GetConfigFieldAs<string>("url_logo", out var urlLogo))
+                        if (!e.TryGetConfigFieldAs<string>("url_logo", out var urlLogo))
                         {
                             $"config of tag \"nft\" doesn't have field \"url_logo\"".Warning();
                         }
 
-                        if (!e.GetConfigFieldAs<bool>("is_standard", out var isStandard))
+                        if (!e.TryGetConfigFieldAs<bool>("is_standard", out var isStandard))
                         {
                             $"config of tag \"nft\" doesn't have field \"is_standard\"".Error();
 
                             return;
                         }
 
-                        if (!e.GetConfigFieldAs<string>("canister", out var canisterId))
+                        if (!e.TryGetConfigFieldAs<string>("canister", out var canisterId))
                         {
                             $"config of tag \"nft\" doesn't have field \"canister\"".Error();
 

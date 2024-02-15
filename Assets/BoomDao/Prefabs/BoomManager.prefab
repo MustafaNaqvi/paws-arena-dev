@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableBoomLogs: 1
-  <WORLD_HUB_CANISTER_ID>k__BackingField: fgpem-ziaaa-aaaag-abi2q-cai
+  <WORLD_HUB_CANISTER_ID>k__BackingField: c5moj-piaaa-aaaal-qdhoq-cai
   <WORLD_CANISTER_ID>k__BackingField: j4n55-giaaa-aaaap-qb3wq-cai
   <WORLD_COLLECTION_CANISTER_ID>k__BackingField: 6uvic-diaaa-aaaap-abgca-cai
   <BoomDaoGameType>k__BackingField: 0
@@ -69,6 +69,9 @@ MonoBehaviour:
   multPlayerActionStateFetch: 0
   multPlayerTokenFetch: 0
   multPlayerCollectionFetch: 0
+  principalId: 
+  loginState: 0
+  loginCompleted: 0
 --- !u!114 &2393423864867871185
 MonoBehaviour:
   m_ObjectHideFlags: 0

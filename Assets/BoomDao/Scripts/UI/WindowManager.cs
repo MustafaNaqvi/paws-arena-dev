@@ -4,8 +4,6 @@ namespace Boom.UI
     using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.Events;
-    using Boom.Patterns;
-    using Boom.Patterns.Broadcasts;
     using System;
 
     public class WindowManager : Singleton<WindowManager>
@@ -19,10 +17,7 @@ namespace Boom.UI
         [field: SerializeField, ShowOnly] public bool CursorUnlockByDefault { get; private set; }
         [field: SerializeField, ShowOnly] public bool CursorUnlockByWindowGod { get; private set; }
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
+
 
         private void HideConflictWindows(Window window)
         {
@@ -97,7 +92,7 @@ namespace Boom.UI
         }
         public T OpenWindow<T>(object data, int? orderLayer = null) where T : Window
         {
-            return (T) OpenWindow(typeof(T).Name, data, orderLayer);
+            return (T)OpenWindow(typeof(T).Name, data, orderLayer);
         }
         public Window OpenWindow(string WindowName, object data, int? orderLayer = null)
         {
@@ -248,6 +243,16 @@ namespace Boom.UI
             OnCloseAllWindows.Invoke();
             hiddenWindows.Clear();
             CursorUnlockByDefault = false;
+        }
+
+        protected override void _Awake()
+        {
+
+        }
+
+        protected override void _OnDestroy()
+        {
+
         }
     }
 }

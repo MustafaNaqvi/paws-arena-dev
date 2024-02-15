@@ -189,6 +189,16 @@ public class CoroutineManager : Singleton<CoroutineManager>
             }
         }
     }
+
+    protected override void _Awake()
+    {
+
+    }
+
+    protected override void _OnDestroy()
+    {
+
+    }
 }
 public static class CoroutineManagerUtil
 {

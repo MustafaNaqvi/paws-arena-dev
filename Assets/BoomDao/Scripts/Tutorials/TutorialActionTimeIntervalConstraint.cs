@@ -130,7 +130,7 @@ namespace Boom.Tutorials
                 string entityId = entityEdit.eid;
 
                 //Try get the entity's config field's value
-                bool configEntityNameFound = entityEdit.GetConfigFieldAs<string>
+                bool configEntityNameFound = entityEdit.TryGetConfigFieldAs<string>
                     //World Id
                     (BoomManager.Instance.WORLD_CANISTER_ID,
                     //Config's field name

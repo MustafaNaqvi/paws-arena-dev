@@ -1,10 +1,13 @@
 ﻿
 public class DDOL : Singleton<DDOL>
 {
-
-    protected override void Awake()
+    protected override void _Awake()
     {
-        base.Awake();
         DontDestroyOnLoad(this);
+    }
+
+    protected override void _OnDestroy()
+    {
+
     }
 }

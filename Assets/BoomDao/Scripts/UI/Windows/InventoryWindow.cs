@@ -75,7 +75,7 @@ public class InventoryWindow : Window
         {
             try
             {
-                if(!ConfigUtil.GetConfigFieldAs<string>(e, "name", out var configName)) throw new Exception($"Config of id: {e.eid} doesn't have field \"name\"");
+                if(!ConfigUtil.TryGetConfigFieldAs<string>(e, "name", out var configName)) throw new Exception($"Config of id: {e.eid} doesn't have field \"name\"");
                 if (!EntityUtil.TryGetFieldAsDouble(e, "quantity", out var currentQuantity)) throw new Exception($"Element of id : \"{e.GetKey()}\" doesn't have field \"quantity\"");
 
                 if (currentQuantity > 0)
