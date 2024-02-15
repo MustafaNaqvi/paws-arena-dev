@@ -33,10 +33,10 @@ public class LevelReward
                 DataManager.Instance.PlayerData.Snacks += Parameter1;
                 break;
             case LevelRewardType.JugOfMilk:
-                DataManager.Instance.PlayerData.JugOfMilk += Parameter1;
+                // DataManager.Instance.PlayerData.JugOfMilk += Parameter1;
                 break;
             case LevelRewardType.GlassOfMilk:
-                DataManager.Instance.PlayerData.GlassOfMilk += Parameter1;
+                // DataManager.Instance.PlayerData.GlassOfMilk += Parameter1;
                 break;
             case LevelRewardType.Item:
                 DataManager.Instance.PlayerData.AddOwnedEquipment(Parameter1);

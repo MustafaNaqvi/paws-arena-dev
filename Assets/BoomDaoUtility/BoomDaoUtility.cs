@@ -17,8 +17,6 @@ namespace BoomDaoWrapper
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
 
         private const string AMOUNT_KEY = "amount";
-        private const string NAME_KEY = "name";
-        private const string DEFAULT_KEY = "None";
 
         private Action loginCallback;
         private bool canLogin;

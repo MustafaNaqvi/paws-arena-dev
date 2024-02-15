@@ -39,7 +39,7 @@ public class ChallengesManager : MonoBehaviour
                 // DataManager.Instance.PlayerData.Experience += _challengeSO.RewardAmount;
                 break;
             case ChallengeRewardType.JugOfMilk:
-                DataManager.Instance.PlayerData.JugOfMilk += _challengeSO.RewardAmount;
+                // DataManager.Instance.PlayerData.JugOfMilk += _challengeSO.RewardAmount;
                 break;
             case ChallengeRewardType.Snacks:
                 DataManager.Instance.PlayerData.Snacks += _challengeSO.RewardAmount;

@@ -27,8 +27,8 @@ public class BuyMilk : MonoBehaviour
         buyJugOfMilkButton.onClick.AddListener(BuyJugOfMilk);
         buyGlassOfMilkButton.onClick.AddListener(BuyGlassOfMIlk);
 
-        DataManager.Instance.PlayerData.UpdatedJugOfMilk += ShowJugOfMilk;
-        DataManager.Instance.PlayerData.UpdatedGlassOfMilk += ShowGlassOfMilk;
+        PlayerData.OnUpdatedJugOfMilk += ShowJugOfMilk;
+        PlayerData.OnUpdatedGlassOfMilk += ShowGlassOfMilk;
 
         glassOfMilkPriceDisplay.text = DataManager.Instance.GameData.GlassOfMilkPrice.ToString();
         jugOfMilkPriceDisplay.text = DataManager.Instance.GameData.JugOfMilkPrice.ToString();
@@ -42,8 +42,8 @@ public class BuyMilk : MonoBehaviour
         buyJugOfMilkButton.onClick.AddListener(BuyJugOfMilk);
         buyGlassOfMilkButton.onClick.AddListener(BuyGlassOfMIlk);
 
-        DataManager.Instance.PlayerData.UpdatedJugOfMilk -= ShowJugOfMilk;
-        DataManager.Instance.PlayerData.UpdatedGlassOfMilk -= ShowGlassOfMilk;
+        PlayerData.OnUpdatedJugOfMilk -= ShowJugOfMilk;
+        PlayerData.OnUpdatedGlassOfMilk -= ShowGlassOfMilk;
     }
 
     private void ShowJugOfMilk()
@@ -67,7 +67,7 @@ public class BuyMilk : MonoBehaviour
         }
 
         DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.JugOfMilkPrice;
-        DataManager.Instance.PlayerData.JugOfMilk++;
+        // DataManager.Instance.PlayerData.JugOfMilk++;
     }
 
     private void BuyGlassOfMIlk()
@@ -79,7 +79,7 @@ public class BuyMilk : MonoBehaviour
         }
 
         DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GlassOfMilkPrice;
-        DataManager.Instance.PlayerData.GlassOfMilk++;
+        // DataManager.Instance.PlayerData.GlassOfMilk++;
     }
 
     private void Done()

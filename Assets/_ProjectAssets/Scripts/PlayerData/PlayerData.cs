@@ -8,9 +8,8 @@ using UnityEngine;
 public class PlayerData
 {
     public const string EARNED_XP_KEY = "earnedXp";
+    
     private float snacks;
-    private float jugOfMilk;
-    private float glassOfMilk;
     private CraftingProcess craftingProcess;
     private bool hasPass;
     private List<ClaimedReward> claimedLevelRewards = new();
@@ -22,8 +21,6 @@ public class PlayerData
     private int points;
 
     [JsonIgnore] public Action UpdatedSnacks;
-    [JsonIgnore] public Action UpdatedJugOfMilk;
-    [JsonIgnore] public Action UpdatedGlassOfMilk;
     [JsonIgnore] public Action UpdatedCraftingProcess;
     [JsonIgnore] public Action UpdatedClaimedLevels;
     [JsonIgnore] public Action UpdatedHasPass;
@@ -61,27 +58,6 @@ public class PlayerData
             snacks = value;
             UpdatedSnacks?.Invoke();
         }
-    }
-
-    public float JugOfMilk
-    {
-        get { return jugOfMilk; }
-        set
-        {
-            jugOfMilk = value;
-            UpdatedJugOfMilk?.Invoke();
-        }
-    }
-
-    public float GlassOfMilk
-    {
-        get { return glassOfMilk; }
-        set
-        {
-            glassOfMilk = value;
-            UpdatedGlassOfMilk?.Invoke();
-        }
-
     }
 
     public CraftingProcess CraftingProcess
@@ -270,16 +246,23 @@ public class PlayerData
     // new system
     public static Action OnUpdatedShards;
     public static Action OnUpdatedExp;
+    public static Action OnUpdatedJugOfMilk;
+    public static Action OnUpdatedGlassOfMilk;
 
     public const string NAME_KEY = "username";
     public const string KITTY_RECOVERY_KEY = "recoveryDate";
     public const string KITTY_KEY = "kitty_id";
-    
+    public const string USE_MILK_BOTTLE = "useMilkBottle";
+    public const string USE_MILK_GLASS = "useMilkGlass";
+
     public const string UNCOMMON_SHARD = "uncommonShard";
     public const string RARE_SHARD = "rareShard";
     public const string EPIC_SHARD = "epicShard";
     public const string LEGENDARY_SHARD = "legendaryShard";
     public const string COMMON_SHARD = "commonShard";
+    
+    public const string MILK_BOTTLE = "milkBottle";
+    public const string MILK_GLASS = "milkGlass";
     
     public const string NAME_ENTITY_ID = "user_profile";
 
@@ -297,6 +280,10 @@ public class PlayerData
     public double EpicShard => BoomDaoUtility.Instance.GetDouble(EPIC_SHARD, AMOUNT_KEY);
     public double LegendaryShard => BoomDaoUtility.Instance.GetDouble(LEGENDARY_SHARD, AMOUNT_KEY);
     public double TotalCrystals => CommonShard + UncommonShard + RareShard + EpicShard + LegendaryShard;
+    
+    public double JugOfMilk => BoomDaoUtility.Instance.GetDouble(MILK_BOTTLE, AMOUNT_KEY);
+
+    public double GlassOfMilk => BoomDaoUtility.Instance.GetDouble(MILK_GLASS, AMOUNT_KEY);
 
     public double Experience => BoomDaoUtility.Instance.GetDouble(XP, AMOUNT_KEY);
 
@@ -327,6 +314,13 @@ public class PlayerData
             case LEGENDARY_SHARD:
                 OnUpdatedShards?.Invoke();
                 break;
+            case MILK_GLASS:
+                OnUpdatedGlassOfMilk?.Invoke();
+                break;
+            case MILK_BOTTLE:
+                OnUpdatedJugOfMilk?.Invoke();
+                break;
+            
             default:
                 Debug.Log($"{_key} got updated!, add handler?");
                 break;

@@ -79,8 +79,8 @@ public class DataManager : MonoBehaviour
         PlayerData.SubscribeEvents();
         hasSubscribed = true;
         PlayerData.UpdatedSnacks += SaveSnacks;
-        PlayerData.UpdatedJugOfMilk += SaveJugOfMilk;
-        PlayerData.UpdatedGlassOfMilk += SaveGlassOfMilk;
+        PlayerData.OnUpdatedJugOfMilk += SaveJugOfMilk;
+        PlayerData.OnUpdatedGlassOfMilk += SaveGlassOfMilk;
         PlayerData.UpdatedCraftingProcess += SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels += SaveClaimedLevels;
         PlayerData.UpdatedHasPass += SaveHasPass;
@@ -99,8 +99,8 @@ public class DataManager : MonoBehaviour
             return;
         }
         PlayerData.UpdatedSnacks -= SaveSnacks;
-        PlayerData.UpdatedJugOfMilk -= SaveJugOfMilk;
-        PlayerData.UpdatedGlassOfMilk -= SaveGlassOfMilk;
+        PlayerData.OnUpdatedJugOfMilk -= SaveJugOfMilk;
+        PlayerData.OnUpdatedGlassOfMilk -= SaveGlassOfMilk;
         PlayerData.UpdatedCraftingProcess -= SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels -= SaveClaimedLevels;
         PlayerData.UpdatedHasPass -= SaveHasPass;
