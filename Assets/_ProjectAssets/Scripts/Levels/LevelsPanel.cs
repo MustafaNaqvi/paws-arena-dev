@@ -65,7 +65,7 @@ public class LevelsPanel : MonoBehaviour
     {
         levelDisplay.text = DataManager.Instance.PlayerData.Level.ToString();
         seasonNumberDisplay.text = "Season "+DataManager.Instance.GameData.SeasonNumber;
-        ShowSeasonEndDiplay();
+        ShowStatus();
     }
 
     private void Close()
@@ -166,34 +166,45 @@ public class LevelsPanel : MonoBehaviour
 
     private void Update()
     {
-        ShowSeasonEndDiplay();
+        ShowStatus();
     }
 
-    private void ShowSeasonEndDiplay()
+    private void ShowStatus()
     {
         if (DataManager.Instance.GameData.HasSeasonEnded)
         {
             seasonEndDisplay.text = "Ended";
+            return;
+        }
+        TimeSpan _timeSpan;
+        string _status;
+        
+        if(DataManager.Instance.GameData.HasSeasonStarted)
+        {
+            _status = "ends";
+            _timeSpan = DataManager.Instance.GameData.SeasonEnds - DateTime.UtcNow;
         }
         else
         {
-            TimeSpan _seasonEndsIn = DataManager.Instance.GameData.SeasonEnds - DateTime.UtcNow;
-            if (_seasonEndsIn.TotalDays>1)
-            {
-                seasonEndDisplay.text = $"Season ends: {(int)_seasonEndsIn.TotalDays}days";
-            }
-            else if (_seasonEndsIn.Hours>1)
-            {
-                seasonEndDisplay.text = $"Season ends: {(int)_seasonEndsIn.TotalDays}hours";
-            }
-            else if (_seasonEndsIn.Minutes>1)
-            {
-                seasonEndDisplay.text = $"Season ends: {(int)_seasonEndsIn.Minutes}minutes";
-            }
-            else
-            {
-                seasonEndDisplay.text = $"Season ends: {(int)_seasonEndsIn.Seconds}secounds";
-            }
+            _status = "starts";
+            _timeSpan = DataManager.Instance.GameData.SeasonStarts - DateTime.UtcNow;
+        }
+        
+        if (_timeSpan.TotalDays>1)
+        {
+            seasonEndDisplay.text = $"Season {_status}: {(int)_timeSpan.TotalDays}days";
+        }
+        else if (_timeSpan.Hours>1)
+        {
+            seasonEndDisplay.text = $"Season {_status}: {(int)_timeSpan.TotalDays}hours";
+        }
+        else if (_timeSpan.Minutes>1)
+        {
+            seasonEndDisplay.text = $"Season {_status}: {_timeSpan.Minutes}minutes";
+        }
+        else
+        {
+            seasonEndDisplay.text = $"Season {_status}: {_timeSpan.Seconds}seconds";
         }
     }
 

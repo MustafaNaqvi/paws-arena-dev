@@ -32,7 +32,7 @@ public class ChallengesManager : MonoBehaviour
         switch (_challengeSO.RewardType)
         {
             case ChallengeRewardType.SeasonExperience:
-                if (DataManager.Instance.GameData.SeasonEnds<DateTime.Now)
+                if (!DataManager.Instance.GameData.IsSeasonActive)
                 {
                     return;
                 }

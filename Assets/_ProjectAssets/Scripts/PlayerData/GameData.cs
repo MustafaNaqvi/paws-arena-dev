@@ -1,12 +1,10 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using BoomDaoWrapper;
 
 [Serializable]
 public class GameData
 {
-    private int seasonNumber;
-    private DateTime seasonEnds;
     private int levelBaseExp;
     private int levelBaseScaler;
     private int respinPrice;
@@ -16,33 +14,6 @@ public class GameData
     private int guildPrice;
     private int guildMaxPlayers;
     private Dictionary<string, GuildData> guilds = new ();
-
-    public bool HasSeasonEnded => DateTime.UtcNow > SeasonEnds;
-
-
-    public int SeasonNumber
-    {
-        get
-        {
-            return seasonNumber;
-        }
-        set
-        {
-            seasonNumber = value;
-        }
-    }
-
-    public DateTime SeasonEnds
-    {
-        get
-        {
-            return seasonEnds;
-        }
-        set
-        {
-            seasonEnds = value;
-        }
-    }
 
     public int LevelBaseExp
     {
@@ -130,4 +101,18 @@ public class GameData
 
     public GuildRankingBorders RankingBorders;
 
+    
+    // new system
+    
+    private const string SEASON_KEY = "season";
+    private const string SEASON_NUMBER = "number";
+    private const string SEASON_START = "startDate";
+    private const string SEASON_END = "endDate";
+
+    public int SeasonNumber => BoomDaoUtility.Instance.GetConfigDataAsInt(SEASON_KEY, SEASON_NUMBER);
+    public DateTime SeasonStarts => BoomDaoUtility.Instance.GetConfigDataAsDate(SEASON_KEY, SEASON_START);
+    public DateTime SeasonEnds => BoomDaoUtility.Instance.GetConfigDataAsDate(SEASON_KEY, SEASON_END);
+    public bool HasSeasonEnded => DateTime.UtcNow > SeasonEnds;
+    public bool HasSeasonStarted => DateTime.UtcNow > SeasonStarts;
+    public bool IsSeasonActive => HasSeasonStarted && !HasSeasonEnded;
 }

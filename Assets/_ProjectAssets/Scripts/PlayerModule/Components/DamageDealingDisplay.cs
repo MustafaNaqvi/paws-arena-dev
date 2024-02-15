@@ -51,7 +51,7 @@ public class DamageDealingDisplay : MonoBehaviour
 
     private void SpawnExperience(int _damageTaken)
     {
-        if (DataManager.Instance.GameData.HasSeasonEnded)
+        if (DataManager.Instance.GameData.IsSeasonActive)
         {
             return;
         }

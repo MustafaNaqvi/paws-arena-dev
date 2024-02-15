@@ -30,7 +30,7 @@ public class GameplayEnemiesLevel : MonoBehaviour
 
     private void SetBotsLevel()
     {
-        if (DataManager.Instance.GameData.SeasonEnds <= DateTime.Now)
+        if (!DataManager.Instance.GameData.IsSeasonActive)
         {
             levelDisplay.text = "1";
             levelBar.fillAmount = 0;
@@ -39,7 +39,8 @@ public class GameplayEnemiesLevel : MonoBehaviour
 
         float _maxExp = 57000;
 
-        int _timePassed = (int)(DateTime.Now - DataManager.Instance.GameData.SeasonEnds.AddMonths(-1)).TotalSeconds;
+        DateTime _seasonEnds = DataManager.Instance.GameData.SeasonEnds;
+        int _timePassed = (int)(DateTime.Now - _seasonEnds.AddMonths(-1)).TotalSeconds;
 
         if (_timePassed<=0)
         {
@@ -48,7 +49,7 @@ public class GameplayEnemiesLevel : MonoBehaviour
             return;
         }
 
-        float _expPerSecond = _maxExp / (int)(DataManager.Instance.GameData.SeasonEnds-DataManager.Instance.GameData.SeasonEnds.AddMonths(-1)).TotalSeconds;
+        float _expPerSecond = _maxExp / (int)(_seasonEnds-_seasonEnds.AddMonths(-1)).TotalSeconds;
 
         float _collectedExp = _timePassed * _expPerSecond;
         ShowProgress((int)_collectedExp);
@@ -57,10 +58,11 @@ public class GameplayEnemiesLevel : MonoBehaviour
     private void SetOpponentsLevel()
     {
         double _experience=0;
-        if (DataManager.Instance.GameData.SeasonEnds > DateTime.Now)
+        if (DataManager.Instance.GameData.IsSeasonActive)
         {
             _experience = DataManager.Instance.PlayerData.Experience;
         }
+        
         photonView.RPC(nameof(TellOpponentMyExp),RpcTarget.Others,_experience);
     }
 
