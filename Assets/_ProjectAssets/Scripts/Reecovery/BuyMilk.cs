@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
+using BoomDaoWrapper;
 
 public class BuyMilk : MonoBehaviour
 {
+    private const string BUY_MILK_BOTTLE = "buyMilkBottle";
+    private const string BUY_MILK_GLASS = "buyMilkGlass";
+    
     [SerializeField] private Button doneButton;
     [SerializeField] private Button buyJugOfMilkButton;
     [SerializeField] private Button buyGlassOfMilkButton;
@@ -60,26 +64,28 @@ public class BuyMilk : MonoBehaviour
 
     private void BuyJugOfMilk()
     {
-        StartCoroutine(BuyCooldown());
         if (DataManager.Instance.PlayerData.Snacks<DataManager.Instance.GameData.JugOfMilkPrice)
         {
             return;
         }
-
-        // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.JugOfMilkPrice;
-        // DataManager.Instance.PlayerData.JugOfMilk++;
+        ManageInteractables(false);
+        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_BOTTLE, HandleBuyOutcome);
     }
 
     private void BuyGlassOfMIlk()
     {
-        StartCoroutine(BuyCooldown());
-        if (DataManager.Instance.PlayerData.Snacks< DataManager.Instance.GameData.GlassOfMilkPrice)
+        if (DataManager.Instance.PlayerData.Snacks < DataManager.Instance.GameData.GlassOfMilkPrice)
         {
             return;
         }
+        ManageInteractables(false);
 
-        // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GlassOfMilkPrice;
-        // DataManager.Instance.PlayerData.GlassOfMilk++;
+        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_GLASS, HandleBuyOutcome);
+    }
+
+    private void HandleBuyOutcome(List<ActionOutcome> _outcomes)
+    {
+        ManageInteractables(true);
     }
 
     private void Done()
@@ -87,12 +93,9 @@ public class BuyMilk : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private IEnumerator BuyCooldown()
+    private void ManageInteractables(bool _status)
     {
-        buyJugOfMilkButton.interactable = false;
-        buyGlassOfMilkButton.interactable = false;
-        yield return new WaitForSeconds(1);
-        buyJugOfMilkButton.interactable = true;
-        buyGlassOfMilkButton.interactable = true;
+        buyJugOfMilkButton.interactable = _status;
+        buyGlassOfMilkButton.interactable = _status;
     }
 }

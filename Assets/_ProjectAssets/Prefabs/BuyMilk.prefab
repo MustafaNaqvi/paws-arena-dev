@@ -1116,8 +1116,8 @@ MonoBehaviour:
   glassOfMilkDisplay: {fileID: 1390852338155710623}
   normalAmountColor: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 1}
   zeroAmountColor: {r: 0.9150943, g: 0.02071909, b: 0.02071909, a: 1}
-  glassOfMilkPriceDisplay: {fileID: 1390852337696294214}
-  jugOfMilkPriceDisplay: {fileID: 1390852338325002892}
+  glassOfMilkPriceDisplay: {fileID: 1390852338325002892}
+  jugOfMilkPriceDisplay: {fileID: 1390852337696294214}
 --- !u!1 &1390852338325002894
 GameObject:
   m_ObjectHideFlags: 0
