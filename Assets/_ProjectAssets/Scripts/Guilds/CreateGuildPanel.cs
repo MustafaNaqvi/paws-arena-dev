@@ -154,7 +154,7 @@ public class CreateGuildPanel : GuildPanelBase
         DataManager.Instance.GameData.Guilds.Add(_newGuild.Id,_newGuild);
         FirebaseManager.Instance.CreateGuild(_newGuild);
         DataManager.Instance.PlayerData.GuildId = _newGuild.Id;
-        DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GuildPrice;
+        // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GuildPrice;
     }
 
     private bool ValidateName(string _name)

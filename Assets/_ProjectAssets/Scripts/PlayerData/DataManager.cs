@@ -8,16 +8,10 @@ public class DataManager : MonoBehaviour
     public PlayerData PlayerData { get; private set; }
     public GameData GameData { get; private set; }
 
-    private const string SNACKS = "Snacks";
-    private const string JUG_OF_MILK = "JugOfMilk";
-    private const string GLASS_OF_MILK = "GlassOfMilk";
     private const string CRAFTING_PROCESS = "CraftingProcess";
-    private const string EXPERIENCE = "Experience";
     private const string CLAIMED_LEVELS = "ClaimedLevelRewards";
     private const string HAS_PASS = "HasPass";
-    private const string RECOVERING_KITTIES = "RecoveringKitties";
     private const string OWNED_EQUIPTABLES = "OwnedEquiptables";
-    private const string SEASON_NUMBER = "SeasonNumber";
     private const string OWNED_EMOJIS= "OwnedEmojis";
     private const string CHALLENGES= "Challenges";
     private const string CHALLENGES_DATA= "Challenges/ChallengesData";
@@ -49,7 +43,6 @@ public class DataManager : MonoBehaviour
             PlayerData.HasPass = false;
             SaveClaimedLevels();
             SaveHasPass();
-            SaveSeasonNumber();
         }
         
     }
@@ -78,14 +71,10 @@ public class DataManager : MonoBehaviour
     {
         PlayerData.SubscribeEvents();
         hasSubscribed = true;
-        PlayerData.UpdatedSnacks += SaveSnacks;
-        PlayerData.OnUpdatedJugOfMilk += SaveJugOfMilk;
-        PlayerData.OnUpdatedGlassOfMilk += SaveGlassOfMilk;
         PlayerData.UpdatedCraftingProcess += SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels += SaveClaimedLevels;
         PlayerData.UpdatedHasPass += SaveHasPass;
         PlayerData.UpdatedEquiptables += SaveEquiptables;
-        PlayerData.UpdatedSeasonNumber += SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis += SaveOwnedEmojis;
         ChallengeData.UpdatedProgress += SaveChallengeProgress;
         PlayerData.Challenges.UpdatedClaimedLuckySpin += SaveClaimedLuckySpin;
@@ -98,34 +87,15 @@ public class DataManager : MonoBehaviour
         {
             return;
         }
-        PlayerData.UpdatedSnacks -= SaveSnacks;
-        PlayerData.OnUpdatedJugOfMilk -= SaveJugOfMilk;
-        PlayerData.OnUpdatedGlassOfMilk -= SaveGlassOfMilk;
         PlayerData.UpdatedCraftingProcess -= SaveCraftingProcess;
         PlayerData.UpdatedClaimedLevels -= SaveClaimedLevels;
         PlayerData.UpdatedHasPass -= SaveHasPass;
         PlayerData.UpdatedEquiptables -= SaveEquiptables;
-        PlayerData.UpdatedSeasonNumber -= SaveSeasonNumber;
         PlayerData.UpdatedOwnedEmojis -= SaveOwnedEmojis;
         ChallengeData.UpdatedProgress -= SaveChallengeProgress;
         PlayerData.Challenges.UpdatedClaimedLuckySpin -= SaveClaimedLuckySpin;
         PlayerData.UpdatedGuild -= SaveGuild;
         PlayerData.UnsubscribeEvents();
-    }
-
-    private void SaveSnacks()
-    {
-        FirebaseManager.Instance.SaveValue(SNACKS,PlayerData.Snacks);
-    }
-
-    private void SaveJugOfMilk()
-    {
-        FirebaseManager.Instance.SaveValue(JUG_OF_MILK, PlayerData.JugOfMilk);
-    }
-
-    private void SaveGlassOfMilk()
-    {
-        FirebaseManager.Instance.SaveValue(GLASS_OF_MILK, PlayerData.GlassOfMilk);
     }
 
     private void SaveCraftingProcess()
@@ -146,11 +116,6 @@ public class DataManager : MonoBehaviour
     private void SaveEquiptables()
     {
         FirebaseManager.Instance.SaveValue(OWNED_EQUIPTABLES, JsonConvert.SerializeObject(PlayerData.OwnedEquiptables));
-    }
-
-    private void SaveSeasonNumber()
-    {
-        FirebaseManager.Instance.SaveValue(SEASON_NUMBER,PlayerData.SeasonNumber);
     }
 
     private void SaveOwnedEmojis()

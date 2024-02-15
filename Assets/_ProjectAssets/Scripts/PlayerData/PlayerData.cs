@@ -9,7 +9,6 @@ public class PlayerData
 {
     public const string EARNED_XP_KEY = "earnedXp";
     
-    private float snacks;
     private CraftingProcess craftingProcess;
     private bool hasPass;
     private List<ClaimedReward> claimedLevelRewards = new();
@@ -20,7 +19,6 @@ public class PlayerData
     private string guildId = string.Empty;
     private int points;
 
-    [JsonIgnore] public Action UpdatedSnacks;
     [JsonIgnore] public Action UpdatedCraftingProcess;
     [JsonIgnore] public Action UpdatedClaimedLevels;
     [JsonIgnore] public Action UpdatedHasPass;
@@ -50,15 +48,6 @@ public class PlayerData
         };
     }
 
-    public float Snacks
-    {
-        get { return snacks; }
-        set
-        {
-            snacks = value;
-            UpdatedSnacks?.Invoke();
-        }
-    }
 
     public CraftingProcess CraftingProcess
     {
@@ -244,11 +233,15 @@ public class PlayerData
     }
 
     // new system
+    public static Action OnUpdatedSnacks;
+
     public static Action OnUpdatedShards;
     public static Action OnUpdatedExp;
     public static Action OnUpdatedJugOfMilk;
     public static Action OnUpdatedGlassOfMilk;
 
+    public const string SNACKS = "snack";
+    
     public const string NAME_KEY = "username";
     public const string KITTY_RECOVERY_KEY = "recoveryDate";
     public const string KITTY_KEY = "kitty_id";
@@ -274,6 +267,9 @@ public class PlayerData
     public int ExperienceForNextLevel { get; private set; }
 
     public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
+
+    public double Snacks => BoomDaoUtility.Instance.GetDouble(SNACKS, AMOUNT_KEY);
+
     public double CommonShard => BoomDaoUtility.Instance.GetDouble(COMMON_SHARD, AMOUNT_KEY);
     public double UncommonShard => BoomDaoUtility.Instance.GetDouble(UNCOMMON_SHARD, AMOUNT_KEY);
     public double RareShard => BoomDaoUtility.Instance.GetDouble(RARE_SHARD, AMOUNT_KEY);
@@ -320,7 +316,9 @@ public class PlayerData
             case MILK_BOTTLE:
                 OnUpdatedJugOfMilk?.Invoke();
                 break;
-            
+            case SNACKS:
+                OnUpdatedSnacks?.Invoke();
+                break;
             default:
                 Debug.Log($"{_key} got updated!, add handler?");
                 break;

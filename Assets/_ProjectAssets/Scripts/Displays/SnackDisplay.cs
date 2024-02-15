@@ -7,13 +7,13 @@ public class SnackDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        DataManager.Instance.PlayerData.UpdatedSnacks += ShowSnacks;
+        PlayerData.OnUpdatedSnacks += ShowSnacks;
         ShowSnacks();
     }
 
     private void OnDisable()
     {
-        DataManager.Instance.PlayerData.UpdatedSnacks -= ShowSnacks;
+        PlayerData.OnUpdatedSnacks -= ShowSnacks;
     }
 
     private void ShowSnacks()

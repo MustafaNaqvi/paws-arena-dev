@@ -38,8 +38,6 @@ public class LevelsPanel : MonoBehaviour
         showNext.onClick.AddListener(ShowNext);
         claimAllButton.onClick.AddListener(ClaimAll);
 
-        DataManager.Instance.PlayerData.UpdatedSnacks += SetupDisplays;
-
         SetupDisplays();
 
         foreach (var _reward in DataManager.Instance.GameData.SeasonRewards)
@@ -57,8 +55,6 @@ public class LevelsPanel : MonoBehaviour
         showPrevious.onClick.RemoveListener(ShowPrevious);
         showNext.onClick.RemoveListener(ShowNext);
         claimAllButton.onClick.RemoveListener(ClaimAll);
-
-        DataManager.Instance.PlayerData.UpdatedSnacks -= SetupDisplays;
     }
 
     private void SetupDisplays()

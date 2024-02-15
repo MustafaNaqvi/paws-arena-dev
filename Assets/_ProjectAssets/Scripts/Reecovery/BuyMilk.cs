@@ -66,7 +66,7 @@ public class BuyMilk : MonoBehaviour
             return;
         }
 
-        DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.JugOfMilkPrice;
+        // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.JugOfMilkPrice;
         // DataManager.Instance.PlayerData.JugOfMilk++;
     }
 
@@ -78,7 +78,7 @@ public class BuyMilk : MonoBehaviour
             return;
         }
 
-        DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GlassOfMilkPrice;
+        // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GlassOfMilkPrice;
         // DataManager.Instance.PlayerData.GlassOfMilk++;
     }
 

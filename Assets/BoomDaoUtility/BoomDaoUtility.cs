@@ -86,7 +86,7 @@ namespace BoomDaoWrapper
             {
                 string _errorMessage = _actionResult.AsErr().content;
                 Debug.LogError(_errorMessage);
-                _callBack?.Invoke(null);
+                _callBack?.Invoke(default);
                 return;
             }
 

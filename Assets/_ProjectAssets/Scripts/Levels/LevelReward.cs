@@ -30,7 +30,7 @@ public class LevelReward
                 // DataManager.Instance.PlayerData.Crystals.LegendaryCrystal += Parameter1;
                 break;
             case LevelRewardType.Snack:
-                DataManager.Instance.PlayerData.Snacks += Parameter1;
+                // DataManager.Instance.PlayerData.Snacks += Parameter1;
                 break;
             case LevelRewardType.JugOfMilk:
                 // DataManager.Instance.PlayerData.JugOfMilk += Parameter1;

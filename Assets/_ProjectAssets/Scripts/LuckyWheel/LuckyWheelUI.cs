@@ -162,7 +162,7 @@ public class LuckyWheelUI : MonoBehaviour
             return;
         }
 
-        DataManager.Instance.PlayerData.Snacks -= currentRespinPrice;
+        // DataManager.Instance.PlayerData.Snacks -= currentRespinPrice;
         // respinButton.gameObject.SetActive(false);
         claimButton.gameObject.SetActive(false);
         choosenReward = null;
