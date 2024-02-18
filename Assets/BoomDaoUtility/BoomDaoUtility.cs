@@ -74,6 +74,7 @@ namespace BoomDaoWrapper
 
             UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
             loginCallback?.Invoke();
+            Debug.Log(UserUtil.GetPrincipal());
         }
 
         #endregion

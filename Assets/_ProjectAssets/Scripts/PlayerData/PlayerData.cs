@@ -356,12 +356,13 @@ public class PlayerData
 
         if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
         {
-            _recoveryDate = DateTime.Parse(_timeString);
+            _recoveryDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
             if (_recoveryDate <= DateTime.UtcNow)
             {
                 _recoveryDate = default;
                 BoomDaoUtility.Instance.RemoveEntity(_kittyId);
             }
+            
         }
 
         return _recoveryDate;

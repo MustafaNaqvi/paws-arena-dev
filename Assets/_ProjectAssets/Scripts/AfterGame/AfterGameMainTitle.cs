@@ -142,7 +142,7 @@ namespace com.colorfulcoding.AfterGame
                 HURT_KITTY
                 , new List<ActionParameter> {new()
                 {
-                    Key = PlayerData.KITTY_RECOVERY_KEY, Value = _recoveryEnds.ToString(CultureInfo.InvariantCulture)
+                    Key = PlayerData.KITTY_RECOVERY_KEY, Value = Utilities.DateTimeToNanoseconds(_recoveryEnds).ToString()
                 },
                     new ()
                     {
