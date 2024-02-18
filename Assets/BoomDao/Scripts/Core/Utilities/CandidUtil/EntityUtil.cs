@@ -615,77 +615,80 @@
                 else currentEntityFields = new();
 
 
-
-                foreach (var edit in fieldsEdits)
+                if(fieldsEdits != null)
                 {
-                    var fieldId = edit.Key;
-
-                    switch (edit.Value)
+                    foreach (var edit in fieldsEdits)
                     {
-                        case EntityFieldEdit.SetText e:
-                            currentEntityFields[fieldId] = e.Value;
-                            break;
+                        var fieldId = edit.Key;
 
-                        case EntityFieldEdit.DeleteField e:
-                            if(currentEntityFields.ContainsKey(fieldId)) currentEntityFields.Remove(fieldId);
-                            break;
-                        case EntityFieldEdit.AddToList e:
-                            if(currentEntityFields.TryAdd(fieldId, e.Value) == false)
-                            {
-                                currentEntityFields[fieldId] += $",{e.Value}";
-                            }
-                            break;
-                        case EntityFieldEdit.RemoveFromList e:
-                            if (currentEntityFields.ContainsKey(e.Value))
-                            {
-                                var currentFieldValue = currentEntityFields[fieldId];
+                        switch (edit.Value)
+                        {
+                            case EntityFieldEdit.SetText e:
+                                currentEntityFields[fieldId] = e.Value;
+                                break;
 
-                                if (currentFieldValue.Contains(e.Value))
+                            case EntityFieldEdit.DeleteField e:
+                                if (currentEntityFields.ContainsKey(fieldId)) currentEntityFields.Remove(fieldId);
+                                break;
+                            case EntityFieldEdit.AddToList e:
+                                if (currentEntityFields.TryAdd(fieldId, e.Value) == false)
                                 {
-                                    var split = currentFieldValue.Split(',').ToList();
-
-                                    split.Remove(e.Value);
-
-                                    var newFieldValue = split.Reduce(e => $"{e}", ",");
-
-                                    currentEntityFields[fieldId] = newFieldValue;
+                                    currentEntityFields[fieldId] += $",{e.Value}";
                                 }
-                            }
+                                break;
+                            case EntityFieldEdit.RemoveFromList e:
+                                if (currentEntityFields.ContainsKey(e.Value))
+                                {
+                                    var currentFieldValue = currentEntityFields[fieldId];
 
-                            break;
+                                    if (currentFieldValue.Contains(e.Value))
+                                    {
+                                        var split = currentFieldValue.Split(',').ToList();
 
-                        case EntityFieldEdit.Numeric e:
+                                        split.Remove(e.Value);
 
-                            if(e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set)
-                            {
-                                currentEntityFields[fieldId] = e.Value.ToString();
-                            }
-                            else if (e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
-                            {
-                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
-                                numberAsText.TryParseValue(out double currentNumericValue);
+                                        var newFieldValue = split.Reduce(e => $"{e}", ",");
 
-                                currentEntityFields[fieldId] = (currentNumericValue + e.Value).ToString();
-                            }
-                            else
-                            {
-                                if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
-                                numberAsText.TryParseValue(out double currentNumericValue);
+                                        currentEntityFields[fieldId] = newFieldValue;
+                                    }
+                                }
 
-                                currentEntityFields[fieldId] = (currentNumericValue - e.Value).ToString();
-                            }
-                            
-                            break;
+                                break;
 
-                        case EntityFieldEdit.RenewTimestamp e:
+                            case EntityFieldEdit.Numeric e:
 
-                            currentEntityFields[fieldId] = (MainUtil.Now().MilliToNano() + e.Value).ToString();
+                                if (e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Set)
+                                {
+                                    currentEntityFields[fieldId] = e.Value.ToString();
+                                }
+                                else if (e.NumericType_ == EntityFieldEdit.Numeric.NumericType.Increment)
+                                {
+                                    if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
+                                    numberAsText.TryParseValue(out double currentNumericValue);
 
-                            break;
+                                    currentEntityFields[fieldId] = (currentNumericValue + e.Value).ToString();
+                                }
+                                else
+                                {
+                                    if (currentEntityFields.TryGetValue(fieldId, out var numberAsText) == false) numberAsText = "0";
+                                    numberAsText.TryParseValue(out double currentNumericValue);
+
+                                    currentEntityFields[fieldId] = (currentNumericValue - e.Value).ToString();
+                                }
+
+                                break;
+
+                            case EntityFieldEdit.RenewTimestamp e:
+
+                                currentEntityFields[fieldId] = (MainUtil.Now().MilliToNano() + e.Value).ToString();
+
+                                break;
+                        }
                     }
                 }
 
                 var newEditedEntity = new DataTypes.Entity(wid, eid, currentEntityFields);
+                if (entity.Value.dispose) newEditedEntity.ScheduleDisposal();
 
                 editedEntities[eid] = newEditedEntity;
             }

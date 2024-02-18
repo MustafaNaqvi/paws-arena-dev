@@ -153,13 +153,13 @@ namespace Boom
                     {
                         case ActionOutcomeOption.OptionInfoTag.UpdateEntity:
 
-                            string wid = BoomManager.Instance.WORLD_CANISTER_ID;
-                            string eid;
                             string fieldName;
                             Dictionary<string, EntityFieldEdit.Base> allFieldsToEdit;
 
-                            var updateEntity = e.Option.AsUpdateEntity();
-                            eid = updateEntity.Eid;
+                            var updateEntity =  e.Option.AsUpdateEntity();
+
+                            string wid = string.IsNullOrEmpty(updateEntity.Wid.ValueOrDefault) == false? updateEntity.Wid.ValueOrDefault : BoomManager.Instance.WORLD_CANISTER_ID;
+                            string eid = updateEntity.Eid;
 
                             if (eid.Contains("$caller"))
                             {
@@ -192,355 +192,362 @@ namespace Boom
                             }
 
 
-
-                            if (!string.IsNullOrEmpty(updateEntity.Wid.ValueOrDefault)) wid = updateEntity.Wid.ValueOrDefault;
-
                             var entityKey = $"{wid}{eid}";
 
-
-                            foreach (var update in updateEntity.Updates)
+                            if (updateEntity.Updates.Count > 0)
                             {
-                                switch (update.Tag)
+                                foreach (var update in updateEntity.Updates)
                                 {
-                                    case UpdateEntityTypeTag.DeleteField:
+                                    switch (update.Tag)
+                                    {
+                                        case UpdateEntityTypeTag.DeleteField:
 
-                                        var val00 = update.AsDeleteField();
-                                        fieldName = val00.FieldName;
+                                            var val00 = update.AsDeleteField();
+                                            fieldName = val00.FieldName;
 
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit00))
-                                        {
-                                            entityToEdit00 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit00);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit00.fields;
-
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.DeleteField()))
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit00))
                                             {
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.DeleteField();
+                                                entityToEdit00 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit00);
                                             }
-                                        }
 
-                                        break;
-                                    case UpdateEntityTypeTag.SetText:
-
-                                        var val1 = update.AsSetText();
-                                        fieldName = val1.FieldName;
-                                        var fieldValue1 = val1.FieldValue;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit1))
-                                        {
-                                            entityToEdit1 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit1);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit1.fields;
+                                            allFieldsToEdit = entityToEdit00.fields;
 
 
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.SetText((string)fieldValue1)))
+                                            if (allFieldsToEdit != null)
                                             {
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.SetText((string)fieldValue1);
-                                            }
-                                        }
-
-                                        break;
-                                    case UpdateEntityTypeTag.AddToList:
-
-                                        var val10 = update.AsAddToList();
-                                        fieldName = val10.FieldName;
-                                        var fieldValue10 = val10.Value;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit10))
-                                        {
-                                            entityToEdit10 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit10);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit10.fields;
-
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.AddToList((string)fieldValue10)))
-                                            {
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.AddToList((string)fieldValue10);
-                                            }
-                                        }
-
-                                        break;
-                                    case UpdateEntityTypeTag.RemoveFromList:
-
-                                        var val11 = update.AsRemoveFromList();
-                                        fieldName = val11.FieldName;
-                                        var fieldValue11 = val11.Value;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit11))
-                                        {
-                                            entityToEdit10 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit11);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit11.fields;
-
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.RemoveFromList((string)fieldValue11)))
-                                            {
-                                                allFieldsToEdit[fieldName] = new EntityFieldEdit.RemoveFromList((string)fieldValue11);
-                                            }
-                                        }
-
-                                        break;
-                                    case UpdateEntityTypeTag.SetNumber:
-
-                                        var val2 = update.AsSetNumber();
-
-                                        fieldName = val2.FieldName;
-                                        var fieldValue2 = val2.FieldValue;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit2))
-                                        {
-                                            entityToEdit2 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit2);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit2.fields;
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (fieldValue2.Tag == Candid.World.Models.SetNumber.FieldValueInfoTag.Number)
-                                            {
-                                                var v = new EntityFieldEdit.Numeric(fieldValue2.AsNumber(), EntityFieldEdit.Numeric.NumericType.Set);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
+                                                if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.DeleteField()))
                                                 {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.DeleteField();
+                                                }
+                                            }
+
+                                            break;
+                                        case UpdateEntityTypeTag.SetText:
+
+                                            var val1 = update.AsSetText();
+                                            fieldName = val1.FieldName;
+                                            var fieldValue1 = val1.FieldValue;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit1))
+                                            {
+                                                entityToEdit1 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit1);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit1.fields;
+
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.SetText((string)fieldValue1)))
+                                                {
+                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.SetText((string)fieldValue1);
+                                                }
+                                            }
+
+                                            break;
+                                        case UpdateEntityTypeTag.AddToList:
+
+                                            var val10 = update.AsAddToList();
+                                            fieldName = val10.FieldName;
+                                            var fieldValue10 = val10.Value;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit10))
+                                            {
+                                                entityToEdit10 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit10);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit10.fields;
+
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.AddToList((string)fieldValue10)))
+                                                {
+                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.AddToList((string)fieldValue10);
+                                                }
+                                            }
+
+                                            break;
+                                        case UpdateEntityTypeTag.RemoveFromList:
+
+                                            var val11 = update.AsRemoveFromList();
+                                            fieldName = val11.FieldName;
+                                            var fieldValue11 = val11.Value;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit11))
+                                            {
+                                                entityToEdit10 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit11);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit11.fields;
+
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.RemoveFromList((string)fieldValue11)))
+                                                {
+                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.RemoveFromList((string)fieldValue11);
+                                                }
+                                            }
+
+                                            break;
+                                        case UpdateEntityTypeTag.SetNumber:
+
+                                            var val2 = update.AsSetNumber();
+
+                                            fieldName = val2.FieldName;
+                                            var fieldValue2 = val2.FieldValue;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit2))
+                                            {
+                                                entityToEdit2 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit2);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit2.fields;
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (fieldValue2.Tag == Candid.World.Models.SetNumber.FieldValueInfoTag.Number)
+                                                {
+                                                    var v = new EntityFieldEdit.Numeric(fieldValue2.AsNumber(), EntityFieldEdit.Numeric.NumericType.Set);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    var formula = fieldValue2.AsFormula();
+                                                    //TODO: Parse formula
+                                                    var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                                    var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Set);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
                                                 }
                                             }
-                                            else
+
+                                            break;
+                                        case UpdateEntityTypeTag.IncrementNumber:
+
+                                            var val3 = update.AsIncrementNumber();
+
+                                            fieldName = val3.FieldName;
+                                            var fieldValue3 = val3.FieldValue;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit3))
                                             {
-                                                var formula = fieldValue2.AsFormula();
-                                                //TODO: Parse formula
-                                                var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Set);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
+                                                entityToEdit3 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit3);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit3.fields;
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (fieldValue3.Tag == Candid.World.Models.IncrementNumber.FieldValueInfoTag.Number)
                                                 {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    var v = new EntityFieldEdit.Numeric(fieldValue3.AsNumber(), EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Set);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    var formula = fieldValue3.AsFormula();
+
+                                                    var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                                    var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        $"Something went wrong setting up outcomes".Error(typeof(ActionUtil).Name);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        break;
-                                    case UpdateEntityTypeTag.IncrementNumber:
+                                            break;
+                                        case UpdateEntityTypeTag.DecrementNumber:
 
-                                        var val3 = update.AsIncrementNumber();
+                                            var val4 = update.AsDecrementNumber();
 
-                                        fieldName = val3.FieldName;
-                                        var fieldValue3 = val3.FieldValue;
+                                            fieldName = val4.FieldName;
+                                            var fieldValue4 = val4.FieldValue;
 
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
 
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit3))
-                                        {
-                                            entityToEdit3 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit3);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit3.fields;
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (fieldValue3.Tag == Candid.World.Models.IncrementNumber.FieldValueInfoTag.Number)
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit4))
                                             {
-                                                var v = new EntityFieldEdit.Numeric(fieldValue3.AsNumber(), EntityFieldEdit.Numeric.NumericType.Increment);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
+                                                entityToEdit4 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit4);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit4.fields;
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (fieldValue4.Tag == Candid.World.Models.DecrementNumber.FieldValueInfoTag.Number)
                                                 {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if(currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    var v = new EntityFieldEdit.Numeric(fieldValue4.AsNumber(), EntityFieldEdit.Numeric.NumericType.Decrement);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    var formula = fieldValue4.AsFormula();
+
+                                                    var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                                    var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Decrement);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+                                                        if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                        {
+                                                            currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        }
+                                                        else
+                                                        {
+                                                            $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
+                                                        }
                                                     }
                                                 }
                                             }
-                                            else
-                                            {
-                                                var formula = fieldValue3.AsFormula();
 
-                                                var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Increment);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
+                                            break;
+                                        case UpdateEntityTypeTag.RenewTimestamp:
+
+                                            var val5 = update.AsRenewTimestamp();
+
+                                            fieldName = val5.FieldName;
+                                            var fieldValue5 = val5.FieldValue;
+
+                                            if (fieldName == "$caller") fieldName = callerPrincipalId;
+                                            else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
+
+                                            if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit5))
+                                            {
+                                                entityToEdit5 = new(wid, eid, new());
+                                                entityOutcomes.Add(entityKey, entityToEdit5);
+                                            }
+
+                                            allFieldsToEdit = entityToEdit5.fields;
+
+                                            if (allFieldsToEdit != null)
+                                            {
+                                                if (fieldValue5.Tag == Candid.World.Models.RenewTimestamp.FieldValueInfoTag.Number)
                                                 {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
+                                                    var v = new EntityFieldEdit.RenewTimestamp(fieldValue5.AsNumber());
+
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
+                                                        var currentValue = allFieldsToEdit[fieldName];
+
+                                                        allFieldsToEdit[fieldName] = new EntityFieldEdit.RenewTimestamp(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
                                                     }
-                                                    else
+                                                }
+                                                else
+                                                {
+                                                    var formula = fieldValue5.AsFormula();
+                                                    //TODO: Parse formula
+                                                    var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
+                                                    var v = new EntityFieldEdit.RenewTimestamp(formulaResult);
+                                                    if (!allFieldsToEdit.TryAdd(fieldName, v))
                                                     {
-                                                        $"Something went wrong setting up increment outcome".Error(typeof(ActionUtil).Name);
+                                                        allFieldsToEdit[fieldName] = v;
                                                     }
                                                 }
                                             }
-                                        }
 
-                                        break;
-                                    case UpdateEntityTypeTag.DecrementNumber:
+                                            break;
+                                        case UpdateEntityTypeTag.DeleteEntity:
 
-                                        var val4 = update.AsDecrementNumber();
+                                            var val6 = update.AsDeleteEntity();
 
-                                        fieldName = val4.FieldName;
-                                        var fieldValue4 = val4.FieldValue;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit4))
-                                        {
-                                            entityToEdit4 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit4);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit4.fields;
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (fieldValue4.Tag == Candid.World.Models.DecrementNumber.FieldValueInfoTag.Number)
+                                            if (entityOutcomes.TryGetValue(entityKey, out var entityToEdit6))
                                             {
-                                                var v = new EntityFieldEdit.Numeric(fieldValue4.AsNumber(), EntityFieldEdit.Numeric.NumericType.Decrement);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
-                                                {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
-                                                    {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
-                                                    }
-                                                    else
-                                                    {
-                                                        $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
-                                                    }
-                                                }
+                                                entityToEdit6.fields.Clear();
                                             }
-                                            else
-                                            {
-                                                var formula = fieldValue4.AsFormula();
 
-                                                var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.Numeric(formulaResult, EntityFieldEdit.Numeric.NumericType.Decrement);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
-                                                {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-                                                    if (currentValue is EntityFieldEdit.Numeric currentNumericValue)
-                                                    {
-                                                        currentNumericValue.EditNumericValue(v.Value, EntityFieldEdit.Numeric.NumericType.Increment);
-                                                    }
-                                                    else
-                                                    {
-                                                        $"Something went wrong setting up decrement outcome".Error(typeof(ActionUtil).Name);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                            EntityOutcome entityToDelete = new(wid, eid, null);
+                                            entityOutcomes[entityKey] = entityToDelete;
 
-                                        break;
-                                    case UpdateEntityTypeTag.RenewTimestamp:
-
-                                        var val5 = update.AsRenewTimestamp();
-
-                                        fieldName = val5.FieldName;
-                                        var fieldValue5 = val5.FieldValue;
-
-                                        if (fieldName == "$caller") fieldName = callerPrincipalId;
-                                        else if (fieldName == "$target") fieldName = optionalTargetPrincipalId;
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit5))
-                                        {
-                                            entityToEdit5 = new(wid, eid, new());
-                                            entityOutcomes.Add(entityKey, entityToEdit5);
-                                        }
-
-                                        allFieldsToEdit = entityToEdit5.fields;
-
-                                        if (allFieldsToEdit != null)
-                                        {
-                                            if (fieldValue5.Tag == Candid.World.Models.RenewTimestamp.FieldValueInfoTag.Number)
-                                            {
-                                                var v = new EntityFieldEdit.RenewTimestamp(fieldValue5.AsNumber());
-
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
-                                                {
-                                                    var currentValue = allFieldsToEdit[fieldName];
-
-                                                    allFieldsToEdit[fieldName] = new EntityFieldEdit.RenewTimestamp(v.Value + (currentValue as EntityFieldEdit.Numeric).Value);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                var formula = fieldValue5.AsFormula();
-                                                //TODO: Parse formula
-                                                var formulaResult = EntityUtil.EvaluateFormula(formula, worldEntities, callerEntities, targetEntities, configs, args);
-                                                var v = new EntityFieldEdit.RenewTimestamp(formulaResult);
-                                                if (!allFieldsToEdit.TryAdd(fieldName, v))
-                                                {
-                                                    allFieldsToEdit[fieldName] = v;
-                                                }
-                                            }
-                                        }
-
-                                        break;
-                                    case UpdateEntityTypeTag.DeleteEntity:
-
-                                        var val6 = update.AsDeleteEntity();
-
-                                        if (!entityOutcomes.TryGetValue(entityKey, out var entityToEdit6))
-                                        {
-                                            entityToEdit6 = new(wid, eid, null);
-                                            entityOutcomes.Add(entityKey, entityToEdit6);
-                                        }
-
-                                        break;
+                                            goto entityLoop;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                EntityOutcome newEntity = new(wid, eid, new());
+                                entityOutcomes.Add(entityKey, newEntity);
+                            }
+
 
                             break;
                         case ActionOutcomeOption.OptionInfoTag.TransferIcrc:
@@ -552,6 +559,8 @@ namespace Boom
                             nfts.Add(e.Option.AsMintNft());
                             break;
                     }
+
+                    entityLoop: { }
                 });
             }
         }
@@ -1064,7 +1073,6 @@ namespace Boom
                 //    }, 20f, BoomManager.Instance.transform);
                 //}
             }
-
 
             $"Action Processed Success, ActionId: {actionId}, outcome: {JsonConvert.SerializeObject(processedActionResponse)}".Log(nameof(ActionUtil));
 
