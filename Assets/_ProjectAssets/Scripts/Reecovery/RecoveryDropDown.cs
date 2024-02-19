@@ -23,6 +23,7 @@ public class RecoveryDropDown : MonoBehaviour
     [SerializeField] private Button jugOfMilkButton;
     [SerializeField] private Button glassOfMilkButton;
     [SerializeField] private UserInfoDropDown userInfoDropDown;
+    [SerializeField] private RecoveryHandler recoveryHandler;
     
     private RecoveryOption recoveryOption;
 
@@ -125,6 +126,7 @@ public class RecoveryDropDown : MonoBehaviour
             return;
         }
 
+        healButton.interactable = false;
         if (recoveryOption == RecoveryOption.JugOfMilk)
         {
             if (DataManager.Instance.PlayerData.JugOfMilk > 0)
@@ -132,7 +134,7 @@ public class RecoveryDropDown : MonoBehaviour
                 BoomDaoUtility.Instance.ExecuteActionWithParameter(PlayerData.USE_MILK_BOTTLE,
                     new List<ActionParameter>()
                     {
-                        new ActionParameter()
+                        new ()
                         {
                             Key = PlayerData.KITTY_KEY,
                             Value = GameState.selectedNFT.imageUrl
@@ -152,7 +154,7 @@ public class RecoveryDropDown : MonoBehaviour
                 BoomDaoUtility.Instance.ExecuteActionWithParameter(PlayerData.USE_MILK_GLASS,
                     new List<ActionParameter>()
                     {
-                        new ActionParameter()
+                        new ()
                         {
                             Key = PlayerData.KITTY_KEY,
                             Value = GameState.selectedNFT.imageUrl
@@ -172,6 +174,7 @@ public class RecoveryDropDown : MonoBehaviour
 
     private void HandleBottleHealOutcome(List<ActionOutcome> _outcomes)
     {
+        healButton.interactable = true;
         if (_outcomes==default||_outcomes.Count==0)
         {
             healMessageHolder.SetActive(true);
@@ -184,6 +187,7 @@ public class RecoveryDropDown : MonoBehaviour
 
     private void HandleGlassHealOutcome(List<ActionOutcome> _outcomes)
     {
+        healButton.interactable = true;
         if (_outcomes==default||_outcomes.Count==0)
         {
             healMessageHolder.SetActive(true);
@@ -192,6 +196,7 @@ public class RecoveryDropDown : MonoBehaviour
         
         EventsManager.OnHealedKitty?.Invoke();
         GameState.selectedNFT.RecoveryEndDate = GameState.selectedNFT.RecoveryEndDate.AddMinutes(-15);
+        recoveryHandler.RestartRoutine(GameState.selectedNFT.RecoveryEndDate);
     }
 
     public void BuyMilk()

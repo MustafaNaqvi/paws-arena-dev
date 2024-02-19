@@ -356,6 +356,10 @@ public class PlayerData
 
         if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
         {
+            if (_timeString.Contains('.'))
+            {
+                _timeString = _timeString.Split('.')[0];
+            }
             _recoveryDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
             if (_recoveryDate <= DateTime.UtcNow)
             {

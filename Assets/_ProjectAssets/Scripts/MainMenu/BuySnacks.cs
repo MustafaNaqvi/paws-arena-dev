@@ -20,20 +20,12 @@ public class BuySnacks : MonoBehaviour
 
     private void Buy()
     {
+        buy.interactable = false;
         BoomDaoUtility.Instance.ExecuteAction(BUY_SNACKS_ICP, HandleBoughtSnacks);
     }
 
-    private void HandleBoughtSnacks(List<ActionOutcome> _outcomes)
+    private void HandleBoughtSnacks(List<ActionOutcome> _)
     {
-        if (_outcomes==default || _outcomes.Count==0)
-        {
-            return;
-        }
-        
-        Debug.Log("---- Bought snacks");
-        foreach (var _outcome in _outcomes)
-        {
-            Debug.Log($"---- {_outcome.Name} : {_outcome.Value}");
-        }
+        buy.interactable = true;
     }
 }

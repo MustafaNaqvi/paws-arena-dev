@@ -39,6 +39,12 @@ public class RecoveryHandler : MonoBehaviour
         recoveryFillAmount.fillAmount = 1;
     }
 
+    public void RestartRoutine(DateTime _endDate)
+    {
+        StopAllCoroutines();
+        StartCoroutine(RecoveryRoutine(_endDate));
+    }
+
     private IEnumerator RecoveryRoutine(DateTime _endDate)
     {
         double _totalSecoundsForRecovery = 60 * RecoveryInMinutes;

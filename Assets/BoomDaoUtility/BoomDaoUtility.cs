@@ -130,7 +130,6 @@ namespace BoomDaoWrapper
                 _incrementalOutcomes.Add(new ActionOutcome { Name = _entityId, Value = _amount.Value });
             }
 
-            Debug.Log("---- Returned list");
             return _incrementalOutcomes;
         }
 

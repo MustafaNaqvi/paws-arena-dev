@@ -17900,6 +17900,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 825014232}
   m_CullTransparentMesh: 1
+--- !u!1 &825100852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 825100854}
+  - component: {fileID: 825100853}
+  m_Layer: 0
+  m_Name: BoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &825100853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825100852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f335a44cd87017247a0153fec4a79be1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableBoomLogs: 1
+  <WORLD_HUB_CANISTER_ID>k__BackingField: fgpem-ziaaa-aaaag-abi2q-cai
+  <WORLD_CANISTER_ID>k__BackingField: j4n55-giaaa-aaaap-qb3wq-cai
+  <WORLD_COLLECTION_CANISTER_ID>k__BackingField: 6uvic-diaaa-aaaap-abgca-cai
+  <BoomDaoGameType>k__BackingField: 0
+  cachedAnonAgent:
+    <IsInit>k__BackingField: 0
+  cachedUserAddress:
+    value: 
+    <IsInit>k__BackingField: 0
+    <InitialValue>k__BackingField: 
+  principal: 
+  isLoginIn: 0
+  nextUpdateIn: 0
+  secondsToUpdateClient: 2
+  lastClientUpdate: 0
+  inRoom: 0
+  currentRoomId: 
+  usersInRoom: []
+  multPlayerActionStateFetch: 0
+  multPlayerTokenFetch: 0
+  multPlayerCollectionFetch: 0
+  principalId: 
+  loginState: 0
+  loginCompleted: 0
+--- !u!4 &825100854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825100852}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &831937422
 GameObject:
   m_ObjectHideFlags: 0
@@ -37790,6 +37859,7 @@ MonoBehaviour:
   jugOfMilkButton: {fileID: 1094931654}
   glassOfMilkButton: {fileID: 242025915}
   userInfoDropDown: {fileID: 1997862949}
+  recoveryHandler: {fileID: 740669173}
 --- !u!1 &1597654384
 GameObject:
   m_ObjectHideFlags: 0
