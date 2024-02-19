@@ -6,8 +6,8 @@ using BoomDaoWrapper;
 
 public class BuyMilk : MonoBehaviour
 {
-    private const string BUY_MILK_BOTTLE = "buyMilkBottle";
-    private const string BUY_MILK_GLASS = "buyMilkGlass";
+    private const string BUY_MILK_BOTTLE = "buyMilkBottleIcp";
+    private const string BUY_MILK_GLASS = "buyMilkGlassIcp";
     
     [SerializeField] private Button doneButton;
     [SerializeField] private Button buyJugOfMilkButton;
@@ -64,20 +64,12 @@ public class BuyMilk : MonoBehaviour
 
     private void BuyJugOfMilk()
     {
-        if (DataManager.Instance.PlayerData.Snacks<DataManager.Instance.GameData.JugOfMilkPrice)
-        {
-            return;
-        }
         ManageInteractables(false);
         BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_BOTTLE, HandleBuyOutcome);
     }
 
     private void BuyGlassOfMIlk()
     {
-        if (DataManager.Instance.PlayerData.Snacks < DataManager.Instance.GameData.GlassOfMilkPrice)
-        {
-            return;
-        }
         ManageInteractables(false);
 
         BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_GLASS, HandleBuyOutcome);

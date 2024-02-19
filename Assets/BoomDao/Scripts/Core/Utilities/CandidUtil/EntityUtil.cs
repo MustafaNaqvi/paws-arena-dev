@@ -1,4 +1,6 @@
-﻿namespace Boom
+﻿using Newtonsoft.Json;
+
+namespace Boom
 {
     using Boom.Utility;
     using Boom.Values;

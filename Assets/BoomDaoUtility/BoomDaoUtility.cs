@@ -103,6 +103,7 @@ namespace BoomDaoWrapper
             bool _isError = _actionResult.IsErr;
             if (_isError)
             {
+                _callBack?.Invoke(default);
                 return;
             }
 

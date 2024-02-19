@@ -10,6 +10,8 @@ public class BuySnacks : MonoBehaviour
 
     private void OnEnable()
     {
+        //delete, already implemented
+        return;
         buy.onClick.AddListener(Buy);
     }
 
