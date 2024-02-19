@@ -1,3 +1,4 @@
+using System;
 using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,11 @@ public class ConnectingToServer : MonoBehaviour
 
     [SerializeField] private GameObject loginFailed;
     private TextMeshProUGUI statusDisplay;
+
+    private void Start()
+    {
+        ConnectToWallet();
+    }
 
     public void ConnectToWallet()
     {

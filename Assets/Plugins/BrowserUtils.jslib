@@ -2,7 +2,7 @@ var WebGLFunctions = {
     
     ToggleLoginIframe: function (show) {
         var iframe = document.getElementById("loginIframe");
-        iframe.style.display = show === 1 ? "block" : "none";
+        iframe.style.display = show === 1 ? "flex" : "none";
     },
     
     IsMobileBrowser: function () {
