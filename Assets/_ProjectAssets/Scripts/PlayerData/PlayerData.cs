@@ -11,7 +11,6 @@ public class PlayerData
     
     private CraftingProcess craftingProcess;
     private bool hasPass;
-    private List<ClaimedReward> claimedLevelRewards = new();
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
@@ -48,7 +47,6 @@ public class PlayerData
         };
     }
 
-
     public CraftingProcess CraftingProcess
     {
         get { return craftingProcess; }
@@ -57,18 +55,6 @@ public class PlayerData
             craftingProcess = value;
             UpdatedCraftingProcess?.Invoke();
         }
-    }
-
-    public void AddCollectedLevelReward(ClaimedReward _reward)
-    {
-        claimedLevelRewards.Add(_reward);
-        UpdatedClaimedLevels?.Invoke();
-    }
-
-    public List<ClaimedReward> ClaimedLevelRewards
-    {
-        get { return claimedLevelRewards; }
-        set { claimedLevelRewards = value; }
     }
 
     public bool HasPass
@@ -80,20 +66,7 @@ public class PlayerData
             UpdatedHasPass?.Invoke();
         }
     }
-
-    public bool HasClaimed(LevelReward _reward, int _level)
-    {
-        foreach (var _claimedReward in claimedLevelRewards)
-        {
-            if (_claimedReward.IsPremium == _reward.IsPremium && _claimedReward.Level == _level)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
+    
     public List<int> OwnedEquiptables
     {
         get { return ownedEquiptables; }
@@ -171,7 +144,6 @@ public class PlayerData
         }
     }
 
-    [JsonIgnore] public string PlayerId => FirebaseManager.Instance.PlayerId;
     [JsonIgnore] public bool IsInGuild => !string.IsNullOrEmpty(GuildId);
 
     [JsonIgnore]
@@ -202,13 +174,13 @@ public class PlayerData
             }
 
             bool _isStillInGuild = false;
-            foreach (var _player in _guild.Players)
-            {
-                if (_player.Id == FirebaseManager.Instance.PlayerId)
-                {
-                    _isStillInGuild = true;
-                }
-            }
+            // foreach (var _player in _guild.Players)
+            // {
+            //     if (_player.Id == FirebaseManager.Instance.PlayerId)
+            //     {
+            //         _isStillInGuild = true;
+            //     }
+            // }
 
 
             if (!_isStillInGuild)
@@ -262,6 +234,9 @@ public class PlayerData
     private const string XP = "xp";
     private const string AMOUNT_KEY = "amount";
 
+    private const string CLAIMED_NORMAL_REWARDS = "claimedNormalRewards";
+    private const string CLAIMED_PREMIUM_REWARDS = "claimedPremiumRewards";
+
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
     public int ExperienceForNextLevel { get; private set; }
@@ -282,6 +257,46 @@ public class PlayerData
     public double GlassOfMilk => BoomDaoUtility.Instance.GetDouble(MILK_GLASS, AMOUNT_KEY);
 
     public double Experience => BoomDaoUtility.Instance.GetDouble(XP, AMOUNT_KEY);
+
+    public List<ClaimedReward> ClaimedLevelRewards => GetClaimedRewards();
+
+    private List<ClaimedReward> GetClaimedRewards()
+    {
+        List<ClaimedReward> _claimedLevelRewards = new List<ClaimedReward>();
+        List<int> _normalRewards = BoomDaoUtility.Instance.GetListOfInts(CLAIMED_NORMAL_REWARDS);
+        List<int> _premiumRewards = BoomDaoUtility.Instance.GetListOfInts(CLAIMED_PREMIUM_REWARDS);
+        AddClaimedReward(_normalRewards,false);
+        AddClaimedReward(_premiumRewards,true);
+
+        return _claimedLevelRewards;
+        void AddClaimedReward(List<int> _levels, bool _isPremium)
+        {
+            if (_levels==default)
+            {
+                return;
+            }
+            
+            foreach (var _level in _levels)
+            {
+                ClaimedReward _claimedReward = new ClaimedReward { Level = _level, IsPremium = _isPremium };
+                _claimedLevelRewards.Add(_claimedReward);
+            }
+        }
+    }
+    
+    public bool HasClaimed(LevelReward _reward, int _level)
+    {
+        foreach (var _claimedReward in GetClaimedRewards())
+        {
+            if (_claimedReward.IsPremium == _reward.IsPremium && _claimedReward.Level == _level)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     public void SubscribeEvents()
     {
@@ -385,12 +400,12 @@ public class PlayerData
     {
         double _experience = _exp;
         int _calculatedLevel = 1;
-        float _calculatedExpForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
+        int _levelScale = 100;
+        float _calculatedExpForNextLevel = 100;
 
-        if (_experience < DataManager.Instance.GameData.LevelBaseExp)
+        if (_experience < _calculatedExpForNextLevel)
         {
             _experienceOnCurrentLevel = (int)_experience;
-            _calculatedExpForNextLevel = DataManager.Instance.GameData.LevelBaseExp;
         }
         else
         {
@@ -398,8 +413,7 @@ public class PlayerData
             {
                 _calculatedLevel++;
                 _experience -= _calculatedExpForNextLevel;
-                _calculatedExpForNextLevel = _calculatedExpForNextLevel +
-                                             (_calculatedExpForNextLevel * ((float)DataManager.Instance.GameData.LevelBaseScaler / 100));
+                _calculatedExpForNextLevel += (_calculatedExpForNextLevel * ((float)_levelScale / 100));
             }
         }
 

@@ -124,7 +124,7 @@ public class CreateGuildPanel : GuildPanelBase
             return;
         }
 
-        FirebaseManager.Instance.ValidateGuildName(_name, CreateGuild, ShowNameTaken);
+        // FirebaseManager.Instance.ValidateGuildName(_name, CreateGuild, ShowNameTaken);
     }
 
     private void ShowNameTaken()
@@ -142,7 +142,7 @@ public class CreateGuildPanel : GuildPanelBase
         _newGuild.Players = new();
         _newGuild.Players.Add(new GuildPlayerData()
         {
-            Id = DataManager.Instance.PlayerData.PlayerId,
+            // Id = DataManager.Instance.PlayerData.PlayerId,
             Name = GameState.nickname,
             IsLeader = true,
             Level = DataManager.Instance.PlayerData.Level,
@@ -152,7 +152,7 @@ public class CreateGuildPanel : GuildPanelBase
         _newGuild.MinimumPoints = _minPoints;
         
         DataManager.Instance.GameData.Guilds.Add(_newGuild.Id,_newGuild);
-        FirebaseManager.Instance.CreateGuild(_newGuild);
+        // FirebaseManager.Instance.CreateGuild(_newGuild);
         DataManager.Instance.PlayerData.GuildId = _newGuild.Id;
         // DataManager.Instance.PlayerData.Snacks -= DataManager.Instance.GameData.GuildPrice;
     }

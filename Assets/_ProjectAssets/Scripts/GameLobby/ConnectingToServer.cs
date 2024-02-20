@@ -22,7 +22,7 @@ public class ConnectingToServer : MonoBehaviour
 
     public void ConnectToWallet()
     {
-        BoomDaoUtility.Instance.Login(ConnectToFirebase);
+        BoomDaoUtility.Instance.Login(SelectNft);
         
         connectButton.SetActive(false);
         logText.SetActive(true);
@@ -31,7 +31,7 @@ public class ConnectingToServer : MonoBehaviour
         statusDisplay.text = "Waiting the connection with ICP Wallet to be approved...";
     }
 
-    private void ConnectToFirebase()
+    private void SelectNft()
     {
         statusDisplay.text = "Connection made!";
 
@@ -41,7 +41,7 @@ public class ConnectingToServer : MonoBehaviour
         var _loginDataAsOk = _loginDataResult.AsOk();
 
         GameState.principalId = _loginDataAsOk.principal;
-        FirebaseManager.Instance.TryLoginAndGetData(GameState.principalId, OnLoginFinished);
+        lobbyUIManager.OpenNFTSelectionScreen();
     }
     
     private void SetupNftData()
@@ -72,20 +72,6 @@ public class ConnectingToServer : MonoBehaviour
                 GameState.nfts.Add(new NFT { imageUrl = _token.url });
             }
             break;
-        }
-    }
-
-    private void OnLoginFinished(bool _result)
-    {
-        if (_result)
-        {
-            DataManager.Instance.SubscribeHandlers();
-            lobbyUIManager.OpenNFTSelectionScreen();
-            // ChallengesManager.Instance.Init();
-        }
-        else
-        {
-            loginFailed.SetActive(true);
         }
     }
 }

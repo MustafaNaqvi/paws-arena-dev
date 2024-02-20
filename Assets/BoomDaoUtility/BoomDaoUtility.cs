@@ -5,7 +5,7 @@ using Boom;
 using Boom.Patterns.Broadcasts;
 using Boom.Values;
 using Candid.World.Models;
-using NaughtyAttributes;
+using Newtonsoft.Json;
 using UnityEngine;
 using Action = System.Action;
 
@@ -18,6 +18,7 @@ namespace BoomDaoWrapper
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
 
         private const string AMOUNT_KEY = "amount";
+        private const string VALUE_KEY = "value";
 
         private Action loginCallback;
         private bool canLogin;
@@ -141,6 +142,35 @@ namespace BoomDaoWrapper
         public UResult<MainDataTypes.LoginData, string> GetLoginData => UserUtil.GetLogInData();
         public UResult<Data<DataTypes.NftCollection>, string> GetNftData => UserUtil.GetDataSelf<DataTypes.NftCollection>();
 
+        public List<int> GetListOfInts(string _entityId)
+        {
+            List<string> _listOfStrings = GetListOfStrings(_entityId);
+            if (_listOfStrings==default)
+            {
+                return default;
+            }
+
+            List<int> _listOfInts = new List<int>();
+            foreach (var _string in _listOfStrings)
+            {
+                _listOfInts.Add(int.Parse(_string));
+            }
+
+            return _listOfInts;
+        }
+
+        public List<string> GetListOfStrings(string _entityId)
+        {
+            var _entityData = GetString(_entityId, VALUE_KEY);
+            if (_entityData==default)
+            {
+                return default;
+            }
+            
+            Debug.Log("------- "+JsonConvert.SerializeObject(_entityData));
+            return default;
+        }
+
         public string GetString(string _entityId, string _fieldName)
         {
             return EntityUtil.TryGetFieldAsText(UserUtil.GetPrincipal(), _entityId, _fieldName, out string _value) ? _value : string.Empty;
@@ -211,7 +241,7 @@ namespace BoomDaoWrapper
             return default;
         }
 
-        private List<ConfigData> GetConfigData(string _configId)
+        public List<ConfigData> GetConfigData(string _configId)
         {
             bool _hasConfig = ConfigUtil.TryGetConfig(BoomManager.Instance.WORLD_CANISTER_ID, _configId, out MainDataTypes.AllConfigs.Config _config);
             if (!_hasConfig)

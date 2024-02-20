@@ -126,7 +126,7 @@ public class JoinGuildPanel : GuildPanelBase
             return;
         }
         joiningGuildPanel.SetActive(true);
-        FirebaseManager.Instance.JoinGuild(FirebaseManager.Instance.PlayerId,_guildData.Id,FinishedJoiningGuild);
+        // FirebaseManager.Instance.JoinGuild(FirebaseManager.Instance.PlayerId,_guildData.Id,FinishedJoiningGuild);
     }
 
     private void FinishedJoiningGuild()

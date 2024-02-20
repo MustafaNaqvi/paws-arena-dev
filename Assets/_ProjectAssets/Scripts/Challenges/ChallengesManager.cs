@@ -47,7 +47,7 @@ public class ChallengesManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        DataManager.Instance.SaveChallenges();
+        // DataManager.Instance.SaveChallenges();
     }
 
 
@@ -346,7 +346,7 @@ public class ChallengesManager : MonoBehaviour
         DataManager.Instance.PlayerData.Challenges.ClaimedLuckySpin = false;
         DataManager.Instance.PlayerData.Challenges.NextReset =
             new DateTime(_nextReset.Year, _nextReset.Month, _nextReset.Day, 0, 0, 0);
-        DataManager.Instance.SaveChallenges();
+        // DataManager.Instance.SaveChallenges();
         SubscribeEvents();
     }
 

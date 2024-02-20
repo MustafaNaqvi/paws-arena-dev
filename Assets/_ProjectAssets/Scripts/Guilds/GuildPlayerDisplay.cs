@@ -18,10 +18,10 @@ public class GuildPlayerDisplay : MonoBehaviour
     public void Setup(GuildPlayerData _playerData, bool _showKickButton)
     {
         playerData = _playerData;
-        if (FirebaseManager.Instance.PlayerId==_playerData.Id)
-        {
-            _showKickButton = false;
-        }
+        // if (FirebaseManager.Instance.PlayerId==_playerData.Id)
+        // {
+        //     _showKickButton = false;
+        // }
         placeDisplay.text = _playerData.Place + ".";
         leaderIcon.SetActive(_playerData.IsLeader);
         levelDisplay.text = _playerData.Level.ToString();

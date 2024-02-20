@@ -115,12 +115,6 @@ public class LevelRewardDisplay : MonoBehaviour
     {
         reward.Claim();
         OnClaimed?.Invoke(reward,GetSpriteForReward(reward));
-        ClaimedReward _claimedReward = new ClaimedReward()
-        {
-            IsPremium = reward.IsPremium,
-            Level = level,
-        };
-        DataManager.Instance.PlayerData.AddCollectedLevelReward(_claimedReward);
         SetupEmpty();
         Setup(reward,level);
 

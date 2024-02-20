@@ -24,7 +24,7 @@ public class ShowGuild : MonoBehaviour
     private void FetchGuild()
     {
         button.interactable = false;
-        FirebaseManager.Instance.CheckIfPlayerIsStillInGuild(Show);
+        // FirebaseManager.Instance.CheckIfPlayerIsStillInGuild(Show);
     }
 
     private void Show()
