@@ -38,13 +38,9 @@ public class LevelRewardDisplay : MonoBehaviour
 
     public bool CanClaim => canClaim;
     
-    private void OnDisable()
-    {
-        claimButton.onClick.RemoveAllListeners();
-    }
-
     public void Setup(LevelReward _reward, int _level)
     {
+        claimButton.onClick.RemoveAllListeners();
         claimButton.interactable = true;
         reward = _reward;
         level = _level;
