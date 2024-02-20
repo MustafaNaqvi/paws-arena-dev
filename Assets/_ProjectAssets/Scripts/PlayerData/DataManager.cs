@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -21,5 +22,15 @@ public class DataManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnDisable()
+    {
+        PlayerData.UnsubscribeEvents();
+    }
+
+    public void Setup()
+    {
+        PlayerData.SubscribeEvents();
     }
 }

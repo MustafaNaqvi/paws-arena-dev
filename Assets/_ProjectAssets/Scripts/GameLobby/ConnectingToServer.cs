@@ -41,6 +41,8 @@ public class ConnectingToServer : MonoBehaviour
         var _loginDataAsOk = _loginDataResult.AsOk();
 
         GameState.principalId = _loginDataAsOk.principal;
+        DataManager.Instance.Setup();
+        
         lobbyUIManager.OpenNFTSelectionScreen();
     }
     

@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using System;
+using System.Collections.Generic;
+using BoomDaoWrapper;
 
 public class LevelRewardDisplay : MonoBehaviour
 {
+    private const string CLAIM_PREMIUM_REWARD = "battlePassPremium";
+    private const string CLAIM_NORMAL_REWARD = "battlePassNormal";
+    
     public static Action<LevelReward, Sprite> OnClaimed;
     [SerializeField] private Image rewardDisplay;
     [SerializeField] private Image background;
@@ -33,9 +37,15 @@ public class LevelRewardDisplay : MonoBehaviour
     private bool canClaim;
 
     public bool CanClaim => canClaim;
+    
+    private void OnDisable()
+    {
+        claimButton.onClick.RemoveAllListeners();
+    }
 
     public void Setup(LevelReward _reward, int _level)
     {
+        claimButton.interactable = true;
         reward = _reward;
         level = _level;
         background.sprite = _reward.IsPremium ? premiumBackground : normalBackground;
@@ -78,6 +88,27 @@ public class LevelRewardDisplay : MonoBehaviour
         }
     }
 
+    public void ClaimReward()
+    {
+        claimButton.interactable = false;
+        string _actionId = reward.IsPremium ? CLAIM_PREMIUM_REWARD : CLAIM_NORMAL_REWARD;
+        _actionId += reward.Level;
+        BoomDaoUtility.Instance.ExecuteAction(_actionId, HandleClaimFinished);
+    }
+
+    private void HandleClaimFinished(List<ActionOutcome> _outcomes)
+    {
+        claimButton.interactable = true;
+        if (_outcomes==default || _outcomes.Count==0)
+        {
+            return;
+        }
+        
+        OnClaimed?.Invoke(reward,GetSpriteForReward(reward));
+        SetupEmpty();
+        Setup(reward,level);
+    }
+
     private Sprite GetSpriteForReward(LevelReward _reward)
     {
         switch (_reward.Type)
@@ -102,27 +133,12 @@ public class LevelRewardDisplay : MonoBehaviour
                 return equipments.GetEquipmentData(_reward.Parameter1).Thumbnail;
             case LevelRewardType.Emote:
                 return EmojiSO.Get(_reward.Parameter1).Sprite;
-                break;
             case LevelRewardType.WeaponSkin:
                 break;
             default:
                 throw new Exception("Cant find sprite for reward type: " + _reward.Type);
         }
         return null;
-    }
-
-   public void ClaimReward()
-    {
-        reward.Claim();
-        OnClaimed?.Invoke(reward,GetSpriteForReward(reward));
-        SetupEmpty();
-        Setup(reward,level);
-
-    }
-
-    private void OnDisable()
-    {
-        claimButton.onClick.RemoveAllListeners();
     }
 
     public void SetupEmpty()

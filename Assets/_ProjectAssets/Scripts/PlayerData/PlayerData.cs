@@ -10,22 +10,12 @@ public class PlayerData
     public const string EARNED_XP_KEY = "earnedXp";
     
     private CraftingProcess craftingProcess;
-    private bool hasPass;
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
     private Challenges challenges = new();
     private string guildId = string.Empty;
     private int points;
-
-    [JsonIgnore] public Action UpdatedCraftingProcess;
-    [JsonIgnore] public Action UpdatedClaimedLevels;
-    [JsonIgnore] public Action UpdatedHasPass;
-    [JsonIgnore] public Action UpdatedEquiptables;
-    [JsonIgnore] public Action UpdatedSeasonNumber;
-    [JsonIgnore] public Action UpdatedOwnedEmojis;
-    [JsonIgnore] public Action UpdatedGuild;
-    [JsonIgnore] public Action UpdatedPoints;
 
     public void SetStartingValues()
     {
@@ -53,20 +43,9 @@ public class PlayerData
         set
         {
             craftingProcess = value;
-            UpdatedCraftingProcess?.Invoke();
         }
     }
 
-    public bool HasPass
-    {
-        get { return hasPass; }
-        set
-        {
-            hasPass = value;
-            UpdatedHasPass?.Invoke();
-        }
-    }
-    
     public List<int> OwnedEquiptables
     {
         get { return ownedEquiptables; }
@@ -81,7 +60,6 @@ public class PlayerData
         }
 
         ownedEquiptables.Add(_id);
-        UpdatedEquiptables?.Invoke();
     }
 
     public void RemoveOwnedEquipment(int _id)
@@ -92,17 +70,6 @@ public class PlayerData
         }
 
         ownedEquiptables.Remove(_id);
-        UpdatedEquiptables?.Invoke();
-    }
-
-    public int SeasonNumber
-    {
-        get => seasonNumber;
-        set
-        {
-            seasonNumber = value;
-            UpdatedSeasonNumber?.Invoke();
-        }
     }
 
     public List<int> OwnedEmojis
@@ -124,7 +91,6 @@ public class PlayerData
 
         ownedEmojis.Add(_id);
         ownedEmojis.Sort();
-        UpdatedOwnedEmojis?.Invoke();
     }
 
     public Challenges Challenges
@@ -140,7 +106,6 @@ public class PlayerData
         set
         {
             guildId = value;
-            UpdatedGuild?.Invoke();
         }
     }
 
@@ -200,7 +165,6 @@ public class PlayerData
         set
         {
             points = value;
-            UpdatedPoints?.Invoke();
         }
     }
 
@@ -211,6 +175,8 @@ public class PlayerData
     public static Action OnUpdatedExp;
     public static Action OnUpdatedJugOfMilk;
     public static Action OnUpdatedGlassOfMilk;
+    public static Action OnClaimedReward;
+    public static Action OnBoughtPass;
 
     public const string SNACKS = "snack";
     
@@ -236,6 +202,7 @@ public class PlayerData
 
     private const string CLAIMED_NORMAL_REWARDS = "claimedNormalRewards";
     private const string CLAIMED_PREMIUM_REWARDS = "claimedPremiumRewards";
+    private const string HAS_PREMIUM_PASS = "hasPremiumPass";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
@@ -257,9 +224,20 @@ public class PlayerData
     public double GlassOfMilk => BoomDaoUtility.Instance.GetDouble(MILK_GLASS, AMOUNT_KEY);
 
     public double Experience => BoomDaoUtility.Instance.GetDouble(XP, AMOUNT_KEY);
+    
+    public bool HasClaimed(LevelReward _reward, int _level)
+    {
+        foreach (var _claimedReward in GetClaimedRewards())
+        {
+            if (_claimedReward.IsPremium == _reward.IsPremium && _claimedReward.Level == _level)
+            {
+                return true;
+            }
+        }
 
-    public List<ClaimedReward> ClaimedLevelRewards => GetClaimedRewards();
-
+        return false;
+    }
+    
     private List<ClaimedReward> GetClaimedRewards()
     {
         List<ClaimedReward> _claimedLevelRewards = new List<ClaimedReward>();
@@ -283,20 +261,8 @@ public class PlayerData
             }
         }
     }
-    
-    public bool HasClaimed(LevelReward _reward, int _level)
-    {
-        foreach (var _claimedReward in GetClaimedRewards())
-        {
-            if (_claimedReward.IsPremium == _reward.IsPremium && _claimedReward.Level == _level)
-            {
-                return true;
-            }
-        }
 
-        return false;
-    }
-
+    public bool HasPass => BoomDaoUtility.Instance.GetDouble(HAS_PREMIUM_PASS, AMOUNT_KEY) > 0.5f;
 
     public void SubscribeEvents()
     {
@@ -333,6 +299,15 @@ public class PlayerData
                 break;
             case SNACKS:
                 OnUpdatedSnacks?.Invoke();
+                break;
+            case CLAIMED_PREMIUM_REWARDS:
+                OnClaimedReward?.Invoke();
+                break;
+            case CLAIMED_NORMAL_REWARDS:
+                OnClaimedReward?.Invoke();
+                break;
+            case HAS_PREMIUM_PASS:
+                OnBoughtPass?.Invoke();
                 break;
             default:
                 Debug.Log($"{_key} got updated!, add handler?");

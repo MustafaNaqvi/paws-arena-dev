@@ -65,7 +65,8 @@ public class GameData
     public DateTime SeasonEnds => BoomDaoUtility.Instance.GetConfigDataAsDate(SEASON_KEY, SEASON_END);
     public bool HasSeasonEnded => DateTime.UtcNow > SeasonEnds;
     public bool HasSeasonStarted => DateTime.UtcNow > SeasonStarts;
-    public bool IsSeasonActive => HasSeasonStarted && !HasSeasonEnded;
+    // public bool IsSeasonActive => HasSeasonStarted && !HasSeasonEnded;
+    public bool IsSeasonActive => true;
     
     public int GlassOfMilkPrice => BoomDaoUtility.Instance.GetConfigDataAsInt(GLASS_MILK_PRICE, PRICE_TAG);
 

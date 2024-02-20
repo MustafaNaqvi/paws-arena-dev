@@ -7,6 +7,7 @@ using Boom.Values;
 using Candid.World.Models;
 using Newtonsoft.Json;
 using UnityEngine;
+using WebSocketSharp;
 using Action = System.Action;
 
 namespace BoomDaoWrapper
@@ -153,6 +154,10 @@ namespace BoomDaoWrapper
             List<int> _listOfInts = new List<int>();
             foreach (var _string in _listOfStrings)
             {
+                if (_string.IsNullOrEmpty())
+                {
+                    continue;
+                }
                 _listOfInts.Add(int.Parse(_string));
             }
 
@@ -167,8 +172,7 @@ namespace BoomDaoWrapper
                 return default;
             }
             
-            Debug.Log("------- "+JsonConvert.SerializeObject(_entityData));
-            return default;
+            return _entityData.Split(',').ToList();
         }
 
         public string GetString(string _entityId, string _fieldName)

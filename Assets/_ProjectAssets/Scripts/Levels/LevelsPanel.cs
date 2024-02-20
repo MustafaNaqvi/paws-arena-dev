@@ -33,6 +33,7 @@ public class LevelsPanel : MonoBehaviour
 
     private void OnEnable()
     {
+        PlayerData.OnClaimedReward += ShowRewards;
         closeButton.onClick.AddListener(Close);
         showPrevious.onClick.AddListener(ShowPrevious);
         showNext.onClick.AddListener(ShowNext);
@@ -51,6 +52,7 @@ public class LevelsPanel : MonoBehaviour
 
     private void OnDisable()
     {
+        PlayerData.OnClaimedReward -= ShowRewards;
         closeButton.onClick.RemoveListener(Close);
         showPrevious.onClick.RemoveListener(ShowPrevious);
         showNext.onClick.RemoveListener(ShowNext);
@@ -129,7 +131,7 @@ public class LevelsPanel : MonoBehaviour
         {
             levelsBackgroundDisplay[i].sprite = i < _progressLevel ? reachedLevelBackground : notReachedLevelBackground;
         }
-        _progressLevel = Mathf.Clamp(_progressLevel, 0, 5);
+        
         if (DataManager.Instance.PlayerData.Level<firstRewardLevel)
         {
             progressDispaly.fillAmount = 0;

@@ -24,7 +24,7 @@ public class GuildPanel : GuildPanelBase
         GuildLeftPanel.OnShowSearchGuilds += OnShowSearchGuilds;
         NoGuildPanel.OnShowCreateGuild += ShowCreateGuild;
         NoGuildPanel.OnShowJoinGuild += ShowJoinGuild;
-        DataManager.Instance.PlayerData.UpdatedGuild += ShowMyGuild;
+        // DataManager.Instance.PlayerData.UpdatedGuild += ShowMyGuild;
         JoinGuildPanel.OnJoinedGuild += ShowMyGuild;
         SearchGuilds.OnJoinedGuild += ShowMyGuild;
     }
@@ -38,7 +38,7 @@ public class GuildPanel : GuildPanelBase
         GuildLeftPanel.OnShowSearchGuilds -= OnShowSearchGuilds;
         NoGuildPanel.OnShowCreateGuild -= ShowCreateGuild;
         NoGuildPanel.OnShowJoinGuild -= ShowJoinGuild;
-        DataManager.Instance.PlayerData.UpdatedGuild -= ShowMyGuild;
+        // DataManager.Instance.PlayerData.UpdatedGuild -= ShowMyGuild;
         JoinGuildPanel.OnJoinedGuild -= ShowMyGuild;
         SearchGuilds.OnJoinedGuild += ShowMyGuild;
     }

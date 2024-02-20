@@ -25,7 +25,7 @@ public class GuildLeftPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        DataManager.Instance.PlayerData.UpdatedGuild += UpdateFlag;
+        // DataManager.Instance.PlayerData.UpdatedGuild += UpdateFlag;
         
         closeButton.onClick.AddListener(Close);
         myGuildButton.onClick.AddListener(ShowMyGuild);
@@ -38,7 +38,7 @@ public class GuildLeftPanel : MonoBehaviour
 
     private void OnDisable()
     {
-        DataManager.Instance.PlayerData.UpdatedGuild -= UpdateFlag;
+        // DataManager.Instance.PlayerData.UpdatedGuild -= UpdateFlag;
         
         closeButton.onClick.RemoveListener(Close);
         myGuildButton.onClick.RemoveListener(ShowMyGuild);
