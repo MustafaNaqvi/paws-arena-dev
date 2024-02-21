@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641246, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -433,7 +433,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f01739a151656804d9de5b634ab52f07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleText: {fileID: 0}
   inventoryText: {fileID: 2142235180}
   actionLogText: {fileID: 255130386}
   actionButton: {fileID: 1770581959}
@@ -877,9 +876,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionsIds:
   - add_gem_x5
-  entityDataValid: 0
-  tokenDataValid: 0
-  nftDataValid: 0
+  userIdEntityData: 0
+  userIdTokenData: 0
+  userIdNftData: 0
+  worldIdEntityData: 0
+  worldIdTokenData: 0
+  worldIdNftData: 0
+  onDependenciesValid:
+    m_PersistentCalls:
+      m_Calls: []
+  onDependenciesInvalid:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &681356741
 GameObject:
   m_ObjectHideFlags: 0

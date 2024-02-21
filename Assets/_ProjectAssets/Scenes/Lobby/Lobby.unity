@@ -28100,7 +28100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: <WORLD_CANISTER_ID>k__BackingField
-      value: hjdu4-kiaaa-aaaap-abxuq-cai
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871021, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: m_RootOrder

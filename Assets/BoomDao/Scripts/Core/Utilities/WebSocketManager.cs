@@ -79,7 +79,8 @@ public class WebSocketManager : MonoBehaviour
         cancellationTokenSource.Cancel(); // Cancel any ongoing operations
         if (this.agent != null)
         {
-            if (this.agent.State == System.Net.WebSockets.WebSocketState.Aborted) return;
+
+            //if (this.agent.State == System.Net.WebSockets.WebSocketState.Aborted) return;
             await this.agent.DisposeAsync();
         }
     }

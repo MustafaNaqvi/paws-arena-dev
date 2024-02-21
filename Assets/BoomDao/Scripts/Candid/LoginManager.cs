@@ -42,7 +42,7 @@ namespace Candid
 
         public void SendCanisterIdsToWebpage(Action<string> send)
         {
-            List<string> targetCanisterIds = new List<string>(); // This is where you'd specify the list of World, NFT, ICRC canister ids this game controls
+            List<string> targetCanisterIds = new List<string>(); // This is where you'd specify the list of World canister ids this game controls
             send(JsonConvert.SerializeObject(new WebsocketMessage(){type = "targetCanisterIds", content = JsonConvert.SerializeObject(targetCanisterIds)}));
         }
 
@@ -97,28 +97,28 @@ namespace Candid
         {
             ("Websocket Message Received: " + e.Data).Log();
             
-            LoginManager.Instance.CreateIdentityWithJson(e.Data); // Comment this out and uncomment the below to test the new login flow
 
-            // WebsocketMessage message = JsonConvert.DeserializeObject<WebsocketMessage>(e.Data);
-            //
-            // if (message == null)
-            // {
-            //     Debug.LogError("Error: Unable to parse websocket message, does it follow the correct WebsocketMessage structure?");
-            //     return;
-            // }
-            //
-            // switch (message.type)
-            // {
-            //     case "fetchCanisterIds":
-            //         LoginManager.Instance.SendCanisterIdsToWebpage(Send);
-            //         break;
-            //     case "identityJson":
-            //         LoginManager.Instance.CreateIdentityWithJson(message.content);
-            //         break; 
-            //     default:
-            //         Debug.LogError("No corresponding websocket message type found for=" + message.type);
-            //         break;
-            // }
+
+            WebsocketMessage message = JsonConvert.DeserializeObject<WebsocketMessage>(e.Data);
+            
+            if (message == null)
+            {
+                Debug.LogError("Error: Unable to parse websocket message, does it follow the correct WebsocketMessage structure?");
+                return;
+            }
+            
+            switch (message.type)
+            {
+                case "fetchCanisterIds":
+                    LoginManager.Instance.SendCanisterIdsToWebpage(Send);
+                    break;
+                case "identityJson":
+                    LoginManager.Instance.CreateIdentityWithJson(message.content);
+                    break; 
+                default:
+                    Debug.LogError("No corresponding websocket message type found for=" + message.type);
+                    break;
+            }
         }
     }
 

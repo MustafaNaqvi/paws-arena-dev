@@ -725,7 +725,7 @@ namespace Boom
         {
             this.wid = string.IsNullOrEmpty(wid) ? BoomManager.Instance.WORLD_CANISTER_ID : wid;
             this.eid = eid;
-            this.fields = fields;
+            this.fields = fields ?? new();
             dispose = fields == null;
         }
         public string GetKey()

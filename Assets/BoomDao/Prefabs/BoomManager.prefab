@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a826ba9b8edac440a04bf58a01d1f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: https://7p3gx-jaaaa-aaaal-acbda-cai.raw.ic0.app/
+  url: https://7p3gx-jaaaa-aaaal-acbda-cai.icp0.io
 --- !u!114 &729251945005567232
 MonoBehaviour:
   m_ObjectHideFlags: 0
