@@ -47,6 +47,7 @@ ScriptedImporter:
     flipbookRows: 0
     flipbookColumns: 0
     ignorePngGamma: 0
+    cookieMode: 0
     filterMode: 1
     aniso: 1
     mipBias: 0
@@ -89,6 +90,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
   - name: Bubblegum Purple
@@ -690,7 +692,8 @@ ScriptedImporter:
     - {x: 48, y: 49}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 369, y: 1261}
+    uvTransform: {x: 1092, y: 1696}
+    spritePosition: {x: 723, y: 435}
   - name: Eyewear Candie Glasses
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -1761,7 +1764,8 @@ ScriptedImporter:
     - {x: 89, y: 90}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 147, y: 705}
+    uvTransform: {x: 713, y: 1092}
+    spritePosition: {x: 566, y: 387}
   - name: fleas
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -1914,7 +1918,8 @@ ScriptedImporter:
     - {x: 10, y: 11}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 858, y: 992}
+    uvTransform: {x: 1005, y: 1531}
+    spritePosition: {x: 147, y: 539}
   - name: Eyes normal
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -3089,7 +3094,8 @@ ScriptedImporter:
     - {x: 93, y: 94}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 122, y: 793}
+    uvTransform: {x: 713, y: 1326}
+    spritePosition: {x: 591, y: 533}
   - name: eye sclera
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -4023,7 +4029,8 @@ ScriptedImporter:
     - {x: 52, y: 53}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 118, y: 876}
+    uvTransform: {x: 713, y: 1413}
+    spritePosition: {x: 595, y: 537}
   - name: mouth normal
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -4712,7 +4719,8 @@ ScriptedImporter:
     - {x: 48, y: 49}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 432, y: 1143}
+    uvTransform: {x: 1092, y: 1593}
+    spritePosition: {x: 660, y: 450}
   - name: head base
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -5867,7 +5875,8 @@ ScriptedImporter:
     - {x: 86, y: 87}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 588, y: -395}
+    uvTransform: {x: 1092, y: 4}
+    spritePosition: {x: 504, y: 399}
   - name: Earring both
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -6042,7 +6051,8 @@ ScriptedImporter:
     - {x: 12, y: 13}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 679, y: 868}
+    uvTransform: {x: 1230, y: 1593}
+    spritePosition: {x: 551, y: 725}
   - name: Earring right
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -6217,7 +6227,8 @@ ScriptedImporter:
     - {x: 12, y: 13}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 679, y: 902}
+    uvTransform: {x: 1230, y: 1626}
+    spritePosition: {x: 551, y: 724}
   - name: R ear
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -6982,7 +6993,8 @@ ScriptedImporter:
     - {x: 63, y: 64}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 558, y: 655}
+    uvTransform: {x: 1092, y: 1235}
+    spritePosition: {x: 534, y: 580}
   - name: Party hat
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -8009,7 +8021,8 @@ ScriptedImporter:
     - {x: 85, y: 86}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 475, y: -357}
+    uvTransform: {x: 1092, y: 322}
+    spritePosition: {x: 617, y: 679}
   - name: 'Earring both '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -8184,7 +8197,8 @@ ScriptedImporter:
     - {x: 12, y: 13}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 382, y: 908}
+    uvTransform: {x: 1230, y: 1659}
+    spritePosition: {x: 848, y: 751}
   - name: Earring Left
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -8359,7 +8373,8 @@ ScriptedImporter:
     - {x: 12, y: 13}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 411, y: 842}
+    uvTransform: {x: 1259, y: 1593}
+    spritePosition: {x: 848, y: 751}
   - name: 'L ear '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -9231,7 +9246,8 @@ ScriptedImporter:
     - {x: 70, y: 71}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 363, y: 413}
+    uvTransform: {x: 1092, y: 955}
+    spritePosition: {x: 729, y: 542}
   - name: Back worm
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -9494,7 +9510,8 @@ ScriptedImporter:
     - {x: 20, y: 21}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 704, y: 925}
+    uvTransform: {x: 1092, y: 1453}
+    spritePosition: {x: 388, y: 528}
   - name: HR leg_Ground Fins
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -9834,7 +9851,8 @@ ScriptedImporter:
     - {x: 27, y: 28}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 814, y: 1820}
+    uvTransform: {x: 1092, y: 1945}
+    spritePosition: {x: 278, y: 125}
   - name: HR leg
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -10493,7 +10511,8 @@ ScriptedImporter:
     - {x: 49, y: 50}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 924, y: 1304}
+    uvTransform: {x: 1207, y: 1453}
+    spritePosition: {x: 283, y: 149}
   - name: FR leg_Ground Fins
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -10822,7 +10841,8 @@ ScriptedImporter:
     - {x: 26, y: 27}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -603, y: 1798}
+    uvTransform: {x: 4, y: 1918}
+    spritePosition: {x: 607, y: 120}
   - name: 'FR leg '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -11428,7 +11448,8 @@ ScriptedImporter:
     - {x: 45, y: 46}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 377, y: 1260}
+    uvTransform: {x: 985, y: 1413}
+    spritePosition: {x: 608, y: 153}
   - name: BACKPACK flap
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -11919,7 +11940,8 @@ ScriptedImporter:
     - {x: 39, y: 40}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 551, y: 761}
+    uvTransform: {x: 992, y: 1326}
+    spritePosition: {x: 441, y: 565}
   - name: BACKPACK
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -13412,7 +13434,8 @@ ScriptedImporter:
     - {x: 93, y: 94}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 254, y: 1343}
+    uvTransform: {x: 612, y: 1531}
+    spritePosition: {x: 358, y: 188}
   - name: 'Sprinkles '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -22343,7 +22366,8 @@ ScriptedImporter:
     - {x: 808, y: 809}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -263, y: 1331}
+    uvTransform: {x: 4, y: 1531}
+    spritePosition: {x: 267, y: 200}
   - name: body
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -24791,7 +24815,8 @@ ScriptedImporter:
     - {x: 135, y: 136}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -208, y: 904}
+    uvTransform: {x: 4, y: 1092}
+    spritePosition: {x: 212, y: 188}
   - name: HL leg_Ground Fins
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -25120,7 +25145,8 @@ ScriptedImporter:
     - {x: 26, y: 27}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -280, y: 1781}
+    uvTransform: {x: 144, y: 1918}
+    spritePosition: {x: 424, y: 137}
   - name: hind L leg
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -25831,7 +25857,8 @@ ScriptedImporter:
     - {x: 50, y: 51}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 665, y: 1650}
+    uvTransform: {x: 1092, y: 1801}
+    spritePosition: {x: 427, y: 151}
   - name: 'FL leg _Ground Fins '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -26160,7 +26187,8 @@ ScriptedImporter:
     - {x: 26, y: 27}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -450, y: 1777}
+    uvTransform: {x: 284, y: 1918}
+    spritePosition: {x: 734, y: 141}
   - name: 'front L leg '
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -26920,7 +26948,8 @@ ScriptedImporter:
     - {x: 49, y: 50}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 441, y: 1645}
+    uvTransform: {x: 1180, y: 1801}
+    spritePosition: {x: 739, y: 156}
   - name: tail curved
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -28261,7 +28290,8 @@ ScriptedImporter:
     - {x: 81, y: 82}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 958, y: 235}
+    uvTransform: {x: 1092, y: 648}
+    spritePosition: {x: 134, y: 413}
   - name: pink (candy)
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -28635,6 +28665,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 0, y: 0}
   characterData:
     bones:
     - name: bone_1

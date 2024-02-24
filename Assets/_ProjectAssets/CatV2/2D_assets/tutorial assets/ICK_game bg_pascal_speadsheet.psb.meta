@@ -47,6 +47,7 @@ ScriptedImporter:
     flipbookRows: 0
     flipbookColumns: 0
     ignorePngGamma: 0
+    cookieMode: 0
     filterMode: 1
     aniso: 1
     mipBias: 0
@@ -89,6 +90,7 @@ ScriptedImporter:
     tessellationDetail: 0
     parentGroupIndex: -1
     uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
   mosaicSpriteImportData: []
   rigSpriteImportData:
   - name: Pascal Larm
@@ -1272,7 +1274,8 @@ ScriptedImporter:
     - {x: 63, y: 64}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 495, y: 1093}
+    uvTransform: {x: 822, y: 1672}
+    spritePosition: {x: 327, y: 579}
   - name: Pascal head closed eyes
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -4926,7 +4929,8 @@ ScriptedImporter:
     - {x: 325, y: 326}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 372, y: -347}
+    uvTransform: {x: 465, y: 522}
+    spritePosition: {x: 93, y: 869}
   - name: Pascal head semi closed eyes
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -8635,7 +8639,8 @@ ScriptedImporter:
     - {x: 330, y: 331}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 372, y: -72}
+    uvTransform: {x: 465, y: 797}
+    spritePosition: {x: 93, y: 869}
   - name: Pascal head
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -12410,7 +12415,8 @@ ScriptedImporter:
     - {x: 336, y: 337}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 372, y: 203}
+    uvTransform: {x: 465, y: 1072}
+    spritePosition: {x: 93, y: 869}
   - name: Pascal Lear
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -13518,7 +13524,8 @@ ScriptedImporter:
     - {x: 96, y: 97}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 96, y: 822}
+    uvTransform: {x: 465, y: 1868}
+    spritePosition: {x: 369, y: 1046}
   - name: Pascal cap
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -15888,7 +15895,8 @@ ScriptedImporter:
     - {x: 205, y: 206}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 226, y: 579}
+    uvTransform: {x: 465, y: 1672}
+    spritePosition: {x: 239, y: 1093}
   - name: Pascal Rear
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -16865,7 +16873,8 @@ ScriptedImporter:
     - {x: 84, y: 85}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 434, y: -665}
+    uvTransform: {x: 607, y: 372}
+    spritePosition: {x: 173, y: 1037}
   - name: Pascal Lleg
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -19262,7 +19271,8 @@ ScriptedImporter:
     - {x: 199, y: 200}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 278, y: -253}
+    uvTransform: {x: 607, y: 4}
+    spritePosition: {x: 329, y: 257}
   - name: Pascal body
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -22198,7 +22208,8 @@ ScriptedImporter:
     - {x: 254, y: 255}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -203, y: 64}
+    uvTransform: {x: 4, y: 522}
+    spritePosition: {x: 207, y: 458}
   - name: Pascal Rarm
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -23885,7 +23896,8 @@ ScriptedImporter:
     - {x: 147, y: 148}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 677, y: 630}
+    uvTransform: {x: 714, y: 1347}
+    spritePosition: {x: 37, y: 717}
   - name: Pascal Rleg
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -25001,7 +25013,8 @@ ScriptedImporter:
     - {x: 71, y: 72}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 302, y: 1026}
+    uvTransform: {x: 465, y: 1347}
+    spritePosition: {x: 163, y: 321}
   - name: Pascal tail
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -28092,7 +28105,8 @@ ScriptedImporter:
     - {x: 273, y: 274}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -36, y: -44}
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 40, y: 48}
   - name: Pascal jet
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -29167,7 +29181,8 @@ ScriptedImporter:
     - {x: 93, y: 94}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: -9, y: 1352}
+    uvTransform: {x: 597, y: 1868}
+    spritePosition: {x: 606, y: 516}
   - name: Pascal jet core
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -29989,7 +30004,8 @@ ScriptedImporter:
     - {x: 70, y: 71}
     tessellationDetail: 0
     parentGroupIndex: -1
-    uvTransform: {x: 117, y: -168}
+    uvTransform: {x: 729, y: 372}
+    spritePosition: {x: 612, y: 540}
   characterData:
     bones:
     - name: bone_1

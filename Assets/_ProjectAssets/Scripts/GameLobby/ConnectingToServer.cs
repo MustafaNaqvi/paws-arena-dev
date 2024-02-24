@@ -15,11 +15,6 @@ public class ConnectingToServer : MonoBehaviour
     [SerializeField] private GameObject loginFailed;
     private TextMeshProUGUI statusDisplay;
 
-    private void Start()
-    {
-        ConnectToWallet();
-    }
-
     public void ConnectToWallet()
     {
         BoomDaoUtility.Instance.Login(SelectNft);
