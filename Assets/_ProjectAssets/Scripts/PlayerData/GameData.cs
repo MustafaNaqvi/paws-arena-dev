@@ -45,6 +45,9 @@ public class GameData
     
     // new system
     
+    public const string CLAIM_PREMIUM_REWARD = "battlePassPremium";
+    public const string CLAIM_NORMAL_REWARD = "battlePassNormal";
+    
     private const string SEASON_KEY = "season";
     private const string SEASON_NUMBER = "number";
     private const string SEASON_START = "startDate";
@@ -53,8 +56,6 @@ public class GameData
     private const string BOTTLE_MILK_PRICE = "milkBottle";
     private const string PRICE_TAG = "price";
     private const string AMOUNT_OF_REWARDS = "amountOfRewards";
-    private const string PREMIUM_REWARDS = "battlePassRewardPremium";
-    private const string NORMAL_REWARDS = "battlePassRewardNormal";
     private const string TYPE = "type";
     private const string AMOUNT = "amount";
 
@@ -90,21 +91,21 @@ public class GameData
         int _amountOfRewards = BoomDaoUtility.Instance.GetConfigDataAsInt(SEASON_KEY, AMOUNT_OF_REWARDS);
         for (int _i = 1; _i <= _amountOfRewards; _i++)
         {
-            TryAddReward(NORMAL_REWARDS+_i,_i,false);
-            TryAddReward(PREMIUM_REWARDS+_i,_i,true);
+            TryAddReward(CLAIM_NORMAL_REWARD+_i,_i,false);
+            TryAddReward(CLAIM_PREMIUM_REWARD+_i,_i,true);
         }
 
         void TryAddReward(string _id,int _level,bool _isPremium)
         {
-            List<ConfigData> _configsData = BoomDaoUtility.Instance.GetConfigData(_id);
-            if (_configsData==default)
+            List<ActionOutcome> _actionOutcomes = BoomDaoUtility.Instance.GetActionOutcomes(_id);
+            if (_actionOutcomes==default || _actionOutcomes.Count==0)
             {
                 return;
             }
 
-            int _type = int.Parse(_configsData.Find(_configData => _configData.Name == TYPE).Value);
-            int _amount = int.Parse(_configsData.Find(_configData => _configData.Name == AMOUNT).Value);
-            LevelRewardType _rewardType = (LevelRewardType)_type;
+            ActionOutcome _outcome = _actionOutcomes[0];
+            int _amount = Convert.ToInt32(_outcome.Value);
+            ItemType _rewardType = Utilities.GetRewardType(_outcome.Name);
             LevelReward _levelReward = new LevelReward
             {
                 Level = _level,
@@ -117,4 +118,6 @@ public class GameData
             seasonRewards.Add(_levelReward);
         }
     }
+
+    
 }

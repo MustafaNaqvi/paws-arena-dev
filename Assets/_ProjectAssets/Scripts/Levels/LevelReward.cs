@@ -5,7 +5,7 @@ public class LevelReward
 {
     public int Level;
     public string Name;
-    public LevelRewardType Type;
+    public ItemType Type;
     public bool IsPremium;
     public int Parameter1;
 }

@@ -5081,7 +5081,7 @@ MonoBehaviour:
   nameDisplay: {fileID: 375637558}
 --- !u!95 &260271247
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5098,7 +5098,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!114 &260271248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15155,7 +15155,7 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 --- !u!95 &693911960
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -15172,7 +15172,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &695044967
 GameObject:
   m_ObjectHideFlags: 0
@@ -28150,6 +28150,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoomManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3245743282429210067, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
+      propertyPath: url
+      value: https://ifxbl-nyaaa-aaaap-abroa-cai.icp0.io
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
 --- !u!1 &1207351228
@@ -35407,7 +35411,7 @@ MonoBehaviour:
   nameDisplay: {fileID: 1652372452}
 --- !u!95 &1468008765
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -35424,7 +35428,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!114 &1468008766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46949,6 +46953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit

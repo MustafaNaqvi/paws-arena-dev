@@ -5,7 +5,6 @@ using Boom;
 using Boom.Patterns.Broadcasts;
 using Boom.Values;
 using Candid.World.Models;
-using Newtonsoft.Json;
 using UnityEngine;
 using WebSocketSharp;
 using Action = System.Action;
@@ -76,7 +75,6 @@ namespace BoomDaoWrapper
 
             UserUtil.RemoveListenerMainDataChange<MainDataTypes.LoginData>(LoginDataChangeHandler);
             loginCallback?.Invoke();
-            Debug.Log(UserUtil.GetPrincipal());
         }
 
         #endregion
@@ -261,6 +259,38 @@ namespace BoomDaoWrapper
             }
 
             return _outcomes;
+        }
+
+        public List<ActionOutcome> GetActionOutcomes(string _actionId)
+        {
+            bool _hasConfig = ConfigUtil.TryGetAction(BoomManager.Instance.WORLD_CANISTER_ID, _actionId, out MainDataTypes.AllAction.Action _action);
+            if (!_hasConfig)
+            {
+                return default;
+            }
+
+            List<ActionOutcome> _actionOutcomes = new();
+            foreach (var _outcome in _action.callerAction.Outcomes)
+            {
+                foreach (var _possibleOutcome in _outcome.PossibleOutcomes)
+                {
+                    var _outcomeOption = _possibleOutcome.Option;
+                    if (_outcomeOption.Tag == ActionOutcomeOption.OptionInfoTag.UpdateEntity)
+                    {
+                        var _entityOutcome = _outcomeOption.AsUpdateEntity();
+                        foreach (var _update in _entityOutcome.Updates)
+                        {
+                            if (_update.Value is IncrementNumber _increment)
+                            {
+                                _actionOutcomes.Add(new ActionOutcome { Name = _entityOutcome.Eid, Value = _increment.FieldValue.AsNumber() });
+                            }
+                        }
+                        
+                    }
+                }
+            }
+
+            return _actionOutcomes;
         }
 
         #endregion

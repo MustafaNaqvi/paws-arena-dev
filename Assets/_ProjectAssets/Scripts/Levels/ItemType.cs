@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public enum LevelRewardType
+public enum ItemType
 {
     CommonShard = 0,
     UncommonShard = 1,

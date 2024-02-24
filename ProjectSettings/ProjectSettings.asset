@@ -474,7 +474,7 @@ PlayerSettings:
   openGLRequireES32: 0
   m_TemplateCustomTags:
     HIDE_FULL_SCREEN_BUTTON: true
-    LOGIN_WEBPAGE_URL: https://7p3gx-jaaaa-aaaal-acbda-cai.raw.ic0.app/
+    LOGIN_WEBPAGE_URL: https://ifxbl-nyaaa-aaaap-abroa-cai.icp0.io
   mobileMTRendering:
     Android: 1
     iPhone: 1
@@ -726,7 +726,7 @@ PlayerSettings:
   webGLTemplate: PROJECT:BoomTemplate
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
-  webGLCompressionFormat: 0
+  webGLCompressionFormat: 2
   webGLWasmArithmeticExceptions: 0
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0

@@ -25,4 +25,46 @@ public static class Utilities
     {
         return Regex.Replace(_source, @"\s", string.Empty);
     }
+    
+    public static ItemType GetRewardType(string _key)
+    {
+        switch (_key)
+        {
+            case PlayerData.COMMON_SHARD:
+                return ItemType.CommonShard;
+            case PlayerData.UNCOMMON_SHARD:
+                return ItemType.UncommonShard;
+            case PlayerData.RARE_SHARD:
+                return ItemType.RareShard;
+            case PlayerData.EPIC_SHARD:
+                return ItemType.EpicShard;
+            case PlayerData.LEGENDARY_SHARD:
+                return ItemType.LegendaryShard;
+            case PlayerData.MILK_GLASS:
+                return ItemType.GlassOfMilk;
+            case PlayerData.MILK_BOTTLE:
+                return ItemType.JugOfMilk;
+            default:
+                throw new Exception($"Don't know how to reward {_key}");
+        }
+    }
+
+    public static CraftingRecepieSO EquipmentRarityToCraftingRecipe(EquipmentRarity _rarity)
+    {
+        switch (_rarity)
+        {
+            case EquipmentRarity.Common:
+                return CraftingRecepieSO.Get(LuckyWheelRewardType.Common);
+            case EquipmentRarity.Uncommon:
+                return CraftingRecepieSO.Get(LuckyWheelRewardType.Uncommon);
+            case EquipmentRarity.Rare:
+                return CraftingRecepieSO.Get(LuckyWheelRewardType.Rare);
+            case EquipmentRarity.Epic:
+                return CraftingRecepieSO.Get(LuckyWheelRewardType.Epic);
+            case EquipmentRarity.Legendary:
+                return CraftingRecepieSO.Get(LuckyWheelRewardType.Legendary);
+            default:
+                throw new Exception($"Don't know how to convert {_rarity} to recepie");
+        }
+    }
 }

@@ -6,8 +6,7 @@ using BoomDaoWrapper;
 
 public class LevelRewardDisplay : MonoBehaviour
 {
-    private const string CLAIM_PREMIUM_REWARD = "battlePassPremium";
-    private const string CLAIM_NORMAL_REWARD = "battlePassNormal";
+
     
     public static Action<LevelReward, Sprite> OnClaimed;
     [SerializeField] private Image rewardDisplay;
@@ -87,7 +86,7 @@ public class LevelRewardDisplay : MonoBehaviour
     public void ClaimReward()
     {
         claimButton.interactable = false;
-        string _actionId = reward.IsPremium ? CLAIM_PREMIUM_REWARD : CLAIM_NORMAL_REWARD;
+        string _actionId = reward.IsPremium ? GameData.CLAIM_PREMIUM_REWARD : GameData.CLAIM_NORMAL_REWARD;
         _actionId += reward.Level;
         BoomDaoUtility.Instance.ExecuteAction(_actionId, HandleClaimFinished);
     }
@@ -109,27 +108,27 @@ public class LevelRewardDisplay : MonoBehaviour
     {
         switch (_reward.Type)
         {
-            case LevelRewardType.CommonShard:
+            case ItemType.CommonShard:
                 return shards[0];
-            case LevelRewardType.UncommonShard:
+            case ItemType.UncommonShard:
                 return shards[1];
-            case LevelRewardType.RareShard:
+            case ItemType.RareShard:
                 return shards[2];
-            case LevelRewardType.EpicShard:
+            case ItemType.EpicShard:
                 return shards[3];
-            case LevelRewardType.LegendaryShard:
+            case ItemType.LegendaryShard:
                 return shards[4];
-            case LevelRewardType.Snack:
+            case ItemType.Snack:
                 return snacks;
-            case LevelRewardType.JugOfMilk:
+            case ItemType.JugOfMilk:
                 return jugOfMilk;
-            case LevelRewardType.GlassOfMilk:
+            case ItemType.GlassOfMilk:
                 return glassOfMilk;
-            case LevelRewardType.Item:
+            case ItemType.Item:
                 return equipments.GetEquipmentData(_reward.Parameter1).Thumbnail;
-            case LevelRewardType.Emote:
+            case ItemType.Emote:
                 return EmojiSO.Get(_reward.Parameter1).Sprite;
-            case LevelRewardType.WeaponSkin:
+            case ItemType.WeaponSkin:
                 break;
             default:
                 throw new Exception("Cant find sprite for reward type: " + _reward.Type);

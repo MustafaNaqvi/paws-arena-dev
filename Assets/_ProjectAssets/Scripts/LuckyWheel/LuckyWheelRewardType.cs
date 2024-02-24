@@ -9,5 +9,4 @@ public enum LuckyWheelRewardType
     Rare = 3,
     Epic = 4,
     Legendary = 5,
-    Item
 }

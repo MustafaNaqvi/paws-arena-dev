@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using WebSocketSharp.Server;
 using WebSocketSharp;
 using Boom.Utility;
+using UnityEngine.Scripting;
 
 namespace Candid
 {
@@ -31,6 +32,7 @@ namespace Candid
             BrowserUtils.ToggleLoginIframe(true);
         }
 
+        [Preserve]
         public void CreateIdentityWithJson(string identityJson)
         {
             createIdentityCallback?.Invoke(identityJson);

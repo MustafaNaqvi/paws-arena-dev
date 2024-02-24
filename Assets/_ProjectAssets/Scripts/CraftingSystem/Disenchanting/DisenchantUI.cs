@@ -84,27 +84,7 @@ public class DisenchantUI : MonoBehaviour
         itemBackground.gameObject.SetActive(true);
         disenchantButton.gameObject.SetActive(true);
         selectedItemDisplay.gameObject.SetActive(true);
-        CraftingRecepieSO _craftingSO = null;
-        switch (_equipmentData.Rarity)
-        {
-            case EquipmentRarity.Common:
-                _craftingSO = CraftingRecepieSO.Get(LuckyWheelRewardType.Common);
-                break;
-            case EquipmentRarity.Uncommon:
-                _craftingSO = CraftingRecepieSO.Get(LuckyWheelRewardType.Uncommon);
-                break;
-            case EquipmentRarity.Rare:
-                _craftingSO = CraftingRecepieSO.Get(LuckyWheelRewardType.Rare);
-                break;
-            case EquipmentRarity.Epic:
-                _craftingSO = CraftingRecepieSO.Get(LuckyWheelRewardType.Epic);
-                break;
-            case EquipmentRarity.Legendary:
-                _craftingSO = CraftingRecepieSO.Get(LuckyWheelRewardType.Legendary);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        CraftingRecepieSO _craftingSO = Utilities.EquipmentRarityToCraftingRecipe(_equipmentData.Rarity);
         
         rewardText.text = $"Get 1 <color={_craftingSO.IngridiantColor}>{_equipmentData.Rarity}</color> shard by from disenchanting";
 
