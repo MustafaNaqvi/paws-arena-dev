@@ -40,15 +40,15 @@ public class CraftingUI : MonoBehaviour
     {
         CraftingProcess.OnFinishedCrafting += FinishedCrafting;
 
-        commonButton.onClick.AddListener(() => ShowRecepie(LuckyWheelRewardType.Common));
-        uncommonButton.onClick.AddListener(() => ShowRecepie(LuckyWheelRewardType.Uncommon));
-        rareButton.onClick.AddListener(() => ShowRecepie(LuckyWheelRewardType.Rare));
-        epicButton.onClick.AddListener(() => ShowRecepie(LuckyWheelRewardType.Epic));
-        legendaryButton.onClick.AddListener(() => ShowRecepie(LuckyWheelRewardType.Legendary));
+        commonButton.onClick.AddListener(() => ShowRecepie(ItemType.CommonShard));
+        uncommonButton.onClick.AddListener(() => ShowRecepie(ItemType.UncommonShard));
+        rareButton.onClick.AddListener(() => ShowRecepie(ItemType.RareShard));
+        epicButton.onClick.AddListener(() => ShowRecepie(ItemType.EpicShard));
+        legendaryButton.onClick.AddListener(() => ShowRecepie(ItemType.LegendaryShard));
         craftCrystalButton.onClick.AddListener(CraftCrystal);
         botCraftItemButton.onClick.AddListener(CraftItem);
 
-        ShowRecepie(LuckyWheelRewardType.Common);
+        ShowRecepie(ItemType.CommonShard);
         ShowRecepie();
         gameObject.SetActive(true);
     }
@@ -71,11 +71,11 @@ public class CraftingUI : MonoBehaviour
         ShowRecepie(showingRecepie.Inggrdiant);
     }
 
-    private void ShowRecepie(LuckyWheelRewardType _ingridiant)
+    private void ShowRecepie(ItemType _ingridiant)
     {
         showingRecepie = CraftingRecepieSO.Get(_ingridiant);
 
-        if (_ingridiant == LuckyWheelRewardType.Common)
+        if (_ingridiant == ItemType.CommonShard)
         {
             messageDisplay.SetActive(true);
             ShowBotFrame(_ingridiant);
@@ -87,7 +87,7 @@ public class CraftingUI : MonoBehaviour
 
         topHolder.SetActive(true);
 
-        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((LuckyWheelRewardType)((int)_ingridiant-1));
+        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((ItemType)((int)_ingridiant-1));
         ingridiantImage.sprite = _topRecepie.EndProductSprite;
         craftText.text = $"Get 1 <color={_topRecepie.EndProductColor}>{_topRecepie.EndProduct}</color> shard by\ncombining {_topRecepie.AmountNeeded} <color={_topRecepie.IngridiantColor}>{_topRecepie.Inggrdiant}</color> shards";
         double _amountOfIngridiants = DataManager.Instance.PlayerData.GetAmountOfCrystals(_topRecepie.Inggrdiant);
@@ -116,7 +116,7 @@ public class CraftingUI : MonoBehaviour
         ShowBotFrame(_ingridiant);
     }
 
-    private void ShowBotFrame(LuckyWheelRewardType _ingridiant)
+    private void ShowBotFrame(ItemType _ingridiant)
     {
         CraftingRecepieSO _recepie = CraftingRecepieSO.Get(_ingridiant);
         botFrameText.text = $"Combine {_recepie.BotAmountNeeded} <color={_recepie.IngridiantColor}>{_recepie.Inggrdiant}</color> shards\nto get 1 <color={_recepie.IngridiantColor}>{_recepie.Inggrdiant}</color> item";
@@ -136,7 +136,7 @@ public class CraftingUI : MonoBehaviour
 
     private void CraftCrystal()
     {
-        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((LuckyWheelRewardType)((int)showingRecepie.Inggrdiant-1));
+        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((ItemType)((int)showingRecepie.Inggrdiant-1));
 
         CraftingProcess _craftingProcess = new CraftingProcess();
         _craftingProcess.DateStarted = DateTime.UtcNow;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CrystalsDisplay : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI amountDisplay;
-    [SerializeField] private LuckyWheelRewardType type;
+    [SerializeField] private ItemType type;
 
     private void OnEnable()
     {

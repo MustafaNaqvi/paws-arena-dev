@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Epic
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 4
-  <Inggrdiant>k__BackingField: 4
+  <Inggrdiant>k__BackingField: 3
   <AmountNeeded>k__BackingField: 5
   <IngridiantColor>k__BackingField: '#5c26dd'
   <IngridiantSprite>k__BackingField: {fileID: 21300000, guid: 2f0b64b6fb26e944eb707460d74f529e, type: 3}
-  <EndProduct>k__BackingField: 5
+  <EndProduct>k__BackingField: 4
   <EndProductColor>k__BackingField: '#f15d2b'
   <FusionTime>k__BackingField: 5
   <EndProductSprite>k__BackingField: {fileID: 21300000, guid: c72e20a746929c64da1e0dc31e729be0, type: 3}

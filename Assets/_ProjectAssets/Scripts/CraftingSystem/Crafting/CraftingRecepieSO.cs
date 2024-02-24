@@ -7,11 +7,11 @@ using System.Linq;
 public class CraftingRecepieSO : ScriptableObject
 {
     [field: SerializeField] public int Id { get; private set; }
-    [field: SerializeField] public LuckyWheelRewardType Inggrdiant { get; private set; }
+    [field: SerializeField] public ItemType Inggrdiant { get; private set; }
     [field: SerializeField] public int AmountNeeded { get; private set; }
     [field: SerializeField] public string IngridiantColor { get; private set; }
     [field: SerializeField] public Sprite IngridiantSprite { get; private set; }
-    [field: SerializeField] public LuckyWheelRewardType EndProduct { get; private set; }
+    [field: SerializeField] public ItemType EndProduct { get; private set; }
     [field: SerializeField] public string EndProductColor { get; private set; }
     [field: SerializeField] public float FusionTime { get; private set; }
     [field: SerializeField] public Sprite EndProductSprite { get; private set; }
@@ -31,7 +31,7 @@ public class CraftingRecepieSO : ScriptableObject
         allRecepies = Resources.LoadAll<CraftingRecepieSO>("CraftingRecepies").ToList();
     }
 
-    public static CraftingRecepieSO Get(LuckyWheelRewardType _ingridiant)
+    public static CraftingRecepieSO Get(ItemType _ingridiant)
     {
         LoadAll();
         return allRecepies.Find(element => element.Inggrdiant == _ingridiant);

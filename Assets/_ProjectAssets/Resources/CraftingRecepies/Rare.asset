@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Rare
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 3
-  <Inggrdiant>k__BackingField: 3
+  <Inggrdiant>k__BackingField: 2
   <AmountNeeded>k__BackingField: 5
   <IngridiantColor>k__BackingField: '#2e6de1'
   <IngridiantSprite>k__BackingField: {fileID: 21300000, guid: 43dad446296fbdf41aef93f669bf7721, type: 3}
-  <EndProduct>k__BackingField: 4
+  <EndProduct>k__BackingField: 3
   <EndProductColor>k__BackingField: '#5c26dd'
   <FusionTime>k__BackingField: 5
   <EndProductSprite>k__BackingField: {fileID: 21300000, guid: 2f0b64b6fb26e944eb707460d74f529e, type: 3}

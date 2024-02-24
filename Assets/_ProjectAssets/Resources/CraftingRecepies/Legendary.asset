@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Legendary
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 5
-  <Inggrdiant>k__BackingField: 5
+  <Inggrdiant>k__BackingField: 4
   <AmountNeeded>k__BackingField: 5
   <IngridiantColor>k__BackingField: '#f15d2b'
   <IngridiantSprite>k__BackingField: {fileID: 0}
-  <EndProduct>k__BackingField: 5
+  <EndProduct>k__BackingField: 4
   <EndProductColor>k__BackingField: '#f15d2b'
   <FusionTime>k__BackingField: 0
   <EndProductSprite>k__BackingField: {fileID: 0}

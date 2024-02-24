@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class CraftingProcess
 {
-    public LuckyWheelRewardType Ingridiant;
+    public ItemType Ingridiant;
     public DateTime DateStarted;
 
     [JsonIgnore] public static Action OnFinishedCrafting;

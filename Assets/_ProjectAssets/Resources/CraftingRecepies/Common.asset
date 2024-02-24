@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Common
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 1
-  <Inggrdiant>k__BackingField: 1
+  <Inggrdiant>k__BackingField: 0
   <AmountNeeded>k__BackingField: 5
   <IngridiantColor>k__BackingField: '#75a090'
   <IngridiantSprite>k__BackingField: {fileID: 21300000, guid: fdfd26e2833239f43ad34bb1c214edf0, type: 3}
-  <EndProduct>k__BackingField: 2
+  <EndProduct>k__BackingField: 1
   <EndProductColor>k__BackingField: '#01b45c'
   <FusionTime>k__BackingField: 5
   <EndProductSprite>k__BackingField: {fileID: 21300000, guid: dfc9ddef2a3a70446a2403f0e594c951, type: 3}

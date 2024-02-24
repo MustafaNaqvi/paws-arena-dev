@@ -8,6 +8,6 @@ public class ChallengeSO : ScriptableObject
     public int AmountNeeded;
     public Sprite RewardSprite;
     public int RewardAmount;
-    public ChallengeRewardType RewardType;
+    public ItemType RewardType;
     public ChallengeCategory Category;
 }

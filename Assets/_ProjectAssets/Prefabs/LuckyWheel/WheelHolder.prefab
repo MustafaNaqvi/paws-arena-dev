@@ -752,7 +752,7 @@ MonoBehaviour:
   shakingScale: {x: 1.4, y: 1.4, z: 1.4}
   shadowHolder: {fileID: 4324128801455690332}
   cristalHolder: {fileID: 4324128802143105344}
-  rewardType: 3
+  rewardType: 2
 --- !u!1 &4324128801642627598
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,7 +883,7 @@ MonoBehaviour:
   shakingScale: {x: 1.4, y: 1.4, z: 1.4}
   shadowHolder: {fileID: 4324128803173369916}
   cristalHolder: {fileID: 4324128802989435762}
-  rewardType: 1
+  rewardType: 0
 --- !u!1 &4324128801759419955
 GameObject:
   m_ObjectHideFlags: 0
@@ -1655,7 +1655,6 @@ MonoBehaviour:
   playerPlatform: {fileID: 0}
   luckyWheel: {fileID: 4324128803234583226}
   rewardDisplay: {fileID: 4324128802040125821}
-  respinButton: {fileID: 4324128802302725511}
   claimButton: {fileID: 4324128801500679532}
   insuficiantSnacksForRespin: {fileID: 4324128801388795437}
   insuficiantSnacksText: {fileID: 4324128801759419953}
@@ -1664,7 +1663,7 @@ MonoBehaviour:
   buyMilk: {fileID: 3301979051762601838}
 --- !u!95 &4324128801988241774
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1681,7 +1680,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &4324128802040125823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,7 +1778,7 @@ MonoBehaviour:
   nameDisplay: {fileID: 4324128801811071074}
 --- !u!95 &4324128802040125760
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1796,7 +1795,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &4324128802143105347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1927,7 +1926,7 @@ MonoBehaviour:
   shakingScale: {x: 1.4, y: 1.4, z: 1.4}
   shadowHolder: {fileID: 4324128801907219851}
   cristalHolder: {fileID: 4324128802336900206}
-  rewardType: 2
+  rewardType: 1
 --- !u!1 &4324128802203317792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1982,7 +1981,7 @@ MonoBehaviour:
   shakingScale: {x: 1.2, y: 1.2, z: 1.2}
   shadowHolder: {fileID: 4324128801642627598}
   cristalHolder: {fileID: 4324128802773412214}
-  rewardType: 4
+  rewardType: 3
 --- !u!1 &4324128802248891389
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,7 +2157,7 @@ MonoBehaviour:
   shakingScale: {x: 1.4, y: 1.4, z: 1.4}
   shadowHolder: {fileID: 4324128802386977835}
   cristalHolder: {fileID: 4324128803100018621}
-  rewardType: 0
+  rewardType: 12
 --- !u!1 &4324128802302725505
 GameObject:
   m_ObjectHideFlags: 0
@@ -2987,7 +2986,7 @@ MonoBehaviour:
   shakingScale: {x: 1.1, y: 1.1, z: 1.1}
   shadowHolder: {fileID: 4324128802476290522}
   cristalHolder: {fileID: 4324128802821675840}
-  rewardType: 5
+  rewardType: 4
 --- !u!1 &4324128802989435757
 GameObject:
   m_ObjectHideFlags: 0

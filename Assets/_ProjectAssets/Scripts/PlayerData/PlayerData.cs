@@ -315,19 +315,19 @@ public class PlayerData
         }
     }
 
-    public double GetAmountOfCrystals(LuckyWheelRewardType _type)
+    public double GetAmountOfCrystals(ItemType _type)
     {
         switch (_type)
         {
-            case LuckyWheelRewardType.Common:
+            case ItemType.CommonShard:
                 return CommonShard;
-            case LuckyWheelRewardType.Uncommon:
+            case ItemType.UncommonShard:
                 return UncommonShard;
-            case LuckyWheelRewardType.Rare:
+            case ItemType.RareShard:
                 return RareShard;
-            case LuckyWheelRewardType.Epic:
+            case ItemType.EpicShard:
                 return EpicShard;
-            case LuckyWheelRewardType.Legendary:
+            case ItemType.LegendaryShard:
                 return LegendaryShard;
         }
 

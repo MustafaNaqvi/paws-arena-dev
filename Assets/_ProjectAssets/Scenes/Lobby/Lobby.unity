@@ -53119,7 +53119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountDisplay: {fileID: 776638050329181081}
-  type: 4
+  type: 3
 --- !u!1 &776638050329181079
 GameObject:
   m_ObjectHideFlags: 0
@@ -55773,7 +55773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountDisplay: {fileID: 776638050454231361}
-  type: 2
+  type: 1
 --- !u!1 &776638051363961247
 GameObject:
   m_ObjectHideFlags: 0
@@ -56468,7 +56468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountDisplay: {fileID: 776638050159517786}
-  type: 5
+  type: 4
 --- !u!1 &776638051522669779
 GameObject:
   m_ObjectHideFlags: 0
@@ -56992,7 +56992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountDisplay: {fileID: 776638049959541727}
-  type: 1
+  type: 0
 --- !u!1 &776638051785091483
 GameObject:
   m_ObjectHideFlags: 0
@@ -57129,7 +57129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountDisplay: {fileID: 776638051074063485}
-  type: 3
+  type: 2
 --- !u!1 &1064260995341367042 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6767056327456873015, guid: 1a105fbcb7fdfea4590c4aab27b4b393, type: 3}

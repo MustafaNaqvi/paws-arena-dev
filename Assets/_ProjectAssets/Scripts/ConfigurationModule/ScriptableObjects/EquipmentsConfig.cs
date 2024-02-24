@@ -40,19 +40,19 @@ public class EquipmentsConfig : ScriptableObject
         EquipmentRarity _rarity;
         switch (_craftingRecepie.Inggrdiant)
         {
-            case LuckyWheelRewardType.Common:
+            case ItemType.CommonShard:
                 _rarity = EquipmentRarity.Common;
                 break;
-            case LuckyWheelRewardType.Uncommon:
+            case ItemType.UncommonShard:
                 _rarity = EquipmentRarity.Uncommon;
                 break;
-            case LuckyWheelRewardType.Rare:
+            case ItemType.RareShard:
                 _rarity = EquipmentRarity.Rare;
                 break;
-            case LuckyWheelRewardType.Epic:
+            case ItemType.EpicShard:
                 _rarity = EquipmentRarity.Epic;
                 break;
-            case LuckyWheelRewardType.Legendary:
+            case ItemType.LegendaryShard:
                 _rarity = EquipmentRarity.Legendary;
                 break;
             default:

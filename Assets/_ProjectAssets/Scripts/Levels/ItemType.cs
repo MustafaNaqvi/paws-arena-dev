@@ -13,5 +13,7 @@ public enum ItemType
     GlassOfMilk = 7,
     Item = 8,
     Emote = 9,
-    WeaponSkin = 10
+    WeaponSkin = 10,
+    SeasonExperience = 11,
+    Present = 12
 }

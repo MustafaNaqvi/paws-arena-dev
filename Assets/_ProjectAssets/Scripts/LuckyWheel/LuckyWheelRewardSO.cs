@@ -6,7 +6,7 @@ using UnityEngine;
 public class LuckyWheelRewardSO : ScriptableObject
 {
     [field: SerializeField] public int Id { get; private set; }
-    [field: SerializeField] public LuckyWheelRewardType Type { get; private set; }
+    [field: SerializeField] public ItemType Type { get; private set; }
     [field: SerializeField] public float Amount { get; private set; }
     [field: SerializeField] public Sprite Sprite { get; private set; }
     [field: SerializeField] public int Chances { get; private set; }

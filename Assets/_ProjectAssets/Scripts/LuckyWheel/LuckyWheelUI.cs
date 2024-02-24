@@ -117,22 +117,22 @@ public class LuckyWheelUI : MonoBehaviour
         //todo increase amount of crystals
         switch (_reward.Type)
         {
-            case LuckyWheelRewardType.Common:
+            case ItemType.CommonShard:
                 // DataManager.Instance.PlayerData.Crystals.CommonCrystal++;
                 break;
-            case LuckyWheelRewardType.Uncommon:
+            case ItemType.UncommonShard:
                 // DataManager.Instance.PlayerData.Crystals.UncommonCrystal++;
                 break;
-            case LuckyWheelRewardType.Rare:
+            case ItemType.RareShard:
                 // DataManager.Instance.PlayerData.Crystals.RareCrystal++;
                 break;
-            case LuckyWheelRewardType.Epic:
+            case ItemType.EpicShard:
                 // DataManager.Instance.PlayerData.Crystals.EpicCrystal++;
                 break;
-            case LuckyWheelRewardType.Legendary:
+            case ItemType.LegendaryShard:
                 // DataManager.Instance.PlayerData.Crystals.LegendaryCrystal++;
                 break;
-            case LuckyWheelRewardType.Gift:
+            case ItemType.GlassOfMilk:
                 EquipmentData = equipments.CraftItem();
                 DataManager.Instance.PlayerData.AddOwnedEquipment(EquipmentData.Id);
                 break;

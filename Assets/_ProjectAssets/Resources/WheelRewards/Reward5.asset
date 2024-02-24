@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Reward5
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 0
-  <Type>k__BackingField: 0
+  <Type>k__BackingField: 12
   <Amount>k__BackingField: 1
   <Sprite>k__BackingField: {fileID: 21300000, guid: b64b7454034913441b043f88d7827f29, type: 3}
   <Chances>k__BackingField: 80
   <Name>k__BackingField: Gift
+  <Key>k__BackingField: 
   <MinRotation>k__BackingField: 155
   <MaxRotation>k__BackingField: 215

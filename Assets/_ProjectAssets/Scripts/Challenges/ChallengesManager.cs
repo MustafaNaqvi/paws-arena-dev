@@ -31,21 +31,21 @@ public class ChallengesManager : MonoBehaviour
         _challengeData.Claimed = true;
         switch (_challengeSO.RewardType)
         {
-            case ChallengeRewardType.SeasonExperience:
+            case ItemType.SeasonExperience:
                 if (!DataManager.Instance.GameData.IsSeasonActive)
                 {
                     return;
                 }
                 // DataManager.Instance.PlayerData.Experience += _challengeSO.RewardAmount;
                 break;
-            case ChallengeRewardType.JugOfMilk:
+            case ItemType.JugOfMilk:
                 // DataManager.Instance.PlayerData.JugOfMilk += _challengeSO.RewardAmount;
                 break;
-            case ChallengeRewardType.Snacks:
+            case ItemType.Snack:
                 // DataManager.Instance.PlayerData.Snacks += _challengeSO.RewardAmount;
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new Exception("Don't know how to handle reward: "+ _challengeSO.RewardType);
         }
         // DataManager.Instance.SaveChallenges();
     }

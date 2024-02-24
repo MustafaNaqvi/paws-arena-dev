@@ -54,15 +54,15 @@ public static class Utilities
         switch (_rarity)
         {
             case EquipmentRarity.Common:
-                return CraftingRecepieSO.Get(LuckyWheelRewardType.Common);
+                return CraftingRecepieSO.Get(ItemType.CommonShard);
             case EquipmentRarity.Uncommon:
-                return CraftingRecepieSO.Get(LuckyWheelRewardType.Uncommon);
+                return CraftingRecepieSO.Get(ItemType.UncommonShard);
             case EquipmentRarity.Rare:
-                return CraftingRecepieSO.Get(LuckyWheelRewardType.Rare);
+                return CraftingRecepieSO.Get(ItemType.RareShard);
             case EquipmentRarity.Epic:
-                return CraftingRecepieSO.Get(LuckyWheelRewardType.Epic);
+                return CraftingRecepieSO.Get(ItemType.EpicShard);
             case EquipmentRarity.Legendary:
-                return CraftingRecepieSO.Get(LuckyWheelRewardType.Legendary);
+                return CraftingRecepieSO.Get(ItemType.LegendaryShard);
             default:
                 throw new Exception($"Don't know how to convert {_rarity} to recepie");
         }
