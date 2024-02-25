@@ -67,4 +67,39 @@ public static class Utilities
                 throw new Exception($"Don't know how to convert {_rarity} to recepie");
         }
     }
+
+    public static string GetItemName(ItemType _type)
+    {
+        switch (_type)
+        {
+            case ItemType.CommonShard:
+                return "Common Crystal";
+            case ItemType.UncommonShard:
+                return "Uncommon Crystal";
+            case ItemType.RareShard:
+                return "Rare Crystal";
+            case ItemType.EpicShard:
+                return "Epic Crystal";
+            case ItemType.LegendaryShard:
+                return "Legendary Crystal";
+            case ItemType.Snack:
+                return "Snack";
+            case ItemType.JugOfMilk:
+                return "Bottle of milk";
+            case ItemType.GlassOfMilk:
+                return "Glass of milk";
+            case ItemType.Item:
+                return "Item";
+            case ItemType.Emote:
+                return "Emote";
+            case ItemType.WeaponSkin:
+                return "Weapon skin";
+            case ItemType.SeasonExperience:
+                return "Season experience";
+            case ItemType.Present:
+                return "Present";
+            default:
+                throw new Exception($"Dont know how to convert {_type} to a name");
+        }
+    }
 }

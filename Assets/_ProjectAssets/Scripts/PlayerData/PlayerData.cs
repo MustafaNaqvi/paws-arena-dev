@@ -9,7 +9,6 @@ public class PlayerData
 {
     public const string EARNED_XP_KEY = "earnedXp";
     
-    private CraftingProcess craftingProcess;
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
@@ -37,14 +36,6 @@ public class PlayerData
         };
     }
 
-    public CraftingProcess CraftingProcess
-    {
-        get { return craftingProcess; }
-        set
-        {
-            craftingProcess = value;
-        }
-    }
 
     public List<int> OwnedEquiptables
     {
@@ -203,6 +194,11 @@ public class PlayerData
     private const string CLAIMED_NORMAL_REWARDS = "claimedNormalRewards";
     private const string CLAIMED_PREMIUM_REWARDS = "claimedPremiumRewards";
     private const string HAS_PREMIUM_PASS = "hasPremiumPass";
+    
+    
+    private const string CRAFTING_PROCESS = "CraftingProcess";
+    private const string CRAFTING_INGREDIENT = "CraftingIngredient";
+    private const string CRAFTING_END_TIME_SPAN = "CraftingEnd";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
@@ -370,6 +366,48 @@ public class PlayerData
         ExperienceForNextLevel = _expForNextLevel;
         ExperienceOnCurrentLevel = _experienceOnCurrentLevel;
     }
+    
+    public CraftingProcess CraftingProcess
+    {
+        get
+        {
+            Dictionary<string, string> _data = BoomDaoUtility.Instance.GetEntityData(CRAFTING_PROCESS);
+            DateTime _endDate = default;
+
+            if (_data==default)
+            {
+                return default;
+            }
+
+            if (_data.TryGetValue(CRAFTING_END_TIME_SPAN, out string _timeString))
+            {
+                if (_timeString.Contains('.'))
+                {
+                    _timeString = _timeString.Split('.')[0];
+                }
+
+                _endDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
+                if (_endDate <= DateTime.UtcNow)
+                {
+                    _endDate = default;
+                }
+
+            }
+
+            if (_endDate==default)
+            {
+                return default;
+            }
+            
+            int _ingredient = Convert.ToInt32(BoomDaoUtility.Instance.GetDouble(CRAFTING_PROCESS, CRAFTING_INGREDIENT));
+            ItemType _type = (ItemType)_ingredient;
+            Debug.Log($"Got end product with id{_ingredient}, {_type}");
+            Debug.Log($"End date: {_endDate}");
+
+            return new CraftingProcess() { EndDate = _endDate, EndProduct = _type};
+        }
+    }
+
 
     public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
     {

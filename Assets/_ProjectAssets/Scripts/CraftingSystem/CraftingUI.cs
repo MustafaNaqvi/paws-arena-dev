@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
 
 public class CraftingUI : MonoBehaviour
 {
@@ -40,16 +39,15 @@ public class CraftingUI : MonoBehaviour
     {
         CraftingProcess.OnFinishedCrafting += FinishedCrafting;
 
-        commonButton.onClick.AddListener(() => ShowRecepie(ItemType.CommonShard));
-        uncommonButton.onClick.AddListener(() => ShowRecepie(ItemType.UncommonShard));
-        rareButton.onClick.AddListener(() => ShowRecepie(ItemType.RareShard));
-        epicButton.onClick.AddListener(() => ShowRecepie(ItemType.EpicShard));
-        legendaryButton.onClick.AddListener(() => ShowRecepie(ItemType.LegendaryShard));
+        commonButton.onClick.AddListener(() => ShowRecipe(ItemType.CommonShard));
+        uncommonButton.onClick.AddListener(() => ShowRecipe(ItemType.UncommonShard));
+        rareButton.onClick.AddListener(() => ShowRecipe(ItemType.RareShard));
+        epicButton.onClick.AddListener(() => ShowRecipe(ItemType.EpicShard));
+        legendaryButton.onClick.AddListener(() => ShowRecipe(ItemType.LegendaryShard));
         craftCrystalButton.onClick.AddListener(CraftCrystal);
         botCraftItemButton.onClick.AddListener(CraftItem);
 
-        ShowRecepie(ItemType.CommonShard);
-        ShowRecepie();
+        ShowRecipe(ItemType.CommonShard);
         gameObject.SetActive(true);
     }
 
@@ -57,52 +55,46 @@ public class CraftingUI : MonoBehaviour
     {
         CraftingProcess.OnFinishedCrafting -= FinishedCrafting;
 
-        craftCrystalButton.onClick.RemoveListener(CraftCrystal);
         commonButton.onClick.RemoveAllListeners();
         uncommonButton.onClick.RemoveAllListeners();
         rareButton.onClick.RemoveAllListeners();
         epicButton.onClick.RemoveAllListeners();
         legendaryButton.onClick.RemoveAllListeners();
+        craftCrystalButton.onClick.RemoveListener(CraftCrystal);
         botCraftItemButton.onClick.RemoveListener(CraftItem);
     }
 
-    private void ShowRecepie()
+    private void ShowRecipe(ItemType _ingredient)
     {
-        ShowRecepie(showingRecepie.Inggrdiant);
-    }
+        showingRecepie = CraftingRecepieSO.Get(_ingredient);
 
-    private void ShowRecepie(ItemType _ingridiant)
-    {
-        showingRecepie = CraftingRecepieSO.Get(_ingridiant);
-
-        if (_ingridiant == ItemType.CommonShard)
+        if (_ingredient == ItemType.CommonShard)
         {
             messageDisplay.SetActive(true);
-            ShowBotFrame(_ingridiant);
+            ShowBotFrame(_ingredient);
             topHolder.SetActive(false);
             return;
         }
         
         messageDisplay.SetActive(false);
-
         topHolder.SetActive(true);
 
-        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((ItemType)((int)_ingridiant-1));
-        ingridiantImage.sprite = _topRecepie.EndProductSprite;
-        craftText.text = $"Get 1 <color={_topRecepie.EndProductColor}>{_topRecepie.EndProduct}</color> shard by\ncombining {_topRecepie.AmountNeeded} <color={_topRecepie.IngridiantColor}>{_topRecepie.Inggrdiant}</color> shards";
-        double _amountOfIngridiants = DataManager.Instance.PlayerData.GetAmountOfCrystals(_topRecepie.Inggrdiant);
-        if (_amountOfIngridiants >= showingRecepie.AmountNeeded)
+        CraftingRecepieSO _topRecipe = CraftingRecepieSO.Get((ItemType)((int)_ingredient-1));
+        ingridiantImage.sprite = _topRecipe.EndProductSprite;
+        craftText.text = $"Get 1 <color={_topRecipe.EndProductColor}>{_topRecipe.EndProduct}</color> shard by\ncombining {_topRecipe.AmountNeeded} <color={_topRecipe.IngridiantColor}>{_topRecipe.Inggrdiant}</color> shards";
+        double _amountOfIngredients = DataManager.Instance.PlayerData.GetAmountOfCrystals(_topRecipe.Inggrdiant);
+        if (_amountOfIngredients >= showingRecepie.AmountNeeded)
         {
-            craftAmountDisplay.text = $"<color=#00ff00>{_amountOfIngridiants}</color>/<color={_topRecepie.EndProductColor}>{_topRecepie.AmountNeeded}</color>";
+            craftAmountDisplay.text = $"<color=#00ff00>{_amountOfIngredients}</color>/<color={_topRecipe.EndProductColor}>{_topRecipe.AmountNeeded}</color>";
             craftCrystalButton.interactable = true;
         }
         else
         {
-            craftAmountDisplay.text = $"<color=#ff0000>{_amountOfIngridiants}</color>/<color={_topRecepie.EndProductColor}>{_topRecepie.AmountNeeded}</color>";
+            craftAmountDisplay.text = $"<color=#ff0000>{_amountOfIngredients}</color>/<color={_topRecipe.EndProductColor}>{_topRecipe.AmountNeeded}</color>";
             craftCrystalButton.interactable = false;
         }
 
-        endResultImage.sprite = _topRecepie.IngridiantSprite;
+        endResultImage.sprite = _topRecipe.IngridiantSprite;
         ingridiantImage.SetNativeSize();
         endResultImage.SetNativeSize();
         craftButtonText.text = "Craft";
@@ -113,16 +105,16 @@ public class CraftingUI : MonoBehaviour
             craftCrystalButton.interactable = false;
         }
 
-        ShowBotFrame(_ingridiant);
+        ShowBotFrame(_ingredient);
     }
 
-    private void ShowBotFrame(ItemType _ingridiant)
+    private void ShowBotFrame(ItemType _ingredient)
     {
-        CraftingRecepieSO _recepie = CraftingRecepieSO.Get(_ingridiant);
-        botFrameText.text = $"Combine {_recepie.BotAmountNeeded} <color={_recepie.IngridiantColor}>{_recepie.Inggrdiant}</color> shards\nto get 1 <color={_recepie.IngridiantColor}>{_recepie.Inggrdiant}</color> item";
-        double _amountGot = DataManager.Instance.PlayerData.GetAmountOfCrystals(_ingridiant);
-        botAmountDisplay.text = $"<color={_recepie.IngridiantColor}>{_amountGot}</color>/<color={showingRecepie.IngridiantColor}>{showingRecepie.BotAmountNeeded}</color>";
-        if (_amountGot >= _recepie.BotAmountNeeded)
+        CraftingRecepieSO _recipe = CraftingRecepieSO.Get(_ingredient);
+        botFrameText.text = $"Combine {_recipe.BotAmountNeeded} <color={_recipe.IngridiantColor}>{_recipe.Inggrdiant}</color> shards\nto get 1 <color={_recipe.IngridiantColor}>{_recipe.Inggrdiant}</color> item";
+        double _amountGot = DataManager.Instance.PlayerData.GetAmountOfCrystals(_ingredient);
+        botAmountDisplay.text = $"<color={_recipe.IngridiantColor}>{_amountGot}</color>/<color={showingRecepie.IngridiantColor}>{showingRecepie.BotAmountNeeded}</color>";
+        if (_amountGot >= _recipe.BotAmountNeeded)
         {
             botCraftItemButton.interactable = true;
         }
@@ -131,22 +123,20 @@ public class CraftingUI : MonoBehaviour
             botCraftItemButton.interactable = false;
         }
 
-        botFrameImage.sprite = _recepie.BottomOfferBackground;
+        botFrameImage.sprite = _recipe.BottomOfferBackground;
     }
 
     private void CraftCrystal()
     {
-        CraftingRecepieSO _topRecepie = CraftingRecepieSO.Get((ItemType)((int)showingRecepie.Inggrdiant-1));
-
-        CraftingProcess _craftingProcess = new CraftingProcess();
-        _craftingProcess.DateStarted = DateTime.UtcNow;
-        _craftingProcess.Ingridiant = _topRecepie.Inggrdiant;
-
-        DataManager.Instance.PlayerData.CraftingProcess = _craftingProcess;
+        // CraftingRecepieSO _topRecipe = CraftingRecepieSO.Get((ItemType)((int)showingRecepie.Inggrdiant-1));
+        //
+        // CraftingProcess _craftingProcess = new CraftingProcess();
+        // _craftingProcess.EndDate = DateTime.UtcNow;
+        // _craftingProcess.EndProduct = _topRecipe.EndProduct;
         
-        //todo deduce the _topRecepie.Inggrdiant type of crystal
+        //todo call action on boomdao ui
 
-        ShowRecepie(showingRecepie.Inggrdiant);
+        ShowRecipe(showingRecepie.Inggrdiant);
     }
 
     public void Close()
@@ -154,17 +144,17 @@ public class CraftingUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void FinishedCrafting()
+    private void FinishedCrafting(ItemType _endProduct)
     {
-        craftingFinished.Setup($"Congratulations, you just crafted a {showingRecepie.EndProduct} shard");
-        ShowRecepie();
-        ShowRecepie(showingRecepie.Inggrdiant);
+        craftingFinished.Setup($"Congratulations, you just crafted a {Utilities.GetItemName(_endProduct)} shard");
+        ShowRecipe(showingRecepie.Inggrdiant);
         craftButtonText.text = "Craft";
         EventsManager.OnCraftedCrystal?.Invoke();
     }
 
     private void CraftItem()
     {
+        return;
         EquipmentData _equipmentData = equipments.CraftItem(showingRecepie);
         ShowItem(_equipmentData);
         DataManager.Instance.PlayerData.AddOwnedEquipment(_equipmentData.Id);
@@ -179,9 +169,10 @@ public class CraftingUI : MonoBehaviour
 
     private void Update()
     {
-        if (DataManager.Instance.PlayerData.CraftingProcess != null)
+        CraftingProcess _process = DataManager.Instance.PlayerData.CraftingProcess;
+        if (_process != default)
         {
-            craftButtonText.text = DataManager.Instance.PlayerData.CraftingProcess.GetFinishTime();
+            craftButtonText.text = _process.GetFinishTime();
         }
     }
 }

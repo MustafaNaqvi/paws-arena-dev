@@ -285,7 +285,6 @@ namespace BoomDaoWrapper
                                 _actionOutcomes.Add(new ActionOutcome { Name = _entityOutcome.Eid, Value = _increment.FieldValue.AsNumber() });
                             }
                         }
-                        
                     }
                 }
             }
