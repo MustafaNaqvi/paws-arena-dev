@@ -63,5 +63,9 @@ public class InputModal : MonoBehaviour
         errors.text = text;
     }
 
+    public void ManageButton(bool _status)
+    {
+        confirmButton.interactable = _status;
+    }
 
 }

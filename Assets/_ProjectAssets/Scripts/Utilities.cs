@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using NUnit.Framework.Internal.Execution;
 
 public static class Utilities
 {
@@ -46,6 +47,31 @@ public static class Utilities
                 return ItemType.JugOfMilk;
             default:
                 throw new Exception($"Don't know how to reward {_key}");
+        }
+    }
+
+    public static string GetItemKey(ItemType _type)
+    {
+        switch (_type)
+        {
+            case ItemType.CommonShard:
+                return PlayerData.COMMON_SHARD;
+            case ItemType.UncommonShard:
+                return PlayerData.UNCOMMON_SHARD;
+            case ItemType.RareShard:
+                return PlayerData.RARE_SHARD;
+            case ItemType.EpicShard:
+                return PlayerData.EPIC_SHARD;
+            case ItemType.LegendaryShard:
+                return PlayerData.LEGENDARY_SHARD;
+            case ItemType.Snack:
+                return PlayerData.SNACKS;
+            case ItemType.JugOfMilk:
+                return PlayerData.MILK_BOTTLE;
+            case ItemType.GlassOfMilk:
+                return PlayerData.MILK_GLASS;
+            default:
+                throw new Exception($"Dont know how to convert {_type} to a key");
         }
     }
 
@@ -101,5 +127,24 @@ public static class Utilities
             default:
                 throw new Exception($"Dont know how to convert {_type} to a name");
         }
+    }
+
+    public static string UpperFirstLetter(this string _string)
+    {
+        string _newString = string.Empty;
+        for (int _i = 0; _i < _string.Length; _i++)
+        {
+            char _char = _string[_i];
+            if (_i==0)
+            {
+                _newString += char.ToUpper(_char);
+            }
+            else
+            {
+                _newString += _char;
+            }
+        }
+
+        return _newString;
     }
 }

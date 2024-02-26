@@ -1,9 +1,16 @@
+using System;
+using System.Collections.Generic;
+using BoomDaoWrapper;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 public class CraftingUI : MonoBehaviour
 {
+    private const string CRAFT_ACTION = "craft";
+    private const string CRAFTING_END_TIME_SPAN = "currentTimeSpan";
+    private const string DELETE_CRAFTING_PROCESS = "deleteCraftingProcess";
+
     [SerializeField] private Button commonButton;
     [SerializeField] private Button uncommonButton;
     [SerializeField] private Button rareButton;
@@ -34,6 +41,7 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] private CraftedItemDisplay itemDisplay;
     [SerializeField] private CraftFinishedDisplay craftingFinished;
     private CraftingRecepieSO showingRecepie;
+    private bool isProcessingAction;
     
     public void Setup()
     {
@@ -128,14 +136,16 @@ public class CraftingUI : MonoBehaviour
 
     private void CraftCrystal()
     {
-        // CraftingRecepieSO _topRecipe = CraftingRecepieSO.Get((ItemType)((int)showingRecepie.Inggrdiant-1));
-        //
-        // CraftingProcess _craftingProcess = new CraftingProcess();
-        // _craftingProcess.EndDate = DateTime.UtcNow;
-        // _craftingProcess.EndProduct = _topRecipe.EndProduct;
-        
-        //todo call action on boomdao ui
+        string _actionKey = CRAFT_ACTION + Utilities.GetItemKey(showingRecepie.Inggrdiant).UpperFirstLetter();
+        BoomDaoUtility.Instance.ExecuteActionWithParameter(_actionKey,
+            new List<ActionParameter>
+            {
+                new() { Key = CRAFTING_END_TIME_SPAN, Value = Utilities.DateTimeToNanoseconds(DateTime.UtcNow).ToString() }
+            }, HandleActionExecuted);
+    }
 
+    private void HandleActionExecuted(List<ActionOutcome> _outcomes)
+    {
         ShowRecipe(showingRecepie.Inggrdiant);
     }
 
@@ -146,10 +156,22 @@ public class CraftingUI : MonoBehaviour
 
     private void FinishedCrafting(ItemType _endProduct)
     {
+        if (isProcessingAction)
+        {
+            return;
+        }
+
+        isProcessingAction = true;
         craftingFinished.Setup($"Congratulations, you just crafted a {Utilities.GetItemName(_endProduct)} shard");
         ShowRecipe(showingRecepie.Inggrdiant);
         craftButtonText.text = "Craft";
+        // BoomDaoUtility.Instance.ExecuteAction(DELETE_CRAFTING_PROCESS, HandleCraftingFinished);
         EventsManager.OnCraftedCrystal?.Invoke();
+    }
+
+    private void HandleCraftingFinished(List<ActionOutcome> _)
+    {
+        isProcessingAction = false;
     }
 
     private void CraftItem()

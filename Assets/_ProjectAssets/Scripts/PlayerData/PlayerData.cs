@@ -161,13 +161,13 @@ public class PlayerData
 
     // new system
     public static Action OnUpdatedSnacks;
-
     public static Action OnUpdatedShards;
     public static Action OnUpdatedExp;
     public static Action OnUpdatedJugOfMilk;
     public static Action OnUpdatedGlassOfMilk;
     public static Action OnClaimedReward;
     public static Action OnBoughtPass;
+    public static Action OnUpdatedCraftingProcess;
 
     public const string SNACKS = "snack";
     
@@ -177,16 +177,16 @@ public class PlayerData
     public const string USE_MILK_BOTTLE = "useMilkBottle";
     public const string USE_MILK_GLASS = "useMilkGlass";
 
+    public const string COMMON_SHARD = "commonShard";
     public const string UNCOMMON_SHARD = "uncommonShard";
     public const string RARE_SHARD = "rareShard";
     public const string EPIC_SHARD = "epicShard";
     public const string LEGENDARY_SHARD = "legendaryShard";
-    public const string COMMON_SHARD = "commonShard";
     
     public const string MILK_BOTTLE = "milkBottle";
     public const string MILK_GLASS = "milkGlass";
     
-    public const string NAME_ENTITY_ID = "user_profile";
+    public const string USER_PROFILE = "user_profile";
 
     private const string XP = "xp";
     private const string AMOUNT_KEY = "amount";
@@ -196,15 +196,15 @@ public class PlayerData
     private const string HAS_PREMIUM_PASS = "hasPremiumPass";
     
     
-    private const string CRAFTING_PROCESS = "CraftingProcess";
-    private const string CRAFTING_INGREDIENT = "CraftingIngredient";
-    private const string CRAFTING_END_TIME_SPAN = "CraftingEnd";
+    public const string CRAFTING_PROCESS = "craftingProcess";
+    private const string CRAFTING_END = "craftingEnd";
+    public const string CRAFTING_INGREDIENT = "craftingIngredient";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
     public int ExperienceForNextLevel { get; private set; }
 
-    public string Username => BoomDaoUtility.Instance.GetString(NAME_ENTITY_ID, NAME_KEY);
+    public string Username => BoomDaoUtility.Instance.GetString(USER_PROFILE, NAME_KEY);
 
     public double Snacks => BoomDaoUtility.Instance.GetDouble(SNACKS, AMOUNT_KEY);
 
@@ -305,6 +305,10 @@ public class PlayerData
             case HAS_PREMIUM_PASS:
                 OnBoughtPass?.Invoke();
                 break;
+            case CRAFTING_PROCESS:
+                OnUpdatedCraftingProcess?.Invoke();
+                Debug.Log("New: " +JsonConvert.SerializeObject(CraftingProcess));
+                break;
             default:
                 Debug.Log($"{_key} got updated!, add handler?");
                 break;
@@ -346,11 +350,11 @@ public class PlayerData
             {
                 _timeString = _timeString.Split('.')[0];
             }
+            
             _recoveryDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
             if (_recoveryDate <= DateTime.UtcNow)
             {
                 _recoveryDate = default;
-                BoomDaoUtility.Instance.RemoveEntity(_kittyId);
             }
             
         }
@@ -379,7 +383,7 @@ public class PlayerData
                 return default;
             }
 
-            if (_data.TryGetValue(CRAFTING_END_TIME_SPAN, out string _timeString))
+            if (_data.TryGetValue(CRAFTING_END, out string _timeString))
             {
                 if (_timeString.Contains('.'))
                 {
@@ -387,11 +391,6 @@ public class PlayerData
                 }
 
                 _endDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
-                if (_endDate <= DateTime.UtcNow)
-                {
-                    _endDate = default;
-                }
-
             }
 
             if (_endDate==default)
@@ -401,13 +400,10 @@ public class PlayerData
             
             int _ingredient = Convert.ToInt32(BoomDaoUtility.Instance.GetDouble(CRAFTING_PROCESS, CRAFTING_INGREDIENT));
             ItemType _type = (ItemType)_ingredient;
-            Debug.Log($"Got end product with id{_ingredient}, {_type}");
-            Debug.Log($"End date: {_endDate}");
 
             return new CraftingProcess() { EndDate = _endDate, EndProduct = _type};
         }
     }
-
 
     public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
     {

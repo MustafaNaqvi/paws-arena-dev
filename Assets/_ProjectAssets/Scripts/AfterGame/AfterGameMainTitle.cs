@@ -131,25 +131,21 @@ namespace com.colorfulcoding.AfterGame
         {
             float _maxHp = 100;
             float _minutesItWillTakeToRecover = (RecoveryHandler.RecoveryInMinutes / _maxHp) * (_maxHp - PlayerManager.HealthAtEnd);
-            if (_minutesItWillTakeToRecover<=1)
+            if (_minutesItWillTakeToRecover <= 1)
             {
                 return;
             }
+
             DateTime _recoveryEnds = DateTime.UtcNow.AddMinutes(_minutesItWillTakeToRecover);
             GameState.selectedNFT.RecoveryEndDate = _recoveryEnds;
-            
-            BoomDaoUtility.Instance.ExecuteActionWithParameter(
-                HURT_KITTY
-                , new List<ActionParameter> {new()
+
+            BoomDaoUtility.Instance.ExecuteActionWithParameter(HURT_KITTY,
+                new List<ActionParameter>
                 {
-                    Key = PlayerData.KITTY_RECOVERY_KEY, Value = Utilities.DateTimeToNanoseconds(_recoveryEnds).ToString()
-                },
-                    new ()
-                    {
-                        Key = PlayerData.KITTY_KEY, Value = GameState.selectedNFT.imageUrl
-                    }
-                },
-                null);
+                    //{$args.
+                    new() { Key = PlayerData.KITTY_RECOVERY_KEY, Value = Utilities.DateTimeToNanoseconds(_recoveryEnds).ToString() },
+                    new() { Key = PlayerData.KITTY_KEY, Value = GameState.selectedNFT.imageUrl }
+                }, null);
 
         }
     }

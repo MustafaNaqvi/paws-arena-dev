@@ -188,11 +188,6 @@ namespace BoomDaoWrapper
             return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(), _entityId, out DataTypes.Entity _entityData) ? _entityData.fields : default;
         }
 
-        public void RemoveEntity(string _entityId)
-        {
-            //todo delete entity
-        }
-
         private void OnEntityDataChangeHandler(Data<DataTypes.Entity> _changedEntities)
         {
             foreach (var _changedEntity in _changedEntities.elements.Values)

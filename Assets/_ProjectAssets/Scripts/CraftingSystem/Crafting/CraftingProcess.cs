@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class CraftingProcess
@@ -15,6 +16,7 @@ public class CraftingProcess
 
         if (_endTime.TotalSeconds < 0)
         {
+            Debug.Log(EndDate);
             OnFinishedCrafting?.Invoke(EndProduct);
             return "Craft";
         }
