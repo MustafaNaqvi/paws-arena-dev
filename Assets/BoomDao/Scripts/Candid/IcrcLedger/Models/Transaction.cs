@@ -1,31 +1,38 @@
 using EdjCase.ICP.Candid.Mapping;
 using EdjCase.ICP.Candid.Models;
-using System.Collections.Generic;
 using Candid.IcrcLedger.Models;
-using Memo = System.UInt64;
+using Timestamp = System.UInt64;
 
 namespace Candid.IcrcLedger.Models
 {
 	public class Transaction
 	{
-		[CandidName("memo")]
-		public Memo Memo { get; set; }
+		[CandidName("burn")]
+		public OptionalValue<Burn> Burn { get; set; }
 
-		[CandidName("icrc1_memo")]
-		public OptionalValue<List<byte>> Icrc1Memo { get; set; }
+		[CandidName("kind")]
+		public string Kind { get; set; }
 
-		[CandidName("operation")]
-		public OptionalValue<Operation> Operation { get; set; }
+		[CandidName("mint")]
+		public OptionalValue<Mint> Mint { get; set; }
 
-		[CandidName("created_at_time")]
-		public TimeStamp CreatedAtTime { get; set; }
+		[CandidName("approve")]
+		public OptionalValue<Approve> Approve { get; set; }
 
-		public Transaction(Memo memo, OptionalValue<List<byte>> icrc1Memo, OptionalValue<Operation> operation, TimeStamp createdAtTime)
+		[CandidName("timestamp")]
+		public Timestamp Timestamp { get; set; }
+
+		[CandidName("transfer")]
+		public OptionalValue<Transfer> Transfer { get; set; }
+
+		public Transaction(OptionalValue<Burn> burn, string kind, OptionalValue<Mint> mint, OptionalValue<Approve> approve, Timestamp timestamp, OptionalValue<Transfer> transfer)
 		{
-			this.Memo = memo;
-			this.Icrc1Memo = icrc1Memo;
-			this.Operation = operation;
-			this.CreatedAtTime = createdAtTime;
+			this.Burn = burn;
+			this.Kind = kind;
+			this.Mint = mint;
+			this.Approve = approve;
+			this.Timestamp = timestamp;
+			this.Transfer = transfer;
 		}
 
 		public Transaction()

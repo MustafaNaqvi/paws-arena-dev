@@ -192,8 +192,10 @@
 
             if (canisterId == Env.CanisterIds.ICP_LEDGER)
             {
-                var baseUnitAmount = await tokenInterface.AccountBalance(new AccountBalanceArgs(CandidUtil.HexStringToByteArray(userAddresses[uid]).ToList()));
-                tokens.Add(canisterId, baseUnitAmount.E8s);
+                var baseUnitAmount = await tokenInterface.Icrc1BalanceOf(new Account(Principal.FromText(uid), new()));
+
+                baseUnitAmount.TryToUInt64(out var outVal);
+                tokens.Add(canisterId, outVal);
             }
             else
             {

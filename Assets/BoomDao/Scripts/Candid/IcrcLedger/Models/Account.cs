@@ -1,7 +1,7 @@
 using EdjCase.ICP.Candid.Mapping;
 using EdjCase.ICP.Candid.Models;
 using Candid.IcrcLedger.Models;
-using SubAccount = System.Collections.Generic.List<System.Byte>;
+using Subaccount = System.Collections.Generic.List<System.Byte>;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -23,13 +23,13 @@ namespace Candid.IcrcLedger.Models
 		{
 		}
 
-		public class SubaccountInfo : OptionalValue<SubAccount>
+		public class SubaccountInfo : OptionalValue<Subaccount>
 		{
 			public SubaccountInfo()
 			{
 			}
 
-			public SubaccountInfo(SubAccount value) : base(value)
+			public SubaccountInfo(Subaccount value) : base(value)
 			{
 			}
 		}

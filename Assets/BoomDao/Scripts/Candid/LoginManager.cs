@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using WebSocketSharp.Server;
 using WebSocketSharp;
 using Boom.Utility;
-using UnityEngine.Scripting;
 
 namespace Candid
 {
@@ -15,7 +14,7 @@ namespace Candid
         private Action<string> createIdentityCallback = null;
 
         [SerializeField]
-        string url = "https://7p3gx-jaaaa-aaaal-acbda-cai.raw.ic0.app/";
+        string url = "https://7p3gx-jaaaa-aaaal-acbda-cai.icp0.io";
 
         void Awake()
         {
@@ -32,7 +31,6 @@ namespace Candid
             BrowserUtils.ToggleLoginIframe(true);
         }
 
-        [Preserve]
         public void CreateIdentityWithJson(string identityJson)
         {
             createIdentityCallback?.Invoke(identityJson);
@@ -42,11 +40,11 @@ namespace Candid
             CloseSocket();
         }
 
-        public void SendCanisterIdsToWebpage(Action<string> send)
-        {
-            List<string> targetCanisterIds = new List<string>(); // This is where you'd specify the list of World canister ids this game controls
-            send(JsonConvert.SerializeObject(new WebsocketMessage(){type = "targetCanisterIds", content = JsonConvert.SerializeObject(targetCanisterIds)}));
-        }
+        // public void SendCanisterIdsToWebpage(Action<string> send)
+        // {
+        //     List<string> targetCanisterIds = new List<string>(); // This is where you'd specify the list of World canister ids this game controls
+        //     send(JsonConvert.SerializeObject(new WebsocketMessage(){type = "targetCanisterIds", content = JsonConvert.SerializeObject(targetCanisterIds)}));
+        // }
 
         public void CancelLogin()
         {
@@ -111,9 +109,9 @@ namespace Candid
             
             switch (message.type)
             {
-                case "fetchCanisterIds":
-                    LoginManager.Instance.SendCanisterIdsToWebpage(Send);
-                    break;
+                // case "fetchCanisterIds":
+                //     LoginManager.Instance.SendCanisterIdsToWebpage(Send);
+                //     break;
                 case "identityJson":
                     LoginManager.Instance.CreateIdentityWithJson(message.content);
                     break; 

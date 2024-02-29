@@ -12,8 +12,8 @@ namespace Boom.Mono
         [System.Serializable]
         public class SerializableField
         {
-            public string FieldName { get; set; }
-            public string FieldValue { get; set; }
+            public string FieldName;
+            public string FieldValue;
 
             public SerializableField(string fieldName, string fieldValue)
             {

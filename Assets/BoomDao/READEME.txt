@@ -1,7 +1,13 @@
-Current Version: 0.2.6
+Current Version: 0.2.8
 ======================
 
-> Version 0.2.6 Changes:
+> Version 0.2.8 Changes:
+
+New Features:
+
+- Leaderboard Tutorial: https://docs.google.com/document/d/1ZRgaJ74KsEHUuX42ejtuLOMFxdJY-6hlqcDnk5JOrRk/edit
+
+> Version 0.2.6 & 0.2.7 Changes:
 
 Issue: Unable to NFID login on the builds
 

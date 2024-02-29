@@ -1,7 +1,10 @@
 using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
 using System;
-using BlockIndex = System.UInt64;
+using EdjCase.ICP.Candid.Models;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using Timestamp = System.UInt64;
+using Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -29,24 +32,39 @@ namespace Candid.IcrcLedger.Models
 			return new TransferError(TransferErrorTag.BadFee, info);
 		}
 
+		public static TransferError BadBurn(TransferError.BadBurnInfo info)
+		{
+			return new TransferError(TransferErrorTag.BadBurn, info);
+		}
+
 		public static TransferError InsufficientFunds(TransferError.InsufficientFundsInfo info)
 		{
 			return new TransferError(TransferErrorTag.InsufficientFunds, info);
 		}
 
-		public static TransferError TxTooOld(TransferError.TxTooOldInfo info)
+		public static TransferError TooOld()
 		{
-			return new TransferError(TransferErrorTag.TxTooOld, info);
+			return new TransferError(TransferErrorTag.TooOld, null);
 		}
 
-		public static TransferError TxCreatedInFuture()
+		public static TransferError CreatedInFuture(TransferError.CreatedInFutureInfo info)
 		{
-			return new TransferError(TransferErrorTag.TxCreatedInFuture, null);
+			return new TransferError(TransferErrorTag.CreatedInFuture, info);
 		}
 
-		public static TransferError TxDuplicate(TransferError.TxDuplicateInfo info)
+		public static TransferError TemporarilyUnavailable()
 		{
-			return new TransferError(TransferErrorTag.TxDuplicate, info);
+			return new TransferError(TransferErrorTag.TemporarilyUnavailable, null);
+		}
+
+		public static TransferError Duplicate(TransferError.DuplicateInfo info)
+		{
+			return new TransferError(TransferErrorTag.Duplicate, info);
+		}
+
+		public static TransferError GenericError(TransferError.GenericErrorInfo info)
+		{
+			return new TransferError(TransferErrorTag.GenericError, info);
 		}
 
 		public TransferError.BadFeeInfo AsBadFee()
@@ -55,22 +73,34 @@ namespace Candid.IcrcLedger.Models
 			return (TransferError.BadFeeInfo)this.Value!;
 		}
 
+		public TransferError.BadBurnInfo AsBadBurn()
+		{
+			this.ValidateTag(TransferErrorTag.BadBurn);
+			return (TransferError.BadBurnInfo)this.Value!;
+		}
+
 		public TransferError.InsufficientFundsInfo AsInsufficientFunds()
 		{
 			this.ValidateTag(TransferErrorTag.InsufficientFunds);
 			return (TransferError.InsufficientFundsInfo)this.Value!;
 		}
 
-		public TransferError.TxTooOldInfo AsTxTooOld()
+		public TransferError.CreatedInFutureInfo AsCreatedInFuture()
 		{
-			this.ValidateTag(TransferErrorTag.TxTooOld);
-			return (TransferError.TxTooOldInfo)this.Value!;
+			this.ValidateTag(TransferErrorTag.CreatedInFuture);
+			return (TransferError.CreatedInFutureInfo)this.Value!;
 		}
 
-		public TransferError.TxDuplicateInfo AsTxDuplicate()
+		public TransferError.DuplicateInfo AsDuplicate()
 		{
-			this.ValidateTag(TransferErrorTag.TxDuplicate);
-			return (TransferError.TxDuplicateInfo)this.Value!;
+			this.ValidateTag(TransferErrorTag.Duplicate);
+			return (TransferError.DuplicateInfo)this.Value!;
+		}
+
+		public TransferError.GenericErrorInfo AsGenericError()
+		{
+			this.ValidateTag(TransferErrorTag.GenericError);
+			return (TransferError.GenericErrorInfo)this.Value!;
 		}
 
 		private void ValidateTag(TransferErrorTag tag)
@@ -96,6 +126,21 @@ namespace Candid.IcrcLedger.Models
 			}
 		}
 
+		public class BadBurnInfo
+		{
+			[CandidName("min_burn_amount")]
+			public Tokens MinBurnAmount { get; set; }
+
+			public BadBurnInfo(Tokens minBurnAmount)
+			{
+				this.MinBurnAmount = minBurnAmount;
+			}
+
+			public BadBurnInfo()
+			{
+			}
+		}
+
 		public class InsufficientFundsInfo
 		{
 			[CandidName("balance")]
@@ -111,32 +156,51 @@ namespace Candid.IcrcLedger.Models
 			}
 		}
 
-		public class TxTooOldInfo
+		public class CreatedInFutureInfo
 		{
-			[CandidName("allowed_window_nanos")]
-			public ulong AllowedWindowNanos { get; set; }
+			[CandidName("ledger_time")]
+			public Timestamp LedgerTime { get; set; }
 
-			public TxTooOldInfo(ulong allowedWindowNanos)
+			public CreatedInFutureInfo(Timestamp ledgerTime)
 			{
-				this.AllowedWindowNanos = allowedWindowNanos;
+				this.LedgerTime = ledgerTime;
 			}
 
-			public TxTooOldInfo()
+			public CreatedInFutureInfo()
 			{
 			}
 		}
 
-		public class TxDuplicateInfo
+		public class DuplicateInfo
 		{
 			[CandidName("duplicate_of")]
 			public BlockIndex DuplicateOf { get; set; }
 
-			public TxDuplicateInfo(BlockIndex duplicateOf)
+			public DuplicateInfo(BlockIndex duplicateOf)
 			{
 				this.DuplicateOf = duplicateOf;
 			}
 
-			public TxDuplicateInfo()
+			public DuplicateInfo()
+			{
+			}
+		}
+
+		public class GenericErrorInfo
+		{
+			[CandidName("error_code")]
+			public UnboundedUInt ErrorCode { get; set; }
+
+			[CandidName("message")]
+			public string Message { get; set; }
+
+			public GenericErrorInfo(UnboundedUInt errorCode, string message)
+			{
+				this.ErrorCode = errorCode;
+				this.Message = message;
+			}
+
+			public GenericErrorInfo()
 			{
 			}
 		}
@@ -145,9 +209,12 @@ namespace Candid.IcrcLedger.Models
 	public enum TransferErrorTag
 	{
 		BadFee,
+		BadBurn,
 		InsufficientFunds,
-		TxTooOld,
-		TxCreatedInFuture,
-		TxDuplicate
+		TooOld,
+		CreatedInFuture,
+		TemporarilyUnavailable,
+		Duplicate,
+		GenericError
 	}
 }

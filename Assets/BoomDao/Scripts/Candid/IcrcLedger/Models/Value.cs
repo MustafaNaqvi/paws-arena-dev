@@ -1,8 +1,9 @@
 using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
-using EdjCase.ICP.Candid.Models;
 using System.Collections.Generic;
+using EdjCase.ICP.Candid.Models;
 using System;
+using Map = System.Collections.Generic.Dictionary<System.String, Candid.IcrcLedger.Models.Value>;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -25,14 +26,9 @@ namespace Candid.IcrcLedger.Models
 		{
 		}
 
-		public static Value Nat(UnboundedUInt info)
+		public static Value Blob(List<byte> info)
 		{
-			return new Value(ValueTag.Nat, info);
-		}
-
-		public static Value Int(UnboundedInt info)
-		{
-			return new Value(ValueTag.Int, info);
+			return new Value(ValueTag.Blob, info);
 		}
 
 		public static Value Text(string info)
@@ -40,21 +36,35 @@ namespace Candid.IcrcLedger.Models
 			return new Value(ValueTag.Text, info);
 		}
 
-		public static Value Blob(List<byte> info)
+		public static Value Nat(UnboundedUInt info)
 		{
-			return new Value(ValueTag.Blob, info);
+			return new Value(ValueTag.Nat, info);
 		}
 
-		public UnboundedUInt AsNat()
+		public static Value Nat64(ulong info)
 		{
-			this.ValidateTag(ValueTag.Nat);
-			return (UnboundedUInt)this.Value_!;
+			return new Value(ValueTag.Nat64, info);
 		}
 
-		public UnboundedInt AsInt()
+		public static Value Int(UnboundedInt info)
 		{
-			this.ValidateTag(ValueTag.Int);
-			return (UnboundedInt)this.Value_!;
+			return new Value(ValueTag.Int, info);
+		}
+
+		public static Value Array(Value.ArrayInfo info)
+		{
+			return new Value(ValueTag.Array, info);
+		}
+
+		public static Value Map(Map info)
+		{
+			return new Value(ValueTag.Map, info);
+		}
+
+		public List<byte> AsBlob()
+		{
+			this.ValidateTag(ValueTag.Blob);
+			return (List<byte>)this.Value_!;
 		}
 
 		public string AsText()
@@ -63,10 +73,34 @@ namespace Candid.IcrcLedger.Models
 			return (string)this.Value_!;
 		}
 
-		public List<byte> AsBlob()
+		public UnboundedUInt AsNat()
 		{
-			this.ValidateTag(ValueTag.Blob);
-			return (List<byte>)this.Value_!;
+			this.ValidateTag(ValueTag.Nat);
+			return (UnboundedUInt)this.Value_!;
+		}
+
+		public ulong AsNat64()
+		{
+			this.ValidateTag(ValueTag.Nat64);
+			return (ulong)this.Value_!;
+		}
+
+		public UnboundedInt AsInt()
+		{
+			this.ValidateTag(ValueTag.Int);
+			return (UnboundedInt)this.Value_!;
+		}
+
+		public Value.ArrayInfo AsArray()
+		{
+			this.ValidateTag(ValueTag.Array);
+			return (Value.ArrayInfo)this.Value_!;
+		}
+
+		public Map AsMap()
+		{
+			this.ValidateTag(ValueTag.Map);
+			return (Map)this.Value_!;
 		}
 
 		private void ValidateTag(ValueTag tag)
@@ -76,13 +110,23 @@ namespace Candid.IcrcLedger.Models
 				throw new InvalidOperationException($"Cannot cast '{this.Tag}' to type '{tag}'");
 			}
 		}
+
+		public class ArrayInfo : List<Value>
+		{
+			public ArrayInfo()
+			{
+			}
+		}
 	}
 
 	public enum ValueTag
 	{
-		Nat,
-		Int,
+		Blob,
 		Text,
-		Blob
+		Nat,
+		Nat64,
+		Int,
+		Array,
+		Map
 	}
 }

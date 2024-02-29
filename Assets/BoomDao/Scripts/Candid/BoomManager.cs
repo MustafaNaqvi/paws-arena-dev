@@ -69,7 +69,7 @@ namespace Boom
 
                 var httpClient = new UnityHttpClient();
 #if UNITY_WEBGL && !UNITY_EDITOR
-                var bls = new BypassedBlsCryptography (); 
+                var bls = new BypassedBlsCryptography ();
 #else
                 var bls = new WasmBlsCryptography();
 #endif

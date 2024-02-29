@@ -1,7 +1,7 @@
 using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
 using System;
-using Icrc1BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -24,7 +24,7 @@ namespace Candid.IcrcLedger.Models
 		{
 		}
 
-		public static TransferFromResult Ok(Icrc1BlockIndex info)
+		public static TransferFromResult Ok(BlockIndex info)
 		{
 			return new TransferFromResult(TransferFromResultTag.Ok, info);
 		}
@@ -34,10 +34,10 @@ namespace Candid.IcrcLedger.Models
 			return new TransferFromResult(TransferFromResultTag.Err, info);
 		}
 
-		public Icrc1BlockIndex AsOk()
+		public BlockIndex AsOk()
 		{
 			this.ValidateTag(TransferFromResultTag.Ok);
-			return (Icrc1BlockIndex)this.Value!;
+			return (BlockIndex)this.Value!;
 		}
 
 		public TransferFromError AsErr()

@@ -2,10 +2,9 @@ using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
 using EdjCase.ICP.Candid.Models;
 using System.Collections.Generic;
-using SubAccount = System.Collections.Generic.List<System.Byte>;
-using Memo = System.UInt64;
-using Icrc1Timestamp = System.UInt64;
-using Icrc1Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using Subaccount = System.Collections.Generic.List<System.Byte>;
+using Timestamp = System.UInt64;
+using Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -21,7 +20,7 @@ namespace Candid.IcrcLedger.Models
 		public Account To { get; set; }
 
 		[CandidName("amount")]
-		public Icrc1Tokens Amount { get; set; }
+		public Tokens Amount { get; set; }
 
 		[CandidName("fee")]
 		public TransferFromArgs.FeeInfo Fee { get; set; }
@@ -32,7 +31,7 @@ namespace Candid.IcrcLedger.Models
 		[CandidName("created_at_time")]
 		public TransferFromArgs.CreatedAtTimeInfo CreatedAtTime { get; set; }
 
-		public TransferFromArgs(TransferFromArgs.SpenderSubaccountInfo spenderSubaccount, Account from, Account to, Icrc1Tokens amount, TransferFromArgs.FeeInfo fee, OptionalValue<List<byte>> memo, TransferFromArgs.CreatedAtTimeInfo createdAtTime)
+		public TransferFromArgs(TransferFromArgs.SpenderSubaccountInfo spenderSubaccount, Account from, Account to, Tokens amount, TransferFromArgs.FeeInfo fee, OptionalValue<List<byte>> memo, TransferFromArgs.CreatedAtTimeInfo createdAtTime)
 		{
 			this.SpenderSubaccount = spenderSubaccount;
 			this.From = from;
@@ -47,35 +46,35 @@ namespace Candid.IcrcLedger.Models
 		{
 		}
 
-		public class SpenderSubaccountInfo : OptionalValue<SubAccount>
+		public class SpenderSubaccountInfo : OptionalValue<Subaccount>
 		{
 			public SpenderSubaccountInfo()
 			{
 			}
 
-			public SpenderSubaccountInfo(SubAccount value) : base(value)
+			public SpenderSubaccountInfo(Subaccount value) : base(value)
 			{
 			}
 		}
 
-		public class FeeInfo : OptionalValue<Icrc1Tokens>
+		public class FeeInfo : OptionalValue<Tokens>
 		{
 			public FeeInfo()
 			{
 			}
 
-			public FeeInfo(Icrc1Tokens value) : base(value)
+			public FeeInfo(Tokens value) : base(value)
 			{
 			}
 		}
 
-		public class CreatedAtTimeInfo : OptionalValue<Icrc1Timestamp>
+		public class CreatedAtTimeInfo : OptionalValue<Timestamp>
 		{
 			public CreatedAtTimeInfo()
 			{
 			}
 
-			public CreatedAtTimeInfo(Icrc1Timestamp value) : base(value)
+			public CreatedAtTimeInfo(Timestamp value) : base(value)
 			{
 			}
 		}

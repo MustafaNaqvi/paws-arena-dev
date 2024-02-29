@@ -1,5 +1,6 @@
 using EdjCase.ICP.Candid.Mapping;
-using BlockIndex = System.UInt64;
+using EdjCase.ICP.Candid.Models;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -9,9 +10,9 @@ namespace Candid.IcrcLedger.Models
 		public BlockIndex Start { get; set; }
 
 		[CandidName("length")]
-		public ulong Length { get; set; }
+		public UnboundedUInt Length { get; set; }
 
-		public GetBlocksArgs(BlockIndex start, ulong length)
+		public GetBlocksArgs(BlockIndex start, UnboundedUInt length)
 		{
 			this.Start = start;
 			this.Length = length;

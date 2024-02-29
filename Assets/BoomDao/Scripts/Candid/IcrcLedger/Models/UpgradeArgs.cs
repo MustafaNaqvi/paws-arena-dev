@@ -1,25 +1,50 @@
 using EdjCase.ICP.Candid.Mapping;
 using EdjCase.ICP.Candid.Models;
+using System.Collections.Generic;
 using Candid.IcrcLedger.Models;
 
 namespace Candid.IcrcLedger.Models
 {
 	public class UpgradeArgs
 	{
-		[CandidName("maximum_number_of_accounts")]
-		public OptionalValue<ulong> MaximumNumberOfAccounts { get; set; }
+		[CandidName("metadata")]
+		public OptionalValue<Dictionary<string, MetadataValue>> Metadata { get; set; }
 
-		[CandidName("icrc1_minting_account")]
-		public OptionalValue<Account> Icrc1MintingAccount { get; set; }
+		[CandidName("token_symbol")]
+		public OptionalValue<string> TokenSymbol { get; set; }
+
+		[CandidName("token_name")]
+		public OptionalValue<string> TokenName { get; set; }
+
+		[CandidName("transfer_fee")]
+		public OptionalValue<UnboundedUInt> TransferFee { get; set; }
+
+		[CandidName("change_fee_collector")]
+		public OptionalValue<ChangeFeeCollector> ChangeFeeCollector { get; set; }
+
+		[CandidName("max_memo_length")]
+		public OptionalValue<ushort> MaxMemoLength { get; set; }
 
 		[CandidName("feature_flags")]
 		public OptionalValue<FeatureFlags> FeatureFlags { get; set; }
 
-		public UpgradeArgs(OptionalValue<ulong> maximumNumberOfAccounts, OptionalValue<Account> icrc1MintingAccount, OptionalValue<FeatureFlags> featureFlags)
+		[CandidName("maximum_number_of_accounts")]
+		public OptionalValue<ulong> MaximumNumberOfAccounts { get; set; }
+
+		[CandidName("accounts_overflow_trim_quantity")]
+		public OptionalValue<ulong> AccountsOverflowTrimQuantity { get; set; }
+
+		public UpgradeArgs(OptionalValue<Dictionary<string, MetadataValue>> metadata, OptionalValue<string> tokenSymbol, OptionalValue<string> tokenName, OptionalValue<UnboundedUInt> transferFee, OptionalValue<ChangeFeeCollector> changeFeeCollector, OptionalValue<ushort> maxMemoLength, OptionalValue<FeatureFlags> featureFlags, OptionalValue<ulong> maximumNumberOfAccounts, OptionalValue<ulong> accountsOverflowTrimQuantity)
 		{
-			this.MaximumNumberOfAccounts = maximumNumberOfAccounts;
-			this.Icrc1MintingAccount = icrc1MintingAccount;
+			this.Metadata = metadata;
+			this.TokenSymbol = tokenSymbol;
+			this.TokenName = tokenName;
+			this.TransferFee = transferFee;
+			this.ChangeFeeCollector = changeFeeCollector;
+			this.MaxMemoLength = maxMemoLength;
 			this.FeatureFlags = featureFlags;
+			this.MaximumNumberOfAccounts = maximumNumberOfAccounts;
+			this.AccountsOverflowTrimQuantity = accountsOverflowTrimQuantity;
 		}
 
 		public UpgradeArgs()

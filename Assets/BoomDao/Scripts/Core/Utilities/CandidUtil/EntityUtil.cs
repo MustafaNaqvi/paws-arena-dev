@@ -2,12 +2,15 @@
 {
     using Boom.Utility;
     using Boom.Values;
+    using Candid;
     using Candid.World.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Unity.VisualScripting;
     using UnityEngine;
+    using static Boom.MainDataTypes.AllAction;
 
     // Ignore Spelling: Util
 
@@ -105,12 +108,12 @@
         }
 
         //Multiple output
-        public static bool TryGetEntities(out LinkedList<DataTypes.Entity> entities, string userPrincipalId = "self", string sourceWorldId = default)
+        public static bool TryGetEntities(string uid, out LinkedList<DataTypes.Entity> entities, string sourceWorldId = default)
         {
             if (string.IsNullOrEmpty(sourceWorldId)) sourceWorldId = BoomManager.Instance.WORLD_CANISTER_ID;
 
             entities = default;
-            var elementsResult = UserUtil.GetElementsOfType<DataTypes.Entity>(userPrincipalId);
+            var elementsResult = UserUtil.GetElementsOfType<DataTypes.Entity>(uid);
 
             if (elementsResult.IsErr) return false;
 

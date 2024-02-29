@@ -2,9 +2,9 @@ using EdjCase.ICP.Candid.Mapping;
 using Candid.IcrcLedger.Models;
 using System;
 using EdjCase.ICP.Candid.Models;
-using Icrc1BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
-using Icrc1Timestamp = System.UInt64;
-using Icrc1Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using BlockIndex = EdjCase.ICP.Candid.Models.UnboundedUInt;
+using Timestamp = System.UInt64;
+using Tokens = EdjCase.ICP.Candid.Models.UnboundedUInt;
 
 namespace Candid.IcrcLedger.Models
 {
@@ -125,9 +125,9 @@ namespace Candid.IcrcLedger.Models
 		public class BadFeeInfo
 		{
 			[CandidName("expected_fee")]
-			public Icrc1Tokens ExpectedFee { get; set; }
+			public Tokens ExpectedFee { get; set; }
 
-			public BadFeeInfo(Icrc1Tokens expectedFee)
+			public BadFeeInfo(Tokens expectedFee)
 			{
 				this.ExpectedFee = expectedFee;
 			}
@@ -140,9 +140,9 @@ namespace Candid.IcrcLedger.Models
 		public class BadBurnInfo
 		{
 			[CandidName("min_burn_amount")]
-			public Icrc1Tokens MinBurnAmount { get; set; }
+			public Tokens MinBurnAmount { get; set; }
 
-			public BadBurnInfo(Icrc1Tokens minBurnAmount)
+			public BadBurnInfo(Tokens minBurnAmount)
 			{
 				this.MinBurnAmount = minBurnAmount;
 			}
@@ -155,9 +155,9 @@ namespace Candid.IcrcLedger.Models
 		public class InsufficientFundsInfo
 		{
 			[CandidName("balance")]
-			public Icrc1Tokens Balance { get; set; }
+			public Tokens Balance { get; set; }
 
-			public InsufficientFundsInfo(Icrc1Tokens balance)
+			public InsufficientFundsInfo(Tokens balance)
 			{
 				this.Balance = balance;
 			}
@@ -170,9 +170,9 @@ namespace Candid.IcrcLedger.Models
 		public class InsufficientAllowanceInfo
 		{
 			[CandidName("allowance")]
-			public Icrc1Tokens Allowance { get; set; }
+			public Tokens Allowance { get; set; }
 
-			public InsufficientAllowanceInfo(Icrc1Tokens allowance)
+			public InsufficientAllowanceInfo(Tokens allowance)
 			{
 				this.Allowance = allowance;
 			}
@@ -185,9 +185,9 @@ namespace Candid.IcrcLedger.Models
 		public class CreatedInFutureInfo
 		{
 			[CandidName("ledger_time")]
-			public Icrc1Timestamp LedgerTime { get; set; }
+			public Timestamp LedgerTime { get; set; }
 
-			public CreatedInFutureInfo(Icrc1Timestamp ledgerTime)
+			public CreatedInFutureInfo(Timestamp ledgerTime)
 			{
 				this.LedgerTime = ledgerTime;
 			}
@@ -200,9 +200,9 @@ namespace Candid.IcrcLedger.Models
 		public class DuplicateInfo
 		{
 			[CandidName("duplicate_of")]
-			public Icrc1BlockIndex DuplicateOf { get; set; }
+			public BlockIndex DuplicateOf { get; set; }
 
-			public DuplicateInfo(Icrc1BlockIndex duplicateOf)
+			public DuplicateInfo(BlockIndex duplicateOf)
 			{
 				this.DuplicateOf = duplicateOf;
 			}

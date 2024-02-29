@@ -103,7 +103,7 @@ namespace Boom.Tutorials
 
             //If entity of id "bitcoin_miners_leaderboard" is not found in
             //the world canister data then display a empty leaderboard and the user's texts with default values
-            if (EntityUtil.TryGetEntity(BoomManager.Instance.WORLD_CANISTER_ID, "bitcoin_miners_leaderboard", out var entity) == false)
+            if (EntityUtil.TryGetEntities(BoomManager.Instance.WORLD_CANISTER_ID, out var entities) == false)
             {
                 myRankText.text = $"#None";
                 myPrincipalIdText.text = userPrincipalId.SimplifyAddress(); ;
@@ -114,12 +114,19 @@ namespace Boom.Tutorials
             List<KeyValue<string, int>> topUsers = new();
 
             //Get Tops and my own value
-            foreach (var field in entity.fields)
+            foreach (var entity in entities)
             {
-                var principalId = field.Key;
-                if(double.TryParse(field.Value, out var value) == false)
+                var principalId = entity.eid;
+
+                if(entity.fields.TryGetValue("mined_bitcoin_count", out var score) == false)
                 {
-                    Debug.LogError($"Issue parsing leaderboard value : {field.Value} to int. entry owner: {principalId}");
+                    score = "0";
+                }
+
+
+                if(double.TryParse(score, out var value) == false)
+                {
+                    Debug.LogError($"Issue parsing leaderboard value : {score} to int. entry owner: {principalId}");
                     continue;
                 }
 

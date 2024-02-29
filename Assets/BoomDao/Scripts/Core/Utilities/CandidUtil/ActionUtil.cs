@@ -1148,7 +1148,7 @@ namespace Boom
                 var result = await tokenInterface.Icrc1Transfer(arg);
 
                 //CHECK SUCCESS
-                if (result.Tag == Candid.IcrcLedger.Models.Icrc1TransferResultTag.Ok)
+                if (result.Tag == Candid.IcrcLedger.Models.TransferResultTag.Ok)
                 {
                     var blockIndex = (ulong)result.AsOk();
                     $"BlockIndex Transfer: {blockIndex}".Log(nameof(ActionUtil));

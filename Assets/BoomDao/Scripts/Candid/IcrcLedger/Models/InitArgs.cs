@@ -1,42 +1,38 @@
 using EdjCase.ICP.Candid.Mapping;
-using EdjCase.ICP.Candid.Models;
 using Candid.IcrcLedger.Models;
+using EdjCase.ICP.Candid.Models;
 using System.Collections.Generic;
-using TextAccountIdentifier = System.String;
 
 namespace Candid.IcrcLedger.Models
 {
 	public class InitArgs
 	{
 		[CandidName("minting_account")]
-		public TextAccountIdentifier MintingAccount { get; set; }
+		public Account MintingAccount { get; set; }
 
-		[CandidName("icrc1_minting_account")]
-		public OptionalValue<Account> Icrc1MintingAccount { get; set; }
-
-		[CandidName("initial_values")]
-		public InitArgs.InitialValuesInfo InitialValues { get; set; }
-
-		[CandidName("max_message_size_bytes")]
-		public OptionalValue<ulong> MaxMessageSizeBytes { get; set; }
-
-		[CandidName("transaction_window")]
-		public OptionalValue<Duration> TransactionWindow { get; set; }
-
-		[CandidName("archive_options")]
-		public OptionalValue<ArchiveOptions> ArchiveOptions { get; set; }
-
-		[CandidName("send_whitelist")]
-		public List<Principal> SendWhitelist { get; set; }
+		[CandidName("fee_collector_account")]
+		public OptionalValue<Account> FeeCollectorAccount { get; set; }
 
 		[CandidName("transfer_fee")]
-		public OptionalValue<Tokens> TransferFee { get; set; }
+		public UnboundedUInt TransferFee { get; set; }
+
+		[CandidName("decimals")]
+		public OptionalValue<byte> Decimals { get; set; }
+
+		[CandidName("max_memo_length")]
+		public OptionalValue<ushort> MaxMemoLength { get; set; }
 
 		[CandidName("token_symbol")]
-		public OptionalValue<string> TokenSymbol { get; set; }
+		public string TokenSymbol { get; set; }
 
 		[CandidName("token_name")]
-		public OptionalValue<string> TokenName { get; set; }
+		public string TokenName { get; set; }
+
+		[CandidName("metadata")]
+		public Dictionary<string, MetadataValue> Metadata { get; set; }
+
+		[CandidName("initial_balances")]
+		public Dictionary<Account, UnboundedUInt> InitialBalances { get; set; }
 
 		[CandidName("feature_flags")]
 		public OptionalValue<FeatureFlags> FeatureFlags { get; set; }
@@ -47,50 +43,66 @@ namespace Candid.IcrcLedger.Models
 		[CandidName("accounts_overflow_trim_quantity")]
 		public OptionalValue<ulong> AccountsOverflowTrimQuantity { get; set; }
 
-		public InitArgs(TextAccountIdentifier mintingAccount, OptionalValue<Account> icrc1MintingAccount, InitArgs.InitialValuesInfo initialValues, OptionalValue<ulong> maxMessageSizeBytes, OptionalValue<Duration> transactionWindow, OptionalValue<ArchiveOptions> archiveOptions, List<Principal> sendWhitelist, OptionalValue<Tokens> transferFee, OptionalValue<string> tokenSymbol, OptionalValue<string> tokenName, OptionalValue<FeatureFlags> featureFlags, OptionalValue<ulong> maximumNumberOfAccounts, OptionalValue<ulong> accountsOverflowTrimQuantity)
+		[CandidName("archive_options")]
+		public InitArgs.ArchiveOptionsInfo ArchiveOptions { get; set; }
+
+		public InitArgs(Account mintingAccount, OptionalValue<Account> feeCollectorAccount, UnboundedUInt transferFee, OptionalValue<byte> decimals, OptionalValue<ushort> maxMemoLength, string tokenSymbol, string tokenName, Dictionary<string, MetadataValue> metadata, Dictionary<Account, UnboundedUInt> initialBalances, OptionalValue<FeatureFlags> featureFlags, OptionalValue<ulong> maximumNumberOfAccounts, OptionalValue<ulong> accountsOverflowTrimQuantity, InitArgs.ArchiveOptionsInfo archiveOptions)
 		{
 			this.MintingAccount = mintingAccount;
-			this.Icrc1MintingAccount = icrc1MintingAccount;
-			this.InitialValues = initialValues;
-			this.MaxMessageSizeBytes = maxMessageSizeBytes;
-			this.TransactionWindow = transactionWindow;
-			this.ArchiveOptions = archiveOptions;
-			this.SendWhitelist = sendWhitelist;
+			this.FeeCollectorAccount = feeCollectorAccount;
 			this.TransferFee = transferFee;
+			this.Decimals = decimals;
+			this.MaxMemoLength = maxMemoLength;
 			this.TokenSymbol = tokenSymbol;
 			this.TokenName = tokenName;
+			this.Metadata = metadata;
+			this.InitialBalances = initialBalances;
 			this.FeatureFlags = featureFlags;
 			this.MaximumNumberOfAccounts = maximumNumberOfAccounts;
 			this.AccountsOverflowTrimQuantity = accountsOverflowTrimQuantity;
+			this.ArchiveOptions = archiveOptions;
 		}
 
 		public InitArgs()
 		{
 		}
 
-		public class InitialValuesInfo : List<InitArgs.InitialValuesInfo.InitialValuesInfoElement>
+		public class ArchiveOptionsInfo
 		{
-			public InitialValuesInfo()
+			[CandidName("num_blocks_to_archive")]
+			public ulong NumBlocksToArchive { get; set; }
+
+			[CandidName("max_transactions_per_response")]
+			public OptionalValue<ulong> MaxTransactionsPerResponse { get; set; }
+
+			[CandidName("trigger_threshold")]
+			public ulong TriggerThreshold { get; set; }
+
+			[CandidName("max_message_size_bytes")]
+			public OptionalValue<ulong> MaxMessageSizeBytes { get; set; }
+
+			[CandidName("cycles_for_archive_creation")]
+			public OptionalValue<ulong> CyclesForArchiveCreation { get; set; }
+
+			[CandidName("node_max_memory_size_bytes")]
+			public OptionalValue<ulong> NodeMaxMemorySizeBytes { get; set; }
+
+			[CandidName("controller_id")]
+			public Principal ControllerId { get; set; }
+
+			public ArchiveOptionsInfo(ulong numBlocksToArchive, OptionalValue<ulong> maxTransactionsPerResponse, ulong triggerThreshold, OptionalValue<ulong> maxMessageSizeBytes, OptionalValue<ulong> cyclesForArchiveCreation, OptionalValue<ulong> nodeMaxMemorySizeBytes, Principal controllerId)
 			{
+				this.NumBlocksToArchive = numBlocksToArchive;
+				this.MaxTransactionsPerResponse = maxTransactionsPerResponse;
+				this.TriggerThreshold = triggerThreshold;
+				this.MaxMessageSizeBytes = maxMessageSizeBytes;
+				this.CyclesForArchiveCreation = cyclesForArchiveCreation;
+				this.NodeMaxMemorySizeBytes = nodeMaxMemorySizeBytes;
+				this.ControllerId = controllerId;
 			}
 
-			public class InitialValuesInfoElement
+			public ArchiveOptionsInfo()
 			{
-				[CandidTag(0U)]
-				public TextAccountIdentifier F0 { get; set; }
-
-				[CandidTag(1U)]
-				public Tokens F1 { get; set; }
-
-				public InitialValuesInfoElement(TextAccountIdentifier f0, Tokens f1)
-				{
-					this.F0 = f0;
-					this.F1 = f1;
-				}
-
-				public InitialValuesInfoElement()
-				{
-				}
 			}
 		}
 	}

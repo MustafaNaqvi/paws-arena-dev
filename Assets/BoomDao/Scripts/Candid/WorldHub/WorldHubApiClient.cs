@@ -9,6 +9,7 @@ using EdjCase.ICP.Candid.Mapping;
 using System;
 using WorldId = System.String;
 using UserId = System.String;
+using NodeId = System.String;
 using EntityId = System.String;
 using TokenIndex = System.UInt32;
 using TokenIdentifier = System.String;
@@ -58,7 +59,7 @@ namespace Candid.WorldHub
 			return reply.ToObjects<bool>(this.Converter);
 		}
 
-		public async Task<Models.Result> CreateNewUser(Principal arg0)
+		public async Task<Models.Result> CreateNewUser(WorldHubApiClient.CreateNewUserArg0 arg0)
 		{
 			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
 			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "createNewUser", arg);
@@ -71,6 +72,12 @@ namespace Candid.WorldHub
 			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "cycleBalance", arg);
 			CandidArg reply = response.ThrowOrGetReply();
 			return reply.ToObjects<UnboundedUInt>(this.Converter);
+		}
+
+		public async Task DeleteCache()
+		{
+			CandidArg arg = CandidArg.FromCandid();
+			await this.Agent.CallAndWaitAsync(this.CanisterId, "delete_cache", arg);
 		}
 
 		public async Task<AccountIdentifier> GetAccountIdentifier(string arg0)
@@ -89,6 +96,14 @@ namespace Candid.WorldHub
 			return reply.ToObjects<List<string>>(this.Converter);
 		}
 
+		public async Task<List<string>> GetAllAssetNodeIds()
+		{
+			CandidArg arg = CandidArg.FromCandid();
+			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getAllAssetNodeIds", arg);
+			CandidArg reply = response.ThrowOrGetReply();
+			return reply.ToObjects<List<string>>(this.Converter);
+		}
+
 		public async Task<List<string>> GetAllNodeIds()
 		{
 			CandidArg arg = CandidArg.FromCandid();
@@ -103,6 +118,14 @@ namespace Candid.WorldHub
 			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getAllUserIds", arg);
 			CandidArg reply = response.ThrowOrGetReply();
 			return reply.ToObjects<List<string>>(this.Converter);
+		}
+
+		public async Task<WorldHubApiClient.GetDeleteCacheResponseReturnArg0> GetDeleteCacheResponse()
+		{
+			CandidArg arg = CandidArg.FromCandid();
+			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getDeleteCacheResponse", arg);
+			CandidArg reply = response.ThrowOrGetReply();
+			return reply.ToObjects<WorldHubApiClient.GetDeleteCacheResponseReturnArg0>(this.Converter);
 		}
 
 		public async Task<Models.StableEntity> GetEntity(UserId arg0, EntityId arg1)
@@ -134,10 +157,33 @@ namespace Candid.WorldHub
 			return reply.ToObjects<TokenIdentifier>(this.Converter);
 		}
 
+		public async Task<List<Models.ActionOutcomeHistory>> GetUserActionHistory(UserId arg0, WorldId arg1)
+		{
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter));
+			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "getUserActionHistory", arg);
+			return reply.ToObjects<List<Models.ActionOutcomeHistory>>(this.Converter);
+		}
+
+		public async Task<List<Models.ActionOutcomeHistory>> GetUserActionHistoryComposite(UserId arg0, WorldId arg1)
+		{
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter), CandidTypedValue.FromObject(arg1, this.Converter));
+			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getUserActionHistoryComposite", arg);
+			CandidArg reply = response.ThrowOrGetReply();
+			return reply.ToObjects<List<Models.ActionOutcomeHistory>>(this.Converter);
+		}
+
 		public async Task<Models.Result> GetUserNodeCanisterId(string arg0)
 		{
 			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
 			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getUserNodeCanisterId", arg);
+			CandidArg reply = response.ThrowOrGetReply();
+			return reply.ToObjects<Models.Result>(this.Converter);
+		}
+
+		public async Task<Models.Result> GetUserNodeCanisterIdComposite(string arg0)
+		{
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
+			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getUserNodeCanisterIdComposite", arg);
 			CandidArg reply = response.ThrowOrGetReply();
 			return reply.ToObjects<Models.Result>(this.Converter);
 		}
@@ -148,6 +194,14 @@ namespace Candid.WorldHub
 			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getUserNodeWasmVersion", arg);
 			CandidArg reply = response.ThrowOrGetReply();
 			return reply.ToObjects<string>(this.Converter);
+		}
+
+		public async Task<WorldHubApiClient.GetUserProfileReturnArg0> GetUserProfile(WorldHubApiClient.GetUserProfileArg0 arg0)
+		{
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
+			QueryResponse response = await this.Agent.QueryAsync(this.CanisterId, "getUserProfile", arg);
+			CandidArg reply = response.ThrowOrGetReply();
+			return reply.ToObjects<WorldHubApiClient.GetUserProfileReturnArg0>(this.Converter);
 		}
 
 		public async Task GrantEntityPermission(Models.EntityPermission arg0)
@@ -229,6 +283,19 @@ namespace Candid.WorldHub
 			await this.Agent.CallAndWaitAsync(this.CanisterId, "upgrade_usernodes", arg);
 		}
 
+		public async Task UploadProfilePicture(WorldHubApiClient.UploadProfilePictureArg0 arg0)
+		{
+			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
+			await this.Agent.CallAndWaitAsync(this.CanisterId, "uploadProfilePicture", arg);
+		}
+
+		public async Task<WorldHubApiClient.ValidateDeleteCacheReturnArg0> ValidateDeleteCache()
+		{
+			CandidArg arg = CandidArg.FromCandid();
+			CandidArg reply = await this.Agent.CallAndWaitAsync(this.CanisterId, "validate_delete_cache", arg);
+			return reply.ToObjects<WorldHubApiClient.ValidateDeleteCacheReturnArg0>(this.Converter);
+		}
+
 		public async Task<WorldHubApiClient.ValidateUpgradeUsernodesReturnArg0> ValidateUpgradeUsernodes(UnboundedInt arg0)
 		{
 			CandidArg arg = CandidArg.FromCandid(CandidTypedValue.FromObject(arg0, this.Converter));
@@ -236,9 +303,92 @@ namespace Candid.WorldHub
 			return reply.ToObjects<WorldHubApiClient.ValidateUpgradeUsernodesReturnArg0>(this.Converter);
 		}
 
+		public class CreateNewUserArg0
+		{
+			[CandidName("requireEntireNode")]
+			public bool RequireEntireNode { get; set; }
+
+			[CandidName("user")]
+			public Principal User { get; set; }
+
+			public CreateNewUserArg0(bool requireEntireNode, Principal user)
+			{
+				this.RequireEntireNode = requireEntireNode;
+				this.User = user;
+			}
+
+			public CreateNewUserArg0()
+			{
+			}
+		}
+
+		public class GetDeleteCacheResponseReturnArg0 : List<WorldHubApiClient.GetDeleteCacheResponseReturnArg0.GetDeleteCacheResponseReturnArg0Element>
+		{
+			public GetDeleteCacheResponseReturnArg0()
+			{
+			}
+
+			public class GetDeleteCacheResponseReturnArg0Element
+			{
+				[CandidTag(0U)]
+				public UserId F0 { get; set; }
+
+				[CandidTag(1U)]
+				public NodeId F1 { get; set; }
+
+				public GetDeleteCacheResponseReturnArg0Element(UserId f0, NodeId f1)
+				{
+					this.F0 = f0;
+					this.F1 = f1;
+				}
+
+				public GetDeleteCacheResponseReturnArg0Element()
+				{
+				}
+			}
+		}
+
 		public class GetGlobalPermissionsOfWorldReturnArg0 : List<WorldId>
 		{
 			public GetGlobalPermissionsOfWorldReturnArg0()
+			{
+			}
+		}
+
+		public class GetUserProfileArg0
+		{
+			[CandidName("uid")]
+			public string Uid { get; set; }
+
+			public GetUserProfileArg0(string uid)
+			{
+				this.Uid = uid;
+			}
+
+			public GetUserProfileArg0()
+			{
+			}
+		}
+
+		public class GetUserProfileReturnArg0
+		{
+			[CandidName("image")]
+			public string Image { get; set; }
+
+			[CandidName("uid")]
+			public string Uid { get; set; }
+
+			[CandidName("username")]
+			public string Username { get; set; }
+
+			public GetUserProfileReturnArg0(string image, string uid, string username)
+			{
+				this.Image = image;
+				this.Uid = uid;
+				this.Username = username;
+			}
+
+			public GetUserProfileReturnArg0()
 			{
 			}
 		}
@@ -279,6 +429,81 @@ namespace Candid.WorldHub
 			public UpdateUserNodeWasmModuleArg0()
 			{
 			}
+		}
+
+		public class UploadProfilePictureArg0
+		{
+			[CandidName("image")]
+			public string Image { get; set; }
+
+			[CandidName("uid")]
+			public string Uid { get; set; }
+
+			public UploadProfilePictureArg0(string image, string uid)
+			{
+				this.Image = image;
+				this.Uid = uid;
+			}
+
+			public UploadProfilePictureArg0()
+			{
+			}
+		}
+
+		[Variant]
+		public class ValidateDeleteCacheReturnArg0
+		{
+			[VariantTagProperty]
+			public WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag Tag { get; set; }
+
+			[VariantValueProperty]
+			public object? Value { get; set; }
+
+			public ValidateDeleteCacheReturnArg0(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag tag, object? value)
+			{
+				this.Tag = tag;
+				this.Value = value;
+			}
+
+			protected ValidateDeleteCacheReturnArg0()
+			{
+			}
+
+			public static WorldHubApiClient.ValidateDeleteCacheReturnArg0 Err(string info)
+			{
+				return new WorldHubApiClient.ValidateDeleteCacheReturnArg0(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag.Err, info);
+			}
+
+			public static WorldHubApiClient.ValidateDeleteCacheReturnArg0 Ok(string info)
+			{
+				return new WorldHubApiClient.ValidateDeleteCacheReturnArg0(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag.Ok, info);
+			}
+
+			public string AsErr()
+			{
+				this.ValidateTag(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag.Err);
+				return (string)this.Value!;
+			}
+
+			public string AsOk()
+			{
+				this.ValidateTag(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag.Ok);
+				return (string)this.Value!;
+			}
+
+			private void ValidateTag(WorldHubApiClient.ValidateDeleteCacheReturnArg0Tag tag)
+			{
+				if (!this.Tag.Equals(tag))
+				{
+					throw new InvalidOperationException($"Cannot cast '{this.Tag}' to type '{tag}'");
+				}
+			}
+		}
+
+		public enum ValidateDeleteCacheReturnArg0Tag
+		{
+			Err,
+			Ok
 		}
 
 		[Variant]
