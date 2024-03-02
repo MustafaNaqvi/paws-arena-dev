@@ -15,6 +15,7 @@ namespace BoomDaoWrapper
     {
         public static BoomDaoUtility Instance;
         public static Action<string> OnDataUpdated;
+        public static Action OnUpdatedWorldData;
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
 
         private const string AMOUNT_KEY = "amount";
@@ -285,6 +286,47 @@ namespace BoomDaoWrapper
             }
 
             return _actionOutcomes;
+        }
+
+        public List<WorldDataEntry> GetWorldData(params string[] _entityIds)
+        {
+            if (!EntityUtil.TryGetEntities(BoomManager.Instance.WORLD_CANISTER_ID, out var _entities))
+            {
+                return default;
+            }
+         
+            List<WorldDataEntry> _output = new();
+
+            foreach (var _entity in _entities)
+            {
+                WorldDataEntry _entry = new ();
+                string _principalId = _entity.eid;
+                _entry.PrincipalId = _principalId;
+                foreach (var _entityId in _entityIds)
+                {
+                    if(!_entity.fields.TryGetValue(_entityId, out var _value))
+                    {
+                        continue;
+                    }
+
+                    _entry.Data.Add(_entityId,_value);    
+                }
+            }
+
+            return _output;
+        }
+        
+        public void ReloadWorldData()
+        {
+            if (UserUtil.IsDataLoading<DataTypes.Entity>(BoomManager.Instance.WORLD_CANISTER_ID)) return;
+            UserUtil.RequestData(new DataTypeRequestArgs.Entity(BoomManager.Instance.WORLD_CANISTER_ID));
+            UserUtil.AddListenerDataChange<DataTypes.Entity>(HandleWorldDataReloaded, default, BoomManager.Instance.WORLD_CANISTER_ID);
+        }
+
+        private void HandleWorldDataReloaded(Data<DataTypes.Entity> _)
+        {
+            UserUtil.RemoveListenerDataChange<DataTypes.Entity>(HandleWorldDataReloaded,BoomManager.Instance.WORLD_CANISTER_ID);
+            OnUpdatedWorldData?.Invoke();
         }
 
         #endregion

@@ -160,55 +160,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &107596198
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 107596199}
-  - component: {fileID: 107596200}
-  m_Layer: 0
-  m_Name: DataServices
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &107596199
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 107596198}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1816460290}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &107596200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 107596198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 088691025aea38841abde3d8e0231dfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leaderboard:
-    leaderboard: []
-    first: 
-    second: 
-    third: 
 --- !u!1 &157475482
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,7 +275,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2120ef05d91e4c7468bdf5c4e434c817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leaderboardData: {fileID: 107596200}
+  leaderboardData:
+    Entries: []
+    TopPlayers: []
   leaderboardContent: {fileID: 780892355}
   leaderboardLinePrefab: {fileID: 3271016340522240111, guid: 018b3831d53da5740a19c9a50a248926, type: 3}
   firstPlacePoints: {fileID: 745022023}
@@ -2420,6 +2373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -2786,7 +2740,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 107596199}
   - {fileID: 2132664256}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -3579,7 +3532,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1816460290}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2132664257
 MonoBehaviour:

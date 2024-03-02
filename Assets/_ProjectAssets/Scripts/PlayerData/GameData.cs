@@ -47,6 +47,9 @@ public class GameData
     
     public const string CLAIM_PREMIUM_REWARD = "battlePassPremium";
     public const string CLAIM_NORMAL_REWARD = "battlePassNormal";
+    public const string LEADERBOARD_POINTS = "leaderboardPoints";
+    public const string LEADERBOARD_KITTY_URL = "kittyUrl";
+    public const string LEADERBOARD_NICK_NAME = "nickName";
     
     private const string SEASON_KEY = "season";
     private const string SEASON_NUMBER = "number";
@@ -119,5 +122,28 @@ public class GameData
         }
     }
 
-    
+    public LeaderboardData GetLeaderboard
+    {
+        get
+        {
+            LeaderboardData _leaderboardData = new LeaderboardData();
+            List<WorldDataEntry> _entries = BoomDaoUtility.Instance.GetWorldData(LEADERBOARD_POINTS,LEADERBOARD_NICK_NAME, LEADERBOARD_KITTY_URL);
+            foreach (var _worldEntry in _entries)
+            {
+                string _pointsString = _worldEntry.GetProperty(LEADERBOARD_POINTS);
+                int _points = Convert.ToInt32(_pointsString.Contains('.') ? _pointsString.Split(',')[0] : _pointsString);
+                _leaderboardData.Entries.Add(new LeaderboardEntries
+                {
+                    PrincipalId = _worldEntry.PrincipalId,
+                    Nickname = _worldEntry.GetProperty(LEADERBOARD_NICK_NAME),
+                    Points = _points,
+                    KittyUrl = _worldEntry.GetProperty(LEADERBOARD_KITTY_URL)
+                });
+            }
+
+            _leaderboardData.FinishSetup(3);
+            return _leaderboardData;
+        }
+    }
+
 }

@@ -1,19 +1,19 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LeaderboardUIManager : MonoBehaviour
 {
-    public LeaderboardData leaderboardData;
     [Header("UI Components")]
     public Transform leaderboardContent;
     public GameObject leaderboardLinePrefab;
 
     [Header("Places")]
-    public TMPro.TextMeshProUGUI firstPlacePoints;
-    public TMPro.TextMeshProUGUI secondPlacePoints;
-    public TMPro.TextMeshProUGUI thirdPlacePoints;
+    public TextMeshProUGUI firstPlacePoints;
+    public TextMeshProUGUI secondPlacePoints;
+    public TextMeshProUGUI thirdPlacePoints;
 
     public PlayerPlatformBehaviour firstPlayer;
     public PlayerPlatformBehaviour secondPlayer;
@@ -21,56 +21,53 @@ public class LeaderboardUIManager : MonoBehaviour
 
     public List<Sprite> stars;
 
-    // Start is called before the first frame update
     private void Start()
     {
         PopulateLeaderboard();
     }
 
-    private async void PopulateLeaderboard()
+    private void PopulateLeaderboard()
     {
-        LeaderboardGetResponseEntity data = await leaderboardData.GetLeaderboard();
+        LeaderboardData _data = DataManager.Instance.GameData.GetLeaderboard;
 
-        int idx = 0;
-        foreach(PlayerStatsEntity playerStats in data.leaderboard)
+        int _idx = 0;
+        foreach(LeaderboardEntries _playerStats in _data.Entries)
         {
-            GameObject go = Instantiate(leaderboardLinePrefab, leaderboardContent);
-            go.GetComponent<LeaderboardLineBehaviour>().SetPrincipalId(playerStats.principalId, idx);
-            go.transform.Find("HorizontalLayout/Points").GetComponent<TMPro.TextMeshProUGUI>().text = "" + playerStats.points;
-            go.transform.Find("HorizontalLayout/Nickname").GetComponent<TMPro.TextMeshProUGUI>().text = playerStats.nickname;
+            GameObject _go = Instantiate(leaderboardLinePrefab, leaderboardContent);
+            _go.GetComponent<LeaderboardLineBehaviour>().SetPrincipalId(_playerStats.PrincipalId, _idx);
+            _go.transform.Find("HorizontalLayout/Points").GetComponent<TextMeshProUGUI>().text = "" + _playerStats.Points;
+            _go.transform.Find("HorizontalLayout/Nickname").GetComponent<TextMeshProUGUI>().text = _playerStats.Nickname;
 
-            if (idx < stars.Count)
+            if (_idx < stars.Count)
             {
-                go.transform.Find("HorizontalLayout/Icon_Text").gameObject.SetActive(false);
-                go.transform.Find("HorizontalLayout/Icon").GetComponent<Image>().sprite = stars[idx];
+                _go.transform.Find("HorizontalLayout/Icon_Text").gameObject.SetActive(false);
+                _go.transform.Find("HorizontalLayout/Icon").GetComponent<Image>().sprite = stars[_idx];
             }
             else
             {
-                go.transform.Find("HorizontalLayout/Icon").gameObject.SetActive(false);
-                go.transform.Find("HorizontalLayout/Icon_Text").GetComponent<TMPro.TextMeshProUGUI>().text ="" + (idx + 1);
-                //go.transform.Find("HorizontalLayout/Icon").GetComponent<Image>().sprite = null;
-                //go.transform.Find("HorizontalLayout/Icon").GetComponent<Image>().color = Color.clear;
+                _go.transform.Find("HorizontalLayout/Icon").gameObject.SetActive(false);
+                _go.transform.Find("HorizontalLayout/Icon_Text").GetComponent<TextMeshProUGUI>().text ="" + (_idx + 1);
             }
 
-            idx++;
+            _idx++;
         }
 
-        if (data.leaderboard.Count >= 1)
+        if (_data.Entries.Count >= 1)
         {
-            firstPlacePoints.text = "" + data.leaderboard[0]?.points;
-            firstPlayer.SetCat(data.first);
+            firstPlacePoints.text = "" + _data.Entries[0]?.Points;
+            firstPlayer.SetCat(_data.TopPlayers[0]);
         }
 
-        if(data.leaderboard.Count >= 2)
+        if(_data.Entries.Count >= 2)
         {
-            secondPlacePoints.text = "" + data.leaderboard[1]?.points;
-            secondPlayer.SetCat(data.second);
+            secondPlacePoints.text = "" + _data.Entries[1]?.Points;
+            secondPlayer.SetCat(_data.TopPlayers[1]);
         }
 
-        if (data.leaderboard.Count >= 3)
+        if (_data.Entries.Count >= 3)
         {
-            thirdPlacePoints.text = "" + data.leaderboard[2]?.points;
-            thirdPlayer.SetCat(data.third);
+            thirdPlacePoints.text = "" + _data.Entries[2]?.Points;
+            thirdPlayer.SetCat(_data.TopPlayers[2]);
         }
     }
 
