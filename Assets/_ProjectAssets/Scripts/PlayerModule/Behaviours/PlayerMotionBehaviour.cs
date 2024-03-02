@@ -74,7 +74,7 @@ public class PlayerMotionBehaviour : MonoBehaviour
         OnMovementPerformed(value.ReadValue<float>());
     }
 
-    private void OnMovementPerformed(float direction)
+    public void OnMovementPerformed(float direction)
     {
         if (isPaused) return;
         SetMovementDirection(direction);
@@ -128,7 +128,7 @@ public class PlayerMotionBehaviour : MonoBehaviour
         }
     }
 
-    public void SetMovementDirection(float value)
+    private void SetMovementDirection(float value)
     {
         playerState.SetMovementDirection(value);
     }

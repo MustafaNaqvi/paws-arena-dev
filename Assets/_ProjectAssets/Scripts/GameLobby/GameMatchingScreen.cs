@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class SeatGameobject
@@ -106,26 +107,90 @@ public class GameMatchingScreen : MonoBehaviour
     }
 
     [ContextMenu("Bring Bot")]
-    public async void BringBot()
+    public void BringBot()
     {
-        var resp = await NetworkManager.GETRequestCoroutine(
-            "/user/player2",
-            (code, err) => { },
-            true
-        );
-
-        if (ConfigurationManager.Instance.GameConfig.enableDevLogs)
-        {
-            Debug.Log("[HTTP][Player2]" + resp);
-        }
-
-        BotInformation botInformation = JsonUtility.FromJson<BotInformation>(resp);
+        BotInformation botInformation = GetRandomBot();
 
         GameState.botInfo = botInformation;
         PhotonNetwork.CurrentRoom.MaxPlayers = 1;
         OccupySeat(seats[1], botInformation.nickname);
         syncPlatformsBehaviour.InstantiateBot();
         StartSinglePlayerGame();
+    }
+
+    private BotInformation GetRandomBot()
+    {
+        var playersList = new List<BotInformation>();
+        playersList.Add(new BotInformation
+        {
+            nickname = "Jack Sparrow",
+            l = 4,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=izapu-dakor-uwiaa-aaaaa-cqace-eaqca-aabmc-a"
+        });
+
+        playersList.Add(new BotInformation
+        {
+            nickname = "Cat Fairy",
+            l = 4,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=pjbr5-xikor-uwiaa-aaaaa-cqace-eaqca-aabmq-a"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "qrqhn",
+            l = 5,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=oeeh5-yikor-uwiaa-aaaaa-cqace-eaqca-aaar7-a"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "lazy_hunter",
+            l = 3,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=kgds5-oykor-uwiaa-aaaaa-cqace-eaqca-aabyk-q"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "Mr. Robot",
+            l = 5,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=te62f-xykor-uwiaa-aaaaa-cqace-eaqca-aadpg-a"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "filipo",
+            l = 5,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=qvghj-likor-uwiaa-aaaaa-cqace-eaqca-aabp4-q"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "Callie",
+            l = 3,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=ben3m-hykor-uwiaa-aaaaa-cqace-eaqca-aadb4-q"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "Strawberry",
+            l = 3,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=yil5q-5ykor-uwiaa-aaaaa-cqace-eaqca-aabur-a"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "Strawberry",
+            l = 1,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=dnmix-6qkor-uwiaa-aaaaa-cqace-eaqca-aabzy-q"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "xLilMonster",
+            l = 4,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=vrun7-takor-uwiaa-aaaaa-cqace-eaqca-aach5-a"
+        });
+        playersList.Add(new BotInformation
+        {
+            nickname = "airstrike22",
+            l = 5,
+            kittyUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?type=thumbnail&tokenid=c6bu2-jqkor-uwiaa-aaaaa-cqace-eaqca-aadni-q"
+        });
+
+        int _index = Random.Range(0, playersList.Count);
+        return playersList[_index];
     }
 
     private void OccupySeat(SeatGameobject seat, string nickName)

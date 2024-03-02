@@ -1,14 +1,11 @@
 using Anura.ConfigurationModule.Managers;
 using Anura.Templates.MonoSingleton;
-using NaughtyAttributes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using static BotAIAim;
 
-[System.Serializable]
+[Serializable]
 public class IntPresetPair
 {
     [SerializeField]

@@ -70,16 +70,28 @@ public class PlayerComponent : MonoBehaviour
 
     private void MobileMovement(Vector3 _direction)
     {
-        playerMotionBehaviour.SetMovementDirection(_direction.x);
+        if (!playerActions.enabled)
+        {
+            return;
+        }
+        playerMotionBehaviour.OnMovementPerformed(_direction.x);
     }
     
     private void StopMobileMovement()
     {
-        playerMotionBehaviour.SetMovementDirection(0);
+        if (!playerActions.enabled)
+        {
+            return;
+        }
+        playerMotionBehaviour.OnMovementPerformed(0);
     }
     
     private void MobileJump(Vector2 _obj)
     {
+        if (!playerActions.enabled)
+        {
+            return;
+        }
         playerMotionBehaviour.OnJumpPerformed();
     }
 
