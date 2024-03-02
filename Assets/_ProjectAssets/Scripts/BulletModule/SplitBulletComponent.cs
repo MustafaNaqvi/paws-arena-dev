@@ -19,6 +19,7 @@ public class SplitBulletComponent : BulletComponent
         {
             playerActions = GameInputManager.Instance.GetWeaponsActionMap().GetWeaponsInputActions();
             playerActions.MainAction.performed += Split;
+            InputManager.OnDoubleTap += SplitMobile;
         }
 
         if (BotPlayerAPI.Instance != null)
@@ -32,12 +33,28 @@ public class SplitBulletComponent : BulletComponent
         if (!isMultiplayer || photonView.IsMine)
         {
             playerActions.MainAction.performed -= Split;
+            InputManager.OnDoubleTap -= SplitMobile;
         }
 
         if (BotPlayerAPI.Instance != null)
         {
             BotPlayerAPI.Instance.onMainAction -= Split;
         }
+    }
+
+    private void SplitMobile(Vector2 _obj)
+    {
+        if (!playerActions.enabled)
+        {
+            return;
+        }
+
+        if (GetComponentInParent<BotPlayerComponent>())
+        {
+            return;
+        }
+        
+        Split();
     }
 
     public void Split()

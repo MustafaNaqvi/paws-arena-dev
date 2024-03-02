@@ -16,6 +16,7 @@ public class EmojisHandler : MonoBehaviour
     
     private void Awake()
     {
+        return;
         AddEmojis();
         if (PhotonNetwork.CurrentRoom!=null)
         {

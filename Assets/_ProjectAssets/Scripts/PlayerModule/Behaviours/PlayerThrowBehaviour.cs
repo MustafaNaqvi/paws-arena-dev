@@ -1,6 +1,5 @@
 using Anura.ConfigurationModule.Managers;
 using Anura.ConfigurationModule.ScriptableObjects;
-using Anura.Extensions;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -19,7 +18,7 @@ public class PlayerThrowBehaviour : MonoBehaviour
 
     private PhotonView photonView;
     private bool isMultiplayer;
-    private bool isEnabled = false;
+    private bool isEnabled;
 
     private WeaponEntity currentWeapon;
     private List<GameObject> projectiles;
@@ -39,6 +38,7 @@ public class PlayerThrowBehaviour : MonoBehaviour
         if (!isMultiplayer || photonView.IsMine)
         {
             PlayerActionsBar.OnShoot += PrepareLaunch;
+            InputManager.OnDoubleTap += MobileLaunch;
         }
     }
 
@@ -53,6 +53,7 @@ public class PlayerThrowBehaviour : MonoBehaviour
         if (!isMultiplayer || photonView.IsMine)
         {
             PlayerActionsBar.OnShoot -= PrepareLaunch;
+            InputManager.OnDoubleTap -= MobileLaunch;
         }
     }
 
@@ -63,6 +64,27 @@ public class PlayerThrowBehaviour : MonoBehaviour
     public void RegisterThrowCallbacks(BotInputActions.PlayerActions playerActions)
     {
         playerActions.Approve.performed += _ => PrepareLaunch();
+    }
+    
+    private void MobileLaunch(Vector2 _)
+    {
+        if (photonView)
+        {
+            if (!photonView.IsMine)
+            {
+                return;
+            }
+        }
+        else
+        {
+            if (GetComponentInParent<BotPlayerComponent>())
+            {
+                return;
+            }
+            
+        }
+        
+        PrepareLaunch();
     }
 
     private void PrepareLaunch()
