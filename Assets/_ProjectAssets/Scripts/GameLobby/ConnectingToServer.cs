@@ -1,4 +1,3 @@
-using System;
 using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
@@ -43,8 +42,27 @@ public class ConnectingToServer : MonoBehaviour
     
     private void SetupNftData()
     {
-        GameState.nfts.Add(new NFT() { imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?&tokenid=hvtag-6ykor-uwiaa-aaaaa-cqace-eaqca-aaabd-a" });
+        MockNfts();
+        UpdateNfts();
+    }
 
+    private void MockNfts()
+    {
+        if (Application.isEditor)
+        {
+            GameState.nfts.Add(new NFT()
+            {
+                imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.ic0.app/?&tokenid=hvtag-6ykor-uwiaa-aaaaa-cqace-eaqca-aaabd-a"
+            });
+            GameState.nfts.Add(new NFT()
+            {
+                imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.icp0.io/?tokenid=o2lah-cikor-uwiaa-aaaaa-cqace-eaqca-aacyz-a"
+            });
+        }
+    }
+
+    public static void UpdateNfts()
+    {
         var _nftCollectionsResult = BoomDaoUtility.Instance.GetNftData;
         if (_nftCollectionsResult.IsErr)
         {

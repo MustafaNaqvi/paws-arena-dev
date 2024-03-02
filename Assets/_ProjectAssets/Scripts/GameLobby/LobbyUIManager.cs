@@ -94,6 +94,10 @@ public class LobbyUIManager : MonoBehaviour
 
     public void OpenGameMenu()
     {
+        if (GameState.selectedNFT==null)
+        {
+            return;
+        }
         loadingScreen.SetActive(false);
         connectingToServerScreen.SetActive(false);
         passwordScreen.SetActive(false);

@@ -21,6 +21,7 @@ public class NFTSelection : MonoBehaviour
 
     private List<GameObject> nftButtons = new List<GameObject>();
     private GameObject playerPlatform;
+    [SerializeField] private GameObject message;
 
     private int currentPage = 0;
     private int pageSize = 9;
@@ -58,7 +59,11 @@ public class NFTSelection : MonoBehaviour
         int maxPages = (int)Math.Floor((GameState.nfts.Count - 1) * 1.0 / pageSize);
         pages.SetNumberOfPages(maxPages + 1);
         await PopulateGridAsync();
-        SelectNFT(0);
+        if (GameState.nfts.Count>0)
+        {
+            SelectNFT(0);
+        }
+        message.SetActive(GameState.nfts.Count==0);
     }
 
     private async void OnPageSelected(int idx)
