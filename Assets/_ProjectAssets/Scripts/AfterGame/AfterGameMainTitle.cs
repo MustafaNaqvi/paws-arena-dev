@@ -139,10 +139,10 @@ namespace com.colorfulcoding.AfterGame
             DateTime _recoveryEnds = DateTime.UtcNow.AddMinutes(_minutesItWillTakeToRecover);
             GameState.selectedNFT.RecoveryEndDate = _recoveryEnds;
 
+            Debug.Log("Recovery ends: "+_recoveryEnds);
             BoomDaoUtility.Instance.ExecuteActionWithParameter(HURT_KITTY,
                 new List<ActionParameter>
                 {
-                    //{$args.
                     new() { Key = PlayerData.KITTY_RECOVERY_KEY, Value = Utilities.DateTimeToNanoseconds(_recoveryEnds).ToString() },
                     new() { Key = PlayerData.KITTY_KEY, Value = GameState.selectedNFT.imageUrl }
                 }, null);

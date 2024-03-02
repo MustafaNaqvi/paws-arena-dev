@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using BoomDaoWrapper;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class CraftingUI : MonoBehaviour
 {
     private const string CRAFT_ACTION = "craft";
     private const string CRAFTING_END_TIME_SPAN = "currentTimeSpan";
-    private const string DELETE_CRAFTING_PROCESS = "deleteCraftingProcess";
+    private const string FINISH_CRAFTING_PROCESS = "craftingReward";
 
     [SerializeField] private Button commonButton;
     [SerializeField] private Button uncommonButton;
@@ -89,7 +90,7 @@ public class CraftingUI : MonoBehaviour
 
         CraftingRecepieSO _topRecipe = CraftingRecepieSO.Get((ItemType)((int)_ingredient-1));
         ingridiantImage.sprite = _topRecipe.EndProductSprite;
-        craftText.text = $"Get 1 <color={_topRecipe.EndProductColor}>{_topRecipe.EndProduct}</color> shard by\ncombining {_topRecipe.AmountNeeded} <color={_topRecipe.IngridiantColor}>{_topRecipe.Inggrdiant}</color> shards";
+        craftText.text = $"Get 1 <color={_topRecipe.EndProductColor}>{Utilities.GetCrystalTypeString(_topRecipe.EndProduct)}</color> shard by\ncombining {_topRecipe.AmountNeeded} <color={_topRecipe.IngridiantColor}>{Utilities.GetCrystalTypeString(_topRecipe.Inggrdiant)}</color> shards";
         double _amountOfIngredients = DataManager.Instance.PlayerData.GetAmountOfCrystals(_topRecipe.Inggrdiant);
         if (_amountOfIngredients >= showingRecepie.AmountNeeded)
         {
@@ -108,7 +109,7 @@ public class CraftingUI : MonoBehaviour
         craftButtonText.text = "Craft";
         shardBackground.sprite = showingRecepie.TopOfferBackground;
 
-        if (DataManager.Instance.PlayerData.CraftingProcess != null)
+        if (DataManager.Instance.PlayerData.IsCrafting)
         {
             craftCrystalButton.interactable = false;
         }
@@ -119,7 +120,7 @@ public class CraftingUI : MonoBehaviour
     private void ShowBotFrame(ItemType _ingredient)
     {
         CraftingRecepieSO _recipe = CraftingRecepieSO.Get(_ingredient);
-        botFrameText.text = $"Combine {_recipe.BotAmountNeeded} <color={_recipe.IngridiantColor}>{_recipe.Inggrdiant}</color> shards\nto get 1 <color={_recipe.IngridiantColor}>{_recipe.Inggrdiant}</color> item";
+        botFrameText.text = $"Combine {_recipe.BotAmountNeeded} <color={_recipe.IngridiantColor}>{Utilities.GetCrystalTypeString(_recipe.Inggrdiant)}</color> shards\nto get 1 <color={_recipe.IngridiantColor}>{Utilities.GetCrystalTypeString(_recipe.Inggrdiant)}</color> item";
         double _amountGot = DataManager.Instance.PlayerData.GetAmountOfCrystals(_ingredient);
         botAmountDisplay.text = $"<color={_recipe.IngridiantColor}>{_amountGot}</color>/<color={showingRecepie.IngridiantColor}>{showingRecepie.BotAmountNeeded}</color>";
         if (_amountGot >= _recipe.BotAmountNeeded)
@@ -146,6 +147,7 @@ public class CraftingUI : MonoBehaviour
 
     private void HandleActionExecuted(List<ActionOutcome> _outcomes)
     {
+        Debug.Log("Started crafting process");
         ShowRecipe(showingRecepie.Inggrdiant);
     }
 
@@ -161,17 +163,23 @@ public class CraftingUI : MonoBehaviour
             return;
         }
 
+        if (!DataManager.Instance.PlayerData.IsCrafting)
+        {
+            return;
+        }
+
         isProcessingAction = true;
         craftingFinished.Setup($"Congratulations, you just crafted a {Utilities.GetItemName(_endProduct)} shard");
         ShowRecipe(showingRecepie.Inggrdiant);
         craftButtonText.text = "Craft";
-        // BoomDaoUtility.Instance.ExecuteAction(DELETE_CRAFTING_PROCESS, HandleCraftingFinished);
+        BoomDaoUtility.Instance.ExecuteAction(FINISH_CRAFTING_PROCESS+Utilities.GetItemKey(_endProduct).UpperFirstLetter(), HandleCraftingFinished);
         EventsManager.OnCraftedCrystal?.Invoke();
     }
 
     private void HandleCraftingFinished(List<ActionOutcome> _)
     {
         isProcessingAction = false;
+        ShowRecipe(showingRecepie.Inggrdiant);
     }
 
     private void CraftItem()
@@ -191,10 +199,9 @@ public class CraftingUI : MonoBehaviour
 
     private void Update()
     {
-        CraftingProcess _process = DataManager.Instance.PlayerData.CraftingProcess;
-        if (_process != default)
+        if (DataManager.Instance.PlayerData.IsCrafting)
         {
-            craftButtonText.text = _process.GetFinishTime();
+            craftButtonText.text = DataManager.Instance.PlayerData.CraftingProcess.GetFinishTime();
         }
     }
 }

@@ -15,6 +15,11 @@ public static class Utilities
         return _nanoseconds;
     }
 
+    public static DateTime NanosecondsToDateTime(double _nanoseconds)
+    {
+        return NanosecondsToDateTime((long)_nanoseconds);
+    }
+    
     public static DateTime NanosecondsToDateTime(long _nanoseconds)
     {
         long _ticks = _nanoseconds / 100; 
@@ -124,6 +129,25 @@ public static class Utilities
                 return "Season experience";
             case ItemType.Present:
                 return "Present";
+            default:
+                throw new Exception($"Dont know how to convert {_type} to a name");
+        }
+    }
+
+    public static string GetCrystalTypeString(ItemType _type)
+    {
+        switch (_type)
+        {
+            case ItemType.CommonShard:
+                return "Common";
+            case ItemType.UncommonShard:
+                return "Uncommon";
+            case ItemType.RareShard:
+                return "Rare";
+            case ItemType.EpicShard:
+                return "Epic";
+            case ItemType.LegendaryShard:
+                return "Legendary";
             default:
                 throw new Exception($"Dont know how to convert {_type} to a name");
         }

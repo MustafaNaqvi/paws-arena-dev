@@ -42,7 +42,7 @@ public class ConnectingToServer : MonoBehaviour
     
     private void SetupNftData()
     {
-        MockNfts();
+        //MockNfts();
         UpdateNfts();
     }
 
@@ -83,7 +83,6 @@ public class ConnectingToServer : MonoBehaviour
             
             foreach (var _token in _collection.tokens)
             {
-                Debug.Log($"Kitty Nft data fetch, index: {_token.index}, url: {_token.url}: "+nameof(ConnectingToServer));
                 GameState.nfts.Add(new NFT { imageUrl = _token.url });
             }
             break;

@@ -53,7 +53,6 @@ public class UserInfoDropDown : MonoBehaviour
     public void SwitchKitty()
     {
         GameState.nfts.Clear();
-        GameState.SetSelectedNFT(null);
         ConnectingToServer.UpdateNfts();
         lobbyUI.OpenNFTSelectionScreen();
         Close();

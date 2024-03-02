@@ -341,22 +341,11 @@ public class PlayerData
 
     public DateTime GetKittyRecoveryDate(string _kittyId)
     {
-        Dictionary<string, string> _data = BoomDaoUtility.Instance.GetEntityData(_kittyId);
-        DateTime _recoveryDate = default;
-
-        if (_data.TryGetValue(KITTY_RECOVERY_KEY, out string _timeString))
+        double _recoveryTimeSpan = BoomDaoUtility.Instance.GetDouble(_kittyId, KITTY_RECOVERY_KEY);
+        DateTime _recoveryDate = Utilities.NanosecondsToDateTime(_recoveryTimeSpan);
+        if (_recoveryDate <= DateTime.UtcNow)
         {
-            if (_timeString.Contains('.'))
-            {
-                _timeString = _timeString.Split('.')[0];
-            }
-            
-            _recoveryDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
-            if (_recoveryDate <= DateTime.UtcNow)
-            {
-                _recoveryDate = default;
-            }
-            
+            _recoveryDate = default;
         }
 
         return _recoveryDate;
@@ -375,35 +364,25 @@ public class PlayerData
     {
         get
         {
-            Dictionary<string, string> _data = BoomDaoUtility.Instance.GetEntityData(CRAFTING_PROCESS);
-            DateTime _endDate = default;
-
-            if (_data==default)
+            if (!IsCrafting)
             {
                 return default;
             }
-
-            if (_data.TryGetValue(CRAFTING_END, out string _timeString))
-            {
-                if (_timeString.Contains('.'))
-                {
-                    _timeString = _timeString.Split('.')[0];
-                }
-
-                _endDate = Utilities.NanosecondsToDateTime(long.Parse(_timeString));
-            }
-
+            
+            DateTime _endDate = Utilities.NanosecondsToDateTime(BoomDaoUtility.Instance.GetDouble(CRAFTING_PROCESS, CRAFTING_END));
             if (_endDate==default)
             {
                 return default;
             }
             
-            int _ingredient = Convert.ToInt32(BoomDaoUtility.Instance.GetDouble(CRAFTING_PROCESS, CRAFTING_INGREDIENT));
-            ItemType _type = (ItemType)_ingredient;
+            string _ingredientString = BoomDaoUtility.Instance.GetString(CRAFTING_PROCESS, CRAFTING_INGREDIENT);
+            ItemType _type = Utilities.GetRewardType(_ingredientString);
 
             return new CraftingProcess() { EndDate = _endDate, EndProduct = _type};
         }
     }
+
+    public bool IsCrafting => BoomDaoUtility.Instance.GetEntityData(CRAFTING_PROCESS) != default;
 
     public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
     {

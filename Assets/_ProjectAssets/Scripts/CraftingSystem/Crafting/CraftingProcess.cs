@@ -13,10 +13,8 @@ public class CraftingProcess
     public string GetFinishTime()
     {
         TimeSpan _endTime = EndDate - DateTime.UtcNow;
-
         if (_endTime.TotalSeconds < 0)
         {
-            Debug.Log(EndDate);
             OnFinishedCrafting?.Invoke(EndProduct);
             return "Craft";
         }

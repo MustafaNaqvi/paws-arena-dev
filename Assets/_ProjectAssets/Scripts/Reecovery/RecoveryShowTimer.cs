@@ -18,7 +18,6 @@ public class RecoveryShowTimer : MonoBehaviour
             if (GameState.selectedNFT.CanFight)
             {
                 recoveryDisplay.text = string.Empty;
-                yield return new WaitForSeconds(5);
             }
             else
             {
@@ -26,14 +25,13 @@ public class RecoveryShowTimer : MonoBehaviour
                 if (_minutes!=0)
                 {
                     recoveryDisplay.text = _minutes + "m";
-                    yield return new WaitForSeconds(5);
                 }
                 else
                 {
                     recoveryDisplay.text = (int)GameState.selectedNFT.TimeUntilHealed.TotalSeconds + "s";
-                    yield return new WaitForSeconds(1);
                 }
             }
+            yield return new WaitForSeconds(1);
         }
     }
 }

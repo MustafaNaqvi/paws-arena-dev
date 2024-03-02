@@ -68,6 +68,7 @@ public class LobbyUIManager : MonoBehaviour
         {
             screen.SetActive(true);
         }
+        GameState.SetSelectedNFT(null);
     }
 
     public void OpenEquipmentScreen()
