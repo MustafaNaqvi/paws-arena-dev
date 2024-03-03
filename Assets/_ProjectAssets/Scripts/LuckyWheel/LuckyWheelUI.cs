@@ -33,6 +33,11 @@ public class LuckyWheelUI : MonoBehaviour
         };
         BoomDaoUtility.Instance.ExecuteActionWithParameter(BATTLE_WON_ACTION_KEY,_parameters, OnGotRewards);
     }
+
+    public void RequestRewardChallenges()
+    {
+        BoomDaoUtility.Instance.ExecuteAction(ChallengesManager.CHALLENGES_REWARD_LUCKY_SPIN, OnGotRewards);
+    }
     
     private void OnGotRewards(List<ActionOutcome> _rewards)
     {

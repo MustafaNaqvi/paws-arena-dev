@@ -5,7 +5,6 @@ using Boom;
 using Boom.Patterns.Broadcasts;
 using Boom.Values;
 using Candid.World.Models;
-using Newtonsoft.Json;
 using UnityEngine;
 using WebSocketSharp;
 using Action = System.Action;
@@ -20,8 +19,8 @@ namespace BoomDaoWrapper
         public static Action OnUpdatedNftsData;
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
 
-        private const string AMOUNT_KEY = "amount";
-        private const string VALUE_KEY = "value";
+        public const string AMOUNT_KEY = "amount";
+        public const string VALUE_KEY = "value";
 
         private Action loginCallback;
         private bool canLogin;
@@ -186,9 +185,21 @@ namespace BoomDaoWrapper
             return EntityUtil.TryGetFieldAsDouble(UserUtil.GetPrincipal(), _entityId, _fieldName, out double _value) ? _value : 0;
         }
 
-        public Dictionary<string, string> GetEntityData(string _entityId)
+        public int GetInt(string _entityId, string _fieldName)
         {
-            return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(), _entityId, out DataTypes.Entity _entityData) ? _entityData.fields : default;
+            return EntityUtil.TryGetFieldAsDouble(UserUtil.GetPrincipal(), _entityId, _fieldName, out double _value) 
+                ? Convert.ToInt32(_value)
+                : default;
+        }
+
+        public bool DoesEntityExist(string _entityId)
+        {
+            return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(), _entityId, out DataTypes.Entity _);
+        }
+        
+        public DataTypes.Entity GetEntity(string _entityId)
+        {
+            return EntityUtil.TryGetEntity(UserUtil.GetPrincipal(), _entityId, out DataTypes.Entity _entityData) ? _entityData : default;
         }
 
         private void OnEntityDataChangeHandler(Data<DataTypes.Entity> _changedEntities)

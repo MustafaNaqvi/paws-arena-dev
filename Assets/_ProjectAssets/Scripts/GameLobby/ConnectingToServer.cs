@@ -36,6 +36,7 @@ public class ConnectingToServer : MonoBehaviour
 
         GameState.principalId = _loginDataAsOk.principal;
         DataManager.Instance.Setup();
+        ChallengesManager.Instance.Setup();
         
         lobbyUIManager.OpenNFTSelectionScreen();
     }

@@ -13,7 +13,7 @@ namespace com.colorfulcoding.AfterGame
         private const string BATTLE_LOST_ACTION_KEY = "battle_outcome_lost";
         private const string HURT_KITTY = "hurtKitty";
         
-        private const string INCREASE_LEADERBOARD_POINTS = "increaseLeaderboardPoints";
+        private const string SET_LEADERBOARD_POINTS = "setLeaderboardPoints";
         
         
         public GameObject winTitle;
@@ -112,10 +112,10 @@ namespace com.colorfulcoding.AfterGame
                 {
                     new ActionParameter { Key = GameData.LEADERBOARD_NICK_NAME, Value = DataManager.Instance.PlayerData.Username},
                     new ActionParameter { Key = GameData.LEADERBOARD_KITTY_URL, Value = GameState.selectedNFT.imageUrl},
-                    new ActionParameter { Key = GameData.LEADERBOARD_POINTS, Value = GameState.pointsChange.points.ToString()}
+                    new ActionParameter { Key = GameData.LEADERBOARD_POINTS, Value = (GameState.pointsChange.oldPoints+GameState.pointsChange.points).ToString()}
                 };
                 Debug.Log(JsonConvert.SerializeObject(_parameters));
-                BoomDaoUtility.Instance.ExecuteActionWithParameter(INCREASE_LEADERBOARD_POINTS, _parameters,null);
+                BoomDaoUtility.Instance.ExecuteActionWithParameter(SET_LEADERBOARD_POINTS, _parameters,null);
                 LeanTween.value(gameObject, 0, GameState.pointsChange.points, 2f).setOnUpdate(val =>
                 {
                     totalCoinsValue.text = "" + Math.Floor(GameState.pointsChange.oldPoints + val);

@@ -1,9 +1,10 @@
-using System;
+using System.Linq;
 using UnityEngine;
 
 public class ChallengeAlert : MonoBehaviour
 {
     [SerializeField] private GameObject alert;
+    
     private void OnEnable()
     {
         ChallengesPanel.OnClosed += CheckForAlert;
@@ -17,15 +18,12 @@ public class ChallengeAlert : MonoBehaviour
 
     private void CheckForAlert()
     {
-        foreach (var _challenge in DataManager.Instance.PlayerData.Challenges.ChallengesData)
+        if (DataManager.Instance.PlayerData.ChallengeProgresses.Any(_challenge => _challenge.Completed&&!_challenge.Claimed))
         {
-            if (_challenge.Completed&&!_challenge.Claimed)
-            {
-                alert.SetActive(true);
-                return;
-            }
+            alert.SetActive(true);
+            return;
         }
-        
+
         alert.SetActive(false);
     }
 }

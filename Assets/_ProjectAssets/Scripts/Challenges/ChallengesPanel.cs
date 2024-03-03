@@ -16,26 +16,25 @@ public class ChallengesPanel : MonoBehaviour
     public void Setup()
     {
         int _completedChallenges = 0;
-        for (int i = 0; i < challengeDisplays.Length; i++)
+        for (int _i = 0; _i < DataManager.Instance.PlayerData.ChallengeProgresses.Count; _i++)
         {
-            ChallengeData _challengeData = DataManager.Instance.PlayerData.Challenges.ChallengesData[i];
-            challengeDisplays[i].Setup(_challengeData);
-            if (_challengeData.Claimed)
+            ChallengeProgress _challengeProgress = DataManager.Instance.PlayerData.ChallengeProgresses[_i];
+            challengeDisplays[_i].Setup(_challengeProgress);
+            if (_challengeProgress.Claimed)
             {
                 _completedChallenges++;
             }
         }
 
-        int _totalAmountOfChellenges = DataManager.Instance.PlayerData.Challenges.ChallengesData.Count;
+        int _totalAmountOfChallenges = DataManager.Instance.GameData.DailyChallenges.Challenges.Count;
         
-        progressDisplay.text = $"{_completedChallenges}/{_totalAmountOfChellenges} Completed";
+        progressDisplay.text = $"{_completedChallenges}/{_totalAmountOfChallenges} Completed";
         gameObject.SetActive(true);
         StartCoroutine(ShowTimer());
-        if (_completedChallenges==_totalAmountOfChellenges&& !DataManager.Instance.PlayerData.Challenges.ClaimedLuckySpin)
+        if (_completedChallenges==_totalAmountOfChallenges&& !DataManager.Instance.PlayerData.HasClaimedChallengeSpin)
         {
-            luckyWheel.RequestReward();
+            luckyWheel.RequestRewardChallenges();
             luckyWheel.ShowReward();
-            DataManager.Instance.PlayerData.Challenges.ClaimedLuckySpin = true;
         }
     }
 
@@ -59,14 +58,24 @@ public class ChallengesPanel : MonoBehaviour
     {
         while (gameObject.activeSelf)
         {
-            TimeSpan _timeLeft = DataManager.Instance.PlayerData.Challenges.NextReset - DateTime.UtcNow;
+            TimeSpan _timeLeft = DataManager.Instance.GameData.DailyChallenges.NextReset - DateTime.UtcNow;
             string _output = string.Empty;
-            _output += _timeLeft.Hours < 10 ? "0" + _timeLeft.Hours : _timeLeft.Hours;
-            _output += "h ";
-            _output += _timeLeft.Minutes < 10 ? "0" + _timeLeft.Minutes : _timeLeft.Minutes;
-            _output += "m ";
-            _output += _timeLeft.Seconds < 10 ? "0" + _timeLeft.Seconds : _timeLeft.Seconds;
-            _output += "s Remaining";
+
+            if (_timeLeft.TotalSeconds<0)
+            {
+                _output = "Finished";
+            }
+            else
+            {
+                _output += _timeLeft.Hours < 10 ? "0" + _timeLeft.Hours : _timeLeft.Hours;
+                _output += "h ";
+                _output += _timeLeft.Minutes < 10 ? "0" + _timeLeft.Minutes : _timeLeft.Minutes;
+                _output += "m ";
+                _output += _timeLeft.Seconds < 10 ? "0" + _timeLeft.Seconds : _timeLeft.Seconds;
+                _output += "s ";
+                _output += "remaining";
+            }
+            
             timerDisplay.text = _output;
             yield return new WaitForSeconds(1);
         }

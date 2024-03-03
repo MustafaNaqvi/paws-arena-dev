@@ -147,4 +147,84 @@ public class GameData
         }
     }
 
+    public DailyChallenges DailyChallenges
+    {
+        get
+        {
+            DailyChallenges _dailyChallenges = new DailyChallenges();
+            for (int _i = 0; _i < ChallengesManager.AMOUNT_OF_CHALLENGES; _i++)
+            {
+                ChallengeData _challenge = GetChallenge(_i);
+                if (_challenge==default)
+                {
+                    continue;
+                }
+                _dailyChallenges.Challenges.Add(_challenge);
+            }
+
+            string _nextResetString = BoomDaoUtility.Instance.GetString(ChallengesManager.DAILY_CHALLENGES,ChallengesManager.NEXT_RESET);
+            if (string.IsNullOrEmpty(_nextResetString))
+            {
+                return default;
+            }
+            ulong _nextResetLong = _nextResetString.Contains('.')
+                ? Convert.ToUInt64(_nextResetString.Split('.')[0])
+                : Convert.ToUInt64(_nextResetString);
+            
+            _dailyChallenges.NextReset = Utilities.NanosecondsToDateTime(_nextResetLong);
+            return _dailyChallenges;
+        }
+    }
+
+    public bool HasDailyChallenges => BoomDaoUtility.Instance.DoesEntityExist(ChallengesManager.DAILY_CHALLENGE + "0");
+    
+    private ChallengeData GetChallenge(int _index)
+    {
+        string _challengeId = ChallengesManager.DAILY_CHALLENGE + _index;
+        if (!BoomDaoUtility.Instance.DoesEntityExist(_challengeId))
+        {
+            Debug.Log("Doesn't exist");
+            return default;
+        }
+
+        ChallengeData _challengeData = new ChallengeData();
+        _challengeData.Id = BoomDaoUtility.Instance.GetInt(_challengeId, ChallengesManager.CHALLENGE_ID);
+        _challengeData.Identifier = BoomDaoUtility.Instance.GetString(_challengeId, ChallengesManager.CHALLENGE_IDENTIFIER);
+        _challengeData.Description = BoomDaoUtility.Instance.GetString(_challengeId, ChallengesManager.CHALLENGE_DESCRIPTION);
+        _challengeData.AmountNeeded = BoomDaoUtility.Instance.GetInt(_challengeId, ChallengesManager.CHALLENGE_AMOUNT_NEEDED);
+        _challengeData.RewardAmount = BoomDaoUtility.Instance.GetInt(_challengeId, ChallengesManager.CHALLENGE_REWARD_AMOUNT);
+        _challengeData.RewardType = (ItemType)BoomDaoUtility.Instance.GetInt(_challengeId, ChallengesManager.CHALLENGE_REWARD_TYPE);
+        _challengeData.Category = (ChallengeCategory)BoomDaoUtility.Instance.GetInt(_challengeId, ChallengesManager.CHALLENGE_CATEGORY);
+        return _challengeData;
+    }
+
+    public ChallengeData GetChallengeByIdentifier(string _identifier)=>DataManager.Instance.GameData.DailyChallenges.Challenges.Find(_challenge => _challenge.Identifier == _identifier);
+
+    public int GetChallengeIndex(ChallengeProgress _challengeProgress)
+    {
+        for (int _i = 0; _i < DailyChallenges.Challenges.Count; _i++)
+        {
+            ChallengeData _data = DailyChallenges.Challenges[_i];
+            if (_data.Identifier==_challengeProgress.Identifier)
+            {
+                return _i;
+            }
+        }
+
+        throw new Exception("Can't find index of challenge");
+    }
+    
+    public int GetChallengeIndex(string _identifier)
+    {
+        for (int _i = 0; _i < DailyChallenges.Challenges.Count; _i++)
+        {
+            ChallengeData _data = DailyChallenges.Challenges[_i];
+            if (_data.Identifier==_identifier)
+            {
+                return _i;
+            }
+        }
+
+        throw new Exception("Can't find index of challenge");
+    }
 }

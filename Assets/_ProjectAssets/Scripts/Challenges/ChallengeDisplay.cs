@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ChallengeDisplay : MonoBehaviour
 {
-    public static Action<ChallengeData> OnClaimPressed;
+    public static Action<ChallengeProgress> OnClaimPressed;
     [SerializeField] private Button claimButton;
     [SerializeField] private GameObject claimHolder;
     [SerializeField] private Image rewardDisplay;
@@ -13,17 +13,17 @@ public class ChallengeDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI progressDisplay;
     [SerializeField] private GameObject completed;
 
-    private ChallengeData challengeData;
+    private ChallengeProgress challengeProgress;
     
-    public void Setup(ChallengeData _data)
+    public void Setup(ChallengeProgress _progress)
     {
         completed.SetActive(false);
         claimHolder.SetActive(false);
-        challengeData = _data;
-        ChallengeSO _challengeSO = ChallengesManager.Instance.Get(_data.Id);
-        if (_data.Completed)
+        challengeProgress = _progress;
+        ChallengeData _challengeData = DataManager.Instance.GameData.GetChallengeByIdentifier(_progress.Identifier);
+        if (_progress.Completed)
         {
-            if (_data.Claimed)
+            if (_progress.Claimed || _progress.IsClaiming)
             {
                 completed.SetActive(true);
             }
@@ -36,11 +36,11 @@ public class ChallengeDisplay : MonoBehaviour
         }
         else
         {
-            descDisplay.text = _challengeSO.Description;
-            progressDisplay.text = $"{_data.Value}/{_challengeSO.AmountNeeded}";
+            descDisplay.text = _challengeData.Description;
+            progressDisplay.text = $"{_progress.Value}/{_challengeData.AmountNeeded}";
         }
 
-        rewardDisplay.sprite = _challengeSO.RewardSprite;
+        rewardDisplay.sprite = AssetsManager.Instance.GetItemSprite(_challengeData.RewardType);
     }
 
     private void OnEnable()
@@ -55,7 +55,7 @@ public class ChallengeDisplay : MonoBehaviour
 
     private void Claim()
     {
-        OnClaimPressed?.Invoke(challengeData);
-        Setup(challengeData);
+        OnClaimPressed?.Invoke(challengeProgress);
+        Setup(challengeProgress);
     }
 }

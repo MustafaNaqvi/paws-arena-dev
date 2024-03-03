@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Boom;
 using BoomDaoWrapper;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public class PlayerData
     private List<int> ownedEquiptables;
     private int seasonNumber;
     private List<int> ownedEmojis;
-    private Challenges challenges = new();
+    private DailyChallenges dailyChallenges = new();
     private string guildId = string.Empty;
     private int points;
 
@@ -35,7 +36,6 @@ public class PlayerData
             4
         };
     }
-
 
     public List<int> OwnedEquiptables
     {
@@ -83,13 +83,6 @@ public class PlayerData
         ownedEmojis.Add(_id);
         ownedEmojis.Sort();
     }
-
-    public Challenges Challenges
-    {
-        get => challenges;
-        set => challenges = value;
-    }
-
 
     public string GuildId
     {
@@ -199,6 +192,8 @@ public class PlayerData
     public const string CRAFTING_PROCESS = "craftingProcess";
     private const string CRAFTING_END = "craftingEnd";
     public const string CRAFTING_INGREDIENT = "craftingIngredient";
+
+    public const string DAILY_CHALLENGE_PROGRESS = "dailyChallengeProgress";
 
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
@@ -336,7 +331,7 @@ public class PlayerData
 
     public bool IsKittyHurt(string _kittyId)
     {
-        return BoomDaoUtility.Instance.GetEntityData(_kittyId) != default;
+        return BoomDaoUtility.Instance.DoesEntityExist(_kittyId);
     }
 
     public DateTime GetKittyRecoveryDate(string _kittyId)
@@ -382,7 +377,41 @@ public class PlayerData
         }
     }
 
-    public bool IsCrafting => BoomDaoUtility.Instance.GetEntityData(CRAFTING_PROCESS) != default;
+    public bool IsCrafting => BoomDaoUtility.Instance.DoesEntityExist(CRAFTING_PROCESS);
+
+    public List<ChallengeProgress> ChallengeProgresses
+    {
+        get
+        {
+            List<ChallengeProgress> _progresses = new List<ChallengeProgress>();
+            for (int _i = 0; _i < ChallengesManager.AMOUNT_OF_CHALLENGES; _i++)
+            {
+                ChallengeProgress _progress = GetChallengeProgress(_i);
+                if (_progress==default)
+                {
+                    continue;
+                }
+
+                _progresses.Add(_progress);
+            }
+
+            return _progresses;
+        }
+    }
+
+    private ChallengeProgress GetChallengeProgress(int _challengeIndex)
+    {
+        string _progressId = DAILY_CHALLENGE_PROGRESS + _challengeIndex;
+        ChallengeProgress _progress = new ChallengeProgress
+            {
+                Identifier = BoomDaoUtility.Instance.GetString(_progressId, ChallengesManager.CHALLENGE_IDENTIFIER),
+                Value = BoomDaoUtility.Instance.GetInt(_progressId, ChallengesManager.PROGRESS_VALUE),
+                Claimed = BoomDaoUtility.Instance.GetInt(_progressId, ChallengesManager.PROGRESS_CLAIMED)==1,
+            };
+        return _progress;
+    }
+
+    public bool HasClaimedChallengeSpin => BoomDaoUtility.Instance.DoesEntityExist(ChallengesManager.CLAIMED_LUCKY_SPIN);
 
     public static void CalculateLevel(double _exp, out int _level, out int _expForNextLevel, out int _experienceOnCurrentLevel)
     {
