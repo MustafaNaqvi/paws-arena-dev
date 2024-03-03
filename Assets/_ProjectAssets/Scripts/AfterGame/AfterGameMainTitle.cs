@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using Anura.ConfigurationModule.Managers;
 using BoomDaoWrapper;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +12,9 @@ namespace com.colorfulcoding.AfterGame
     {
         private const string BATTLE_LOST_ACTION_KEY = "battle_outcome_lost";
         private const string HURT_KITTY = "hurtKitty";
+        
+        private const string INCREASE_LEADERBOARD_POINTS = "increaseLeaderboardPoints";
+        
         
         public GameObject winTitle;
         public GameObject loseTitle;
@@ -106,7 +108,15 @@ namespace com.colorfulcoding.AfterGame
 
             if (GameState.pointsChange.points != 0)
             {
-                LeanTween.value(gameObject, 0, GameState.pointsChange.points, 2f).setOnUpdate((float val) =>
+                List<ActionParameter> _parameters = new()
+                {
+                    new ActionParameter { Key = GameData.LEADERBOARD_NICK_NAME, Value = DataManager.Instance.PlayerData.Username},
+                    new ActionParameter { Key = GameData.LEADERBOARD_KITTY_URL, Value = GameState.selectedNFT.imageUrl},
+                    new ActionParameter { Key = GameData.LEADERBOARD_POINTS, Value = GameState.pointsChange.points.ToString()}
+                };
+                Debug.Log(JsonConvert.SerializeObject(_parameters));
+                BoomDaoUtility.Instance.ExecuteActionWithParameter(INCREASE_LEADERBOARD_POINTS, _parameters,null);
+                LeanTween.value(gameObject, 0, GameState.pointsChange.points, 2f).setOnUpdate(val =>
                 {
                     totalCoinsValue.text = "" + Math.Floor(GameState.pointsChange.oldPoints + val);
                     deltaPoints.text = "+" + Math.Floor(val);

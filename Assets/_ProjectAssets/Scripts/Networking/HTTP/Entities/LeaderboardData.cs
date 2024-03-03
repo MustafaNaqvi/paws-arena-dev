@@ -18,7 +18,7 @@ public class LeaderboardData
                 break;
             }
 
-            TopPlayers[_i] = Entries[_i].KittyUrl;
+            TopPlayers.Add(Entries[_i].KittyUrl);
         }
     }
 }

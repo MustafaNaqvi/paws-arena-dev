@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,6 +11,7 @@ public class LeaderboardUIManager : MonoBehaviour
     [Header("UI Components")]
     public Transform leaderboardContent;
     public GameObject leaderboardLinePrefab;
+    [SerializeField] private Button reload;
 
     [Header("Places")]
     public TextMeshProUGUI firstPlacePoints;
@@ -20,6 +23,28 @@ public class LeaderboardUIManager : MonoBehaviour
     public PlayerPlatformBehaviour thirdPlayer;
 
     public List<Sprite> stars;
+
+    private void OnEnable()
+    {
+        reload.onClick.AddListener(RequestReload);
+        BoomDaoUtility.OnUpdatedWorldData += ReloadScene;
+    }
+
+    private void OnDisable()
+    {
+        reload.onClick.RemoveListener(RequestReload);
+        BoomDaoUtility.OnUpdatedWorldData -= ReloadScene;
+    }
+
+    private void RequestReload()
+    {
+        BoomDaoUtility.Instance.ReloadWorldData();
+    }
+    
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
     private void Start()
     {

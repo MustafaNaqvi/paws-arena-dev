@@ -27,7 +27,6 @@ public class LuckyWheelUI : MonoBehaviour
 
     public void RequestReward()
     {
-        Debug.Log("---- Dealt damage: "+DamageDealingDisplay.XpEarned);
         List<ActionParameter> _parameters = new()
         {
             new ActionParameter { Key = PlayerData.EARNED_XP_KEY, Value = DamageDealingDisplay.XpEarned.ToString()}

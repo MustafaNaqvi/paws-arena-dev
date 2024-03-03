@@ -145,6 +145,7 @@ public class RecoveryDropDown : MonoBehaviour
             else
             {
                 healMessageHolder.SetActive(true);
+                return;
             }
         }
         else
@@ -165,6 +166,7 @@ public class RecoveryDropDown : MonoBehaviour
             else
             {
                 healMessageHolder.SetActive(true);
+                return;
             }
         }
 

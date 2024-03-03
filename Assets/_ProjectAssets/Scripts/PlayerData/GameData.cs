@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BoomDaoWrapper;
+using UnityEngine;
 
 [Serializable]
 public class GameData
@@ -131,7 +132,7 @@ public class GameData
             foreach (var _worldEntry in _entries)
             {
                 string _pointsString = _worldEntry.GetProperty(LEADERBOARD_POINTS);
-                int _points = Convert.ToInt32(_pointsString.Contains('.') ? _pointsString.Split(',')[0] : _pointsString);
+                int _points = Convert.ToInt32(_pointsString.Contains('.') ? _pointsString.Split('.')[0] : _pointsString);
                 _leaderboardData.Entries.Add(new LeaderboardEntries
                 {
                     PrincipalId = _worldEntry.PrincipalId,

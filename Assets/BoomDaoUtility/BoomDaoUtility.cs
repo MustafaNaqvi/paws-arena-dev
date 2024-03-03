@@ -5,6 +5,7 @@ using Boom;
 using Boom.Patterns.Broadcasts;
 using Boom.Values;
 using Candid.World.Models;
+using Newtonsoft.Json;
 using UnityEngine;
 using WebSocketSharp;
 using Action = System.Action;
@@ -16,6 +17,7 @@ namespace BoomDaoWrapper
         public static BoomDaoUtility Instance;
         public static Action<string> OnDataUpdated;
         public static Action OnUpdatedWorldData;
+        public static Action OnUpdatedNftsData;
         public const string ICK_KITTIES = "rw7qm-eiaaa-aaaak-aaiqq-cai";
 
         private const string AMOUNT_KEY = "amount";
@@ -304,13 +306,14 @@ namespace BoomDaoWrapper
                 _entry.PrincipalId = _principalId;
                 foreach (var _entityId in _entityIds)
                 {
-                    if(!_entity.fields.TryGetValue(_entityId, out var _value))
+                    if (!_entity.TryGetFieldAsText(_entityId, out var _value))
                     {
                         continue;
                     }
-
+                    Debug.Log($"{_entityId}: {_value}");
                     _entry.Data.Add(_entityId,_value);    
                 }
+                _output.Add(_entry);
             }
 
             return _output;
@@ -327,6 +330,19 @@ namespace BoomDaoWrapper
         {
             UserUtil.RemoveListenerDataChange<DataTypes.Entity>(HandleWorldDataReloaded,BoomManager.Instance.WORLD_CANISTER_ID);
             OnUpdatedWorldData?.Invoke();
+        }
+
+        public void ReloadNfts()
+        {
+            if (UserUtil.IsDataLoading<DataTypes.NftCollection>(BoomManager.Instance.WORLD_CANISTER_ID)) return;
+            UserUtil.RequestData(new DataTypeRequestArgs.NftCollection(new [] {ICK_KITTIES}, UserUtil.GetPrincipal()));
+            UserUtil.AddListenerDataChange<DataTypes.NftCollection>(HandleNftsReloaded, default, UserUtil.GetPrincipal());
+        }
+
+        private void HandleNftsReloaded(Data<DataTypes.NftCollection> _)
+        {
+            UserUtil.RemoveListenerDataChange<DataTypes.NftCollection>(HandleNftsReloaded, UserUtil.GetPrincipal());
+            OnUpdatedNftsData?.Invoke();
         }
 
         #endregion
