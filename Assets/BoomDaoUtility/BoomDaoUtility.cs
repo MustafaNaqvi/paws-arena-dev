@@ -83,7 +83,7 @@ namespace BoomDaoWrapper
 
         #region Actions
 
-        public async void ExecuteAction(string _actionId, Action<List<ActionOutcome>> _callBack)
+        public async void ExecuteAction(string _actionId, Action<List<ActionOutcome>> _callBack, Action _onError=null)
         {
             var _actionResult = await ActionUtil.ProcessAction(_actionId);
             if (_actionResult.IsErr)
@@ -91,6 +91,7 @@ namespace BoomDaoWrapper
                 string _errorMessage = _actionResult.AsErr().content;
                 Debug.LogError(_errorMessage);
                 _callBack?.Invoke(default);
+                _onError?.Invoke();
                 return;
             }
 
@@ -218,7 +219,19 @@ namespace BoomDaoWrapper
                 return default;
             }
 
+            Debug.Log(_int);
             return int.Parse(_int);
+        }
+        
+        public double GetConfigDataAsDouble(string _configId, string _fieldName)
+        {
+            string _double = GetConfigDataAsString(_configId, _fieldName);
+            if (_double == default)
+            {
+                return default;
+            }
+
+            return double.Parse(_double);
         }
 
         public DateTime GetConfigDataAsDate(string _configId, string _fieldName)

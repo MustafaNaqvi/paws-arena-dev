@@ -72,9 +72,9 @@ public class GameData
     public bool HasSeasonStarted => DateTime.UtcNow > SeasonStarts;
     public bool IsSeasonActive => HasSeasonStarted && !HasSeasonEnded;
     
-    public int GlassOfMilkPrice => BoomDaoUtility.Instance.GetConfigDataAsInt(GLASS_MILK_PRICE, PRICE_TAG);
+    public double GlassOfMilkPrice => BoomDaoUtility.Instance.GetConfigDataAsDouble(GLASS_MILK_PRICE, PRICE_TAG);
 
-    public int JugOfMilkPrice => BoomDaoUtility.Instance.GetConfigDataAsInt(BOTTLE_MILK_PRICE, PRICE_TAG);
+    public double JugOfMilkPrice => BoomDaoUtility.Instance.GetConfigDataAsDouble(BOTTLE_MILK_PRICE, PRICE_TAG);
     
     public List<LevelReward> SeasonRewards
     {

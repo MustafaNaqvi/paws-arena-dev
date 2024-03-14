@@ -231,7 +231,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &14187466
 GameObject:
@@ -8290,75 +8290,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 365935087}
   m_CullTransparentMesh: 1
---- !u!1 &367294707
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 367294709}
-  - component: {fileID: 367294708}
-  m_Layer: 0
-  m_Name: BoomManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &367294708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367294707}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f335a44cd87017247a0153fec4a79be1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enableBoomLogs: 1
-  <WORLD_HUB_CANISTER_ID>k__BackingField: fgpem-ziaaa-aaaag-abi2q-cai
-  <WORLD_CANISTER_ID>k__BackingField: j4n55-giaaa-aaaap-qb3wq-cai
-  <WORLD_COLLECTION_CANISTER_ID>k__BackingField: 6uvic-diaaa-aaaap-abgca-cai
-  <BoomDaoGameType>k__BackingField: 0
-  cachedAnonAgent:
-    <IsInit>k__BackingField: 0
-  cachedUserAddress:
-    value: 
-    <IsInit>k__BackingField: 0
-    <InitialValue>k__BackingField: 
-  principal: 
-  isLoginIn: 0
-  nextUpdateIn: 0
-  secondsToUpdateClient: 2
-  lastClientUpdate: 0
-  inRoom: 0
-  currentRoomId: 
-  usersInRoom: []
-  multPlayerActionStateFetch: 0
-  multPlayerTokenFetch: 0
-  multPlayerCollectionFetch: 0
-  principalId: 
-  loginState: 0
-  loginCompleted: 0
---- !u!4 &367294709
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367294707}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &370965382
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29205,7 +29136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: <WORLD_CANISTER_ID>k__BackingField
-      value: hjdu4-kiaaa-aaaap-abxuq-cai
+      value: aqxsc-zaaaa-aaaal-qdloa-cai
       objectReference: {fileID: 0}
     - target: {fileID: 2393423864867871021, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
       propertyPath: m_RootOrder
@@ -31825,6 +31756,7 @@ MonoBehaviour:
   fightImage: {fileID: 1239415176}
   normalFightSprite: {fileID: -282244159, guid: aca6eb77f82259b46a66e4327dd30ea4, type: 3}
   injuredFightSprite: {fileID: 1354134836, guid: aca6eb77f82259b46a66e4327dd30ea4, type: 3}
+  noNftsMessage: {fileID: 1785290378}
 --- !u!1 &1314372113
 GameObject:
   m_ObjectHideFlags: 0
@@ -34832,7 +34764,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Buy some at <color=#4083F5>Enterpot</color>.
+  m_text: 'Buy some at <color=#4083F5>Entrepot</color>.
 
 '
   m_isRightToLeft: 0
@@ -46520,7 +46452,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1870169727
 RectTransform:
   m_ObjectHideFlags: 0
@@ -58925,10 +58857,6 @@ PrefabInstance:
     - target: {fileID: 1390852338248638728, guid: d248185474391e945870ed53c604100a, type: 3}
       propertyPath: m_Name
       value: BuyMilk
-      objectReference: {fileID: 0}
-    - target: {fileID: 1390852338248638728, guid: d248185474391e945870ed53c604100a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1390852338248638729, guid: d248185474391e945870ed53c604100a, type: 3}
       propertyPath: m_Pivot.x

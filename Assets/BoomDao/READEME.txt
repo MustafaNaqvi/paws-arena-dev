@@ -1,5 +1,8 @@
-Current Version: 0.2.8
+Current Version: 0.2.9
 ======================
+> Version 0.2.8 Changes:
+
+- Fix: Now entity's outcomes of type text can be parsed as variables
 
 > Version 0.2.8 Changes:
 

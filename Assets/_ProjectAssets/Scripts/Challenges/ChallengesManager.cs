@@ -121,6 +121,7 @@ public class ChallengesManager : MonoBehaviour
 
     public void Setup()
     {
+        return;
         if (DataManager.Instance.GameData.HasDailyChallenges)
         {
             SubscribeEvents();

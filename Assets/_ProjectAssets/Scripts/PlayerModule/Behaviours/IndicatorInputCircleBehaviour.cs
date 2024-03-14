@@ -1,10 +1,7 @@
 using Anura.ConfigurationModule.Managers;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class IndicatorInputCircleBehaviour : MonoBehaviour, IPointerUpHandler
 {
@@ -26,13 +23,26 @@ public class IndicatorInputCircleBehaviour : MonoBehaviour, IPointerUpHandler
 
     public void CheckPointerClick(Vector2 pointerPos)
     {
-        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(pointerPos);
-        Vector2 myPos = transform.position;
-        float angle = Vector2.SignedAngle(new Vector2(1, 0), mouseWorldPos - myPos);
-        float power = ((mouseWorldPos - myPos).magnitude / radius);
-        power = Math.Clamp(power, 0, 1);
-        power = power * (1 + startOffset) - startOffset;
-        CheckPointerClick(angle, power);
+        if (Application.isMobilePlatform)
+        {
+            Vector2 touchWorldPos = Camera.main.ScreenToWorldPoint(pointerPos);
+            Vector2 myPos = transform.position;
+            float angle = Vector2.SignedAngle(new Vector2(1, 0), touchWorldPos - myPos);
+            float power = ((touchWorldPos - myPos).magnitude / radius);
+            power = Mathf.Clamp(power, 0, 1);
+            power = power * (1 + startOffset) - startOffset;
+            CheckPointerClick(angle, power);
+        }
+        else
+        {
+            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(pointerPos);
+            Vector2 myPos = transform.position;
+            float angle = Vector2.SignedAngle(new Vector2(1, 0), mouseWorldPos - myPos);
+            float power = ((mouseWorldPos - myPos).magnitude / radius);
+            power = Math.Clamp(power, 0, 1);
+            power = power * (1 + startOffset) - startOffset;
+            CheckPointerClick(angle, power);
+        }
     }
 
     public void CheckPointerClick(float angle, float power)

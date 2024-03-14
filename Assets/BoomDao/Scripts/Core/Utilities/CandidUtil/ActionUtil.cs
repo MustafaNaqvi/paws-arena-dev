@@ -246,6 +246,8 @@ namespace Boom
 
                                             if (allFieldsToEdit != null)
                                             {
+                                                fieldValue1 = EntityUtil.ReplaceVariables(fieldValue1, worldEntities, callerEntities, targetEntities, configs, args);
+
                                                 if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.SetText((string)fieldValue1)))
                                                 {
                                                     allFieldsToEdit[fieldName] = new EntityFieldEdit.SetText((string)fieldValue1);
@@ -273,6 +275,8 @@ namespace Boom
 
                                             if (allFieldsToEdit != null)
                                             {
+                                                fieldValue10 = EntityUtil.ReplaceVariables(fieldValue10, worldEntities, callerEntities, targetEntities, configs, args);
+                                                
                                                 if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.AddToList((string)fieldValue10)))
                                                 {
                                                     allFieldsToEdit[fieldName] = new EntityFieldEdit.AddToList((string)fieldValue10);
@@ -300,6 +304,8 @@ namespace Boom
 
                                             if (allFieldsToEdit != null)
                                             {
+                                                fieldValue11 = EntityUtil.ReplaceVariables(fieldValue11, worldEntities, callerEntities, targetEntities, configs, args);
+
                                                 if (!allFieldsToEdit.TryAdd(fieldName, new EntityFieldEdit.RemoveFromList((string)fieldValue11)))
                                                 {
                                                     allFieldsToEdit[fieldName] = new EntityFieldEdit.RemoveFromList((string)fieldValue11);

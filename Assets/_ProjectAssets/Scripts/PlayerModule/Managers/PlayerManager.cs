@@ -57,6 +57,14 @@ public class PlayerManager : MonoSingleton<PlayerManager>
         HealthAtEnd = myPlayerHealth;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            KillOpponent();
+        }
+    }
+
     [Button("Suicide")]
     private void Suicide()
     {

@@ -39,6 +39,7 @@ public class PlayerNicknameButton : MonoBehaviour
             {
                 HandleSetNameFinished(_outcomes, _nickname);
             });
+        
     }
 
     private void HandleSetNameFinished(List<ActionOutcome> _, string _newName)

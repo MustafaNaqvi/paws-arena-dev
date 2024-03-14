@@ -53,14 +53,11 @@ public class ChallengeProgress
 
     private void IncreaseChallengeProgress(int _amount)
     {        
-        Debug.Log("Should increase progress: "+_amount);
-
         List<ActionParameter> _parameters = new List<ActionParameter>
         {
             new () { Key = CHALLENGE_UPDATE_KEY, Value = PlayerData.DAILY_CHALLENGE_PROGRESS+DataManager.Instance.GameData.GetChallengeIndex(Identifier) },
             new () { Key = BoomDaoUtility.AMOUNT_KEY, Value = _amount.ToString() }
         };
-        Debug.Log(JsonConvert.SerializeObject(_parameters));
         BoomDaoUtility.Instance.ExecuteActionWithParameter(UPDATE_CHALLENGE_PROGRESS, _parameters, null);
     }
 

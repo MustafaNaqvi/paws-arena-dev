@@ -22,6 +22,8 @@ public class BuyMilk : MonoBehaviour
     [SerializeField] private TextMeshProUGUI glassOfMilkPriceDisplay;
     [SerializeField] private TextMeshProUGUI jugOfMilkPriceDisplay;
 
+    [SerializeField] private GameObject insufficientFounds;
+
     public void Setup()
     {
         ShowGlassOfMilk();
@@ -65,19 +67,24 @@ public class BuyMilk : MonoBehaviour
     private void BuyJugOfMilk()
     {
         ManageInteractables(false);
-        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_BOTTLE, HandleBuyOutcome);
+        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_BOTTLE, HandleBuyOutcome,ShowInsufficientFunds);
     }
 
     private void BuyGlassOfMIlk()
     {
         ManageInteractables(false);
 
-        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_GLASS, HandleBuyOutcome);
+        BoomDaoUtility.Instance.ExecuteAction(BUY_MILK_GLASS, HandleBuyOutcome,ShowInsufficientFunds);
     }
 
     private void HandleBuyOutcome(List<ActionOutcome> _outcomes)
     {
         ManageInteractables(true);
+    }
+
+    private void ShowInsufficientFunds()
+    {
+        insufficientFounds.gameObject.SetActive(true);
     }
 
     private void Done()

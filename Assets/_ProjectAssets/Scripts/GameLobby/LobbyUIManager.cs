@@ -39,6 +39,8 @@ public class LobbyUIManager : MonoBehaviour
     [SerializeField] private Sprite normalFightSprite;
     [SerializeField] private Sprite injuredFightSprite;
 
+    [SerializeField] private GameObject noNftsMessage;
+
 
     private void OnEnable()
     {
@@ -97,6 +99,10 @@ public class LobbyUIManager : MonoBehaviour
     {
         if (GameState.selectedNFT==null)
         {
+            if (GameState.nfts.Count==0)
+            {
+                noNftsMessage.SetActive(true);
+            }
             return;
         }
         loadingScreen.SetActive(false);

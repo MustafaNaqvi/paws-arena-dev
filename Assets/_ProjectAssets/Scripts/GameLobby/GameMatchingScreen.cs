@@ -74,7 +74,7 @@ public class GameMatchingScreen : MonoBehaviour
             }
         }
 
-        StartCoroutine(BringBotAfterSeconds(5));
+        StartCoroutine(BringBotAfterSeconds(30));
     }
 
     public void SetSeats()

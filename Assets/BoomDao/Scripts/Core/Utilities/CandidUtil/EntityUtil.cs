@@ -485,7 +485,7 @@
             return formulaEvaluationDependencies;
         }
 
-        private static string ReplaceVariables(string formula, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
+        public static string ReplaceVariables(string formula, IEnumerable<DataTypes.Entity> worldEntities, IEnumerable<DataTypes.Entity> callerEntities, IEnumerable<DataTypes.Entity> targetEntities, IEnumerable<MainDataTypes.AllConfigs.Config> configs, IEnumerable<Field> args)
         {
             StringBuilder subExpr = new();
             bool isOpen = false;
@@ -594,6 +594,7 @@
         internal static void ApplyEntityEdits(ProcessedActionResponse.Outcomes outcomes)
         {
             var uid = outcomes.uid;
+            Debug.Log($"Apply outcomes to {uid}, outcomes: {outcomes.entityOutcomes}");
             var entityOutcomes = outcomes.entityOutcomes;
 
             Dictionary<string, DataTypes.Entity> editedEntities = new();
