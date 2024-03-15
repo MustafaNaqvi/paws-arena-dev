@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Boom;
 using BoomDaoWrapper;
 using UnityEngine;
 
@@ -195,6 +194,9 @@ public class PlayerData
 
     public const string DAILY_CHALLENGE_PROGRESS = "dailyChallengeProgress";
 
+    public const string AMOUNT_OF_GAMES_PLAYED_TODAY = "amountOfGamesPlayedToday";
+    public const string RESET_AMOUNT_OF_GAMES_PLAYED_TODAY = "resetAmountOfGamesPlayedToday";
+
     public int Level { get; private set; }
     public int ExperienceOnCurrentLevel { get; private set; }
     public int ExperienceForNextLevel { get; private set; }
@@ -302,10 +304,9 @@ public class PlayerData
                 break;
             case CRAFTING_PROCESS:
                 OnUpdatedCraftingProcess?.Invoke();
-                Debug.Log("New: " +JsonConvert.SerializeObject(CraftingProcess));
                 break;
             default:
-                Debug.Log($"{_key} got updated!, add handler?");
+                // Debug.Log($"{_key} got updated!, add handler?");
                 break;
         }
     }
@@ -437,5 +438,14 @@ public class PlayerData
         _expForNextLevel = (int)_calculatedExpForNextLevel;
         _experienceOnCurrentLevel = (int)_experience;
         _level = _calculatedLevel;
+    }
+    
+    public bool ShouldBotBeEasy
+    {
+        get
+        {
+            double _amountOfGamesPlayedToday = BoomDaoUtility.Instance.GetDouble(AMOUNT_OF_GAMES_PLAYED_TODAY, BoomDaoUtility.AMOUNT_KEY);
+            return _amountOfGamesPlayedToday<=5;
+        }
     }
 }

@@ -45,6 +45,13 @@ public class ConnectingToServer : MonoBehaviour
     {
         //MockNfts();
         UpdateNfts();
+        if (GameState.nfts.Count==0)
+        {
+            GameState.nfts.Add(new NFT()
+            {
+                imageUrl = "https://rw7qm-eiaaa-aaaak-aaiqq-cai.raw.icp0.io/?&tokenid=cad6v-gqkor-uwiaa-aaaaa-cqace-eaqca-aadvq-a"
+            });
+        }
     }
 
     private void MockNfts()

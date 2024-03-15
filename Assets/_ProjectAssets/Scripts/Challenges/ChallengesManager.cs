@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class ChallengesManager : MonoBehaviour
 {
+    public static Action OnChallengeClaimed;
     public const int AMOUNT_OF_CHALLENGES = 3;
     
     public const string GENERATE_DAILY_CHALLENGE = "generateDailyChallenge";
@@ -30,11 +31,19 @@ public class ChallengesManager : MonoBehaviour
     public const string CHALLENGE_CATEGORY = "category";
 
     public const string CHALLENGES_REWARD_LUCKY_SPIN = "challengesLuckyWheel";
-    public const string CHALLENGES_CLAIM_DAILY_CHALLENGE = "claimDailyChallenge";
+    public const string CHALLENGES_CLAIM_DAILY_CHALLENGE = "setChallengeAsClaimed";
+    
+    private const string UPDATE_CHALLENGE_PROGRESS = "increaseChallengeProgress";
 
     public static ChallengesManager Instance;
     private bool isGeneratingNewChallenges;
     private bool isSubscribed;
+    
+    private List<ChallengeUpdateProgress> progressToUpdate = new();
+    private bool isUpdatingProgress;
+
+    private List<ChallengeProgress> challengesToClaim = new();
+    private bool isClaiming;
 
     private void OnEnable()
     {
@@ -54,56 +63,92 @@ public class ChallengesManager : MonoBehaviour
             return;
         }
 
+        foreach (ChallengeProgress _claimingChallenge in challengesToClaim)
+        {
+            if (DataManager.Instance.GameData.GetChallengeByIdentifier(_claimingChallenge.Identifier)==DataManager.Instance.GameData
+            .GetChallengeByIdentifier(_challengeProgress.Identifier))
+            {
+                return;
+            }
+        }
+        challengesToClaim.Add(_challengeProgress);
+        TryClaim();
+    }
+
+    private void TryClaim()
+    {
+        if (isClaiming)
+        {
+            return;
+        }
+
+        if (challengesToClaim.Count==0)
+        {
+            return;
+        }
+
+        isClaiming = true;
+        var _challengeProgress = challengesToClaim[0];
+        _challengeProgress.IsClaiming = true;
+        
         List<ActionParameter> _parameters = new List<ActionParameter>
         {
-            new() { Key = CHALLENGE_NUMBER, Value = DataManager.Instance.GameData.GetChallengeIndex(_challengeProgress).ToString() }
+            new() { Key = CHALLENGE_NUMBER, Value = PlayerData.DAILY_CHALLENGE_PROGRESS+DataManager.Instance.GameData.GetChallengeIndex(_challengeProgress) }
         };
+        
+        Debug.Log($"{CHALLENGE_NUMBER}: meaning challenge name is {PlayerData.DAILY_CHALLENGE_PROGRESS+DataManager.Instance.GameData.GetChallengeIndex(_challengeProgress)}, calling for action {CHALLENGES_CLAIM_DAILY_CHALLENGE}");
+        
         BoomDaoUtility.Instance.ExecuteActionWithParameter(CHALLENGES_CLAIM_DAILY_CHALLENGE, _parameters, _ =>
         {
             _challengeProgress.Claimed = true;
+            ChallengeData _challengeData = DataManager.Instance.GameData.GetChallengeByIdentifier(_challengeProgress.Identifier);
+            string _claimActionId;
+            switch (_challengeData.RewardType)
+            {
+                case ItemType.CommonShard:
+                    _claimActionId = RewardActions.REWARD_N_COMMON_CRYSTALS;
+                    break;
+                case ItemType.UncommonShard:
+                    _claimActionId = RewardActions.REWARD_N_UNCOMMON_CRYSTALS;
+                    break;
+                case ItemType.RareShard:
+                    _claimActionId = RewardActions.REWARD_N_RARE_CRYSTALS;
+                    break;
+                case ItemType.EpicShard:
+                    _claimActionId = RewardActions.REWARD_N_EPIC_CRYSTALS;
+                    break;
+                case ItemType.LegendaryShard:
+                    _claimActionId = RewardActions.REWARD_N_LEGENDARY_CRYSTALS;
+                    break;
+                case ItemType.Snack:
+                    _claimActionId = RewardActions.REWARD_N_SNACKS;
+                    break;
+                case ItemType.JugOfMilk:
+                    _claimActionId = RewardActions.REWARD_N_JUG_OF_MILKS;
+                    break;
+                case ItemType.GlassOfMilk:
+                    _claimActionId = RewardActions.REWARD_N_GLASS_OF_MILKS;
+                    break;
+                case ItemType.SeasonExperience:
+                    _claimActionId = RewardActions.REWARD_N_XPS;
+                    break;
+                default:
+                    throw new Exception("Don't know how to reward item type: "+_challengeData.RewardType);
+            }
+        
+            List<ActionParameter> _claimedParameters = new List<ActionParameter>
+            {
+                new() { Key = BoomDaoUtility.AMOUNT_KEY, Value = _challengeData.RewardAmount.ToString() }
+            };
+            BoomDaoUtility.Instance.ExecuteActionWithParameter(_claimActionId,_claimedParameters,_ =>
+            {
+                challengesToClaim.RemoveAt(0);
+                isClaiming = false;
+                OnChallengeClaimed?.Invoke();
+                TryClaim();
+            });
         });
         
-        _challengeProgress.IsClaiming = true;
-        ChallengeData _challengeData = DataManager.Instance.GameData.GetChallengeByIdentifier(_challengeProgress.Identifier);
-        string _claimActionId;
-        switch (_challengeData.RewardType)
-        {
-            case ItemType.CommonShard:
-                _claimActionId = RewardActions.REWARD_N_COMMON_CRYSTALS;
-                break;
-            case ItemType.UncommonShard:
-                _claimActionId = RewardActions.REWARD_N_UNCOMMON_CRYSTALS;
-                break;
-            case ItemType.RareShard:
-                _claimActionId = RewardActions.REWARD_N_RARE_CRYSTALS;
-                break;
-            case ItemType.EpicShard:
-                _claimActionId = RewardActions.REWARD_N_EPIC_CRYSTALS;
-                break;
-            case ItemType.LegendaryShard:
-                _claimActionId = RewardActions.REWARD_N_LEGENDARY_CRYSTALS;
-                break;
-            case ItemType.Snack:
-                _claimActionId = RewardActions.REWARD_N_SNACKS;
-                break;
-            case ItemType.JugOfMilk:
-                _claimActionId = RewardActions.REWARD_N_JUG_OF_MILKS;
-                break;
-            case ItemType.GlassOfMilk:
-                _claimActionId = RewardActions.REWARD_N_GLASS_OF_MILKS;
-                break;
-            case ItemType.SeasonExperience:
-                _claimActionId = RewardActions.REWARD_N_XPS;
-                break;
-            default:
-                throw new Exception("Don't know how to reward item type: "+_challengeData.RewardType);
-        }
-        
-        List<ActionParameter> _claimedParameters = new List<ActionParameter>
-        {
-            new() { Key = BoomDaoUtility.AMOUNT_KEY, Value = _challengeData.RewardAmount.ToString() }
-        };
-        BoomDaoUtility.Instance.ExecuteActionWithParameter(_claimActionId,_claimedParameters,null);
     }
 
     private void Awake()
@@ -121,7 +166,6 @@ public class ChallengesManager : MonoBehaviour
 
     public void Setup()
     {
-        return;
         if (DataManager.Instance.GameData.HasDailyChallenges)
         {
             SubscribeEvents();
@@ -167,6 +211,7 @@ public class ChallengesManager : MonoBehaviour
         UnsubscribeEvents();
         isGeneratingNewChallenges = true;
 
+        BoomDaoUtility.Instance.ExecuteAction(PlayerData.RESET_AMOUNT_OF_GAMES_PLAYED_TODAY, null);
         int _counter = 0;
         CheckForFinishCreating(null);
 
@@ -369,5 +414,35 @@ public class ChallengesManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void IncreaseProgress(ChallengeUpdateProgress _progressData)
+    {
+        progressToUpdate.Add(_progressData);
+        TryUpdate();
+    }
+
+    private void TryUpdate()
+    {
+        if (isUpdatingProgress)
+        {
+            return;
+        }
+
+        if (progressToUpdate.Count==0)
+        {
+            return;
+        }
+
+        isUpdatingProgress = true;
+        BoomDaoUtility.Instance.ExecuteActionWithParameter(UPDATE_CHALLENGE_PROGRESS, progressToUpdate[0].Parameters, FinishedUpdating);
+    }
+
+    private void FinishedUpdating(List<ActionOutcome> _)
+    {
+        isUpdatingProgress = false;
+        Debug.Log("Finished updating: "+JsonConvert.SerializeObject(progressToUpdate[0]));
+        progressToUpdate.RemoveAt(0);
+        TryUpdate();
     }
 }

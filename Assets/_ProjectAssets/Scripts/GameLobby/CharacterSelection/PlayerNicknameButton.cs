@@ -13,7 +13,6 @@ public class PlayerNicknameButton : MonoBehaviour
     private void Start()
     {
         string _nickname = DataManager.Instance.PlayerData.Username;
-        
         nicknameText.text = "";
         if (!string.IsNullOrEmpty(_nickname.Trim()))
         {
@@ -39,7 +38,6 @@ public class PlayerNicknameButton : MonoBehaviour
             {
                 HandleSetNameFinished(_outcomes, _nickname);
             });
-        
     }
 
     private void HandleSetNameFinished(List<ActionOutcome> _, string _newName)
@@ -51,6 +49,19 @@ public class PlayerNicknameButton : MonoBehaviour
     private void SetPlayerName(string _newName)
     {
         GameState.nickname = PhotonNetwork.NickName = nicknameText.text = _newName;
+        SendNewNicknameToServer(_newName);
         inputModal.Hide();
+    }
+    
+    private async void SendNewNicknameToServer(string _nickname)
+    {
+        try
+        {
+            await NetworkManager.POSTRequest("/user/nickname", $"\"{_nickname}\"", null,null,true);
+        }
+        catch
+        {
+            // ignored
+        }
     }
 }

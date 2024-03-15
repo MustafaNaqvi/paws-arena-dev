@@ -13,6 +13,24 @@ public class ChallengesPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerDisplay;
     [SerializeField] private LuckyWheelUI luckyWheel;
 
+    private void OnEnable()
+    {
+        closeButton.onClick.AddListener(Close);
+        ChallengesManager.OnChallengeClaimed += Setup;
+    }
+
+    private void OnDisable()
+    {
+        closeButton.onClick.RemoveListener(Close);
+        ChallengesManager.OnChallengeClaimed -= Setup;
+    }
+
+    private void Close()
+    {
+        OnClosed?.Invoke();
+        gameObject.SetActive(false);
+    }
+
     public void Setup()
     {
         int _completedChallenges = 0;
@@ -37,23 +55,7 @@ public class ChallengesPanel : MonoBehaviour
             luckyWheel.ShowReward();
         }
     }
-
-    private void OnEnable()
-    {
-        closeButton.onClick.AddListener(Close);
-    }
-
-    private void OnDisable()
-    {
-        closeButton.onClick.RemoveListener(Close);
-    }
-
-    private void Close()
-    {
-        OnClosed?.Invoke();
-        gameObject.SetActive(false);
-    }
-
+    
     private IEnumerator ShowTimer()
     {
         while (gameObject.activeSelf)

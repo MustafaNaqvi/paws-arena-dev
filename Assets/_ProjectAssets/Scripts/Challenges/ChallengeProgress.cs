@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using BoomDaoWrapper;
-using Newtonsoft.Json;
-using UnityEngine;
 
 [Serializable]
 public class ChallengeProgress
 {
-    private const string UPDATE_CHALLENGE_PROGRESS = "increaseChallengeProgress";
     private const string CHALLENGE_UPDATE_KEY = "challangeId";
     public static Action<string> UpdatedProgress;
     public string Identifier;
@@ -19,10 +16,7 @@ public class ChallengeProgress
     {
         get
         {
-            Debug.Log(Identifier);
             ChallengeData _challengeData = DataManager.Instance.GameData.GetChallengeByIdentifier(Identifier);
-            Debug.Log(JsonConvert.SerializeObject(DataManager.Instance.GameData.DailyChallenges));
-            Debug.Log(DataManager.Instance.GameData.DailyChallenges.Challenges.Count);
             return _challengeData.AmountNeeded - Value <= 0;
         }
     }
@@ -58,7 +52,9 @@ public class ChallengeProgress
             new () { Key = CHALLENGE_UPDATE_KEY, Value = PlayerData.DAILY_CHALLENGE_PROGRESS+DataManager.Instance.GameData.GetChallengeIndex(Identifier) },
             new () { Key = BoomDaoUtility.AMOUNT_KEY, Value = _amount.ToString() }
         };
-        BoomDaoUtility.Instance.ExecuteActionWithParameter(UPDATE_CHALLENGE_PROGRESS, _parameters, null);
+
+        ChallengeUpdateProgress _progress = new ChallengeUpdateProgress { Parameters = _parameters };
+        ChallengesManager.Instance.IncreaseProgress(_progress);
     }
 
     public void Reset()

@@ -23,6 +23,11 @@ public class ShowChallenges : MonoBehaviour
 
     private void Update()
     {
+        if (DataManager.Instance.PlayerData.ChallengeProgresses==default)
+        {
+            button.interactable = false;
+            return;
+        }
         button.interactable = DataManager.Instance.PlayerData.ChallengeProgresses.Count > 0;
     }
 }
