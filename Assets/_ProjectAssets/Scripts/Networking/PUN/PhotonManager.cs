@@ -14,6 +14,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public event Action OnConnectedServer;
     public event Action OnCreatingRoom;
     public event Action OnRoomLeft;
+    public static Action OnFailedToCreateRoom;
+    public static Action OnJoinedFriendlyRoom;
 
     [SerializeField]
     private byte maxPlayersPerRoom = 2;
@@ -21,6 +23,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     private bool isRoomCreated = false;
     private bool isSinglePlayer = false;
+    private string friendlyRoomName;
 
 
     #region ACTIONS
@@ -49,6 +52,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LeaveRoom();
     }
+
+    public void JoinFriendlyRoom(string _roomName)
+    {
+        friendlyRoomName = _roomName;
+        PhotonNetwork.JoinRoom(friendlyRoomName);
+    }
+    
     #endregion
     #region CALLBACKS
 
@@ -74,6 +84,25 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         OnCreatingRoom?.Invoke();
     }
 
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        isRoomCreated = true;
+
+        PhotonNetwork.CreateRoom(friendlyRoomName, 
+            new RoomOptions
+            {
+                IsVisible = false,
+                MaxPlayers = maxPlayersPerRoom,
+            });
+        GameState.roomName = friendlyRoomName;
+        OnCreatingRoom?.Invoke();
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        OnFailedToCreateRoom?.Invoke();
+    }
+
     public void CreateSinglePlayerRoom()
     {
         isRoomCreated = true;
@@ -94,6 +123,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.LoadLevel("SinglePlayerGameRoom");
             }
+        }
+
+        if (PhotonNetwork.CurrentRoom is { IsVisible: false })
+        {
+            OnJoinedFriendlyRoom?.Invoke();
         }
     }
 

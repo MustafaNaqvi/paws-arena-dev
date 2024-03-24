@@ -225,7 +225,6 @@ public class ChallengesManager : MonoBehaviour
                     new () { Key = CHALLENGE_IDENTIFIER, Value = Guid.NewGuid().ToString() },
                     new () { Key = "progressNumber" , Value = PlayerData.DAILY_CHALLENGE_PROGRESS+_counter }
                 };
-                Debug.Log(JsonConvert.SerializeObject(_parameters));
                 BoomDaoUtility.Instance.ExecuteActionWithParameter(GENERATE_DAILY_CHALLENGE,_parameters, CheckForFinishCreating);
                 _counter++;
             }

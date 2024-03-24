@@ -74,7 +74,10 @@ public class GameMatchingScreen : MonoBehaviour
             }
         }
 
-        StartCoroutine(BringBotAfterSeconds(15));
+        if (PhotonNetwork.CurrentRoom is {IsVisible: true})
+        {
+            StartCoroutine(BringBotAfterSeconds(15));
+        }
     }
 
     public void SetSeats()

@@ -183,7 +183,6 @@ public class GameData
         string _challengeId = ChallengesManager.DAILY_CHALLENGE + _index;
         if (!BoomDaoUtility.Instance.DoesEntityExist(_challengeId))
         {
-            Debug.Log("Doesn't exist");
             return default;
         }
 
