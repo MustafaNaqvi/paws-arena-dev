@@ -1,12 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class LeaderboardLineBehaviour : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [DllImport("__Internal")]
+    public static extern void CopyToClipboard(string _text);
+    
     public GameObject principalIdTooltip;
     public TMPro.TextMeshProUGUI principalIdText;
     public Image principalIdIcon;
@@ -51,7 +52,14 @@ public class LeaderboardLineBehaviour : MonoBehaviour, IPointerEnterHandler, IPo
 
     public void SavePrincipalIdToClipboard()
     {
-        UniClipboard.SetText(principalIdText.text);
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            CopyToClipboard(principalIdText.text);
+        }
+        else
+        {
+            GUIUtility.systemCopyBuffer = principalIdText.text;
+        }
         principalIdIcon.sprite = copiedSprite;
     }
 }
