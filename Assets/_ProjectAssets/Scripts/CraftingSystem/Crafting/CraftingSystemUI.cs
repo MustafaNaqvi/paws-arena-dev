@@ -6,6 +6,7 @@ public class CraftingSystemUI : MonoBehaviour
     [SerializeField] private CraftingUI craftingUI;
     [SerializeField] private DisenchantUI disenchantUI;
     [SerializeField] private Button closeButton;
+    
     public void Setup()
     {
         craftingUI.Setup();

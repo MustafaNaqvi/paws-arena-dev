@@ -219,7 +219,6 @@ namespace BoomDaoWrapper
                 return default;
             }
 
-            Debug.Log(_int);
             return int.Parse(_int);
         }
         

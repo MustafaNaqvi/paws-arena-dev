@@ -1,34 +1,32 @@
 using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ConnectingToServer : MonoBehaviour
 {
-    [Header("Managers")]
-    public LobbyUIManager lobbyUIManager;
+    [SerializeField] private Button connect;
+    [SerializeField] private TextMeshProUGUI logText;
 
-    [Header("Internals")]
-    public GameObject connectButton;
-    public GameObject logText;
-
-    [SerializeField] private GameObject loginFailed;
-    private TextMeshProUGUI statusDisplay;
-
-    public void ConnectToWallet()
+    private void OnEnable()
     {
-        BoomDaoUtility.Instance.Login(SelectNft);
-        
-        connectButton.SetActive(false);
-        logText.SetActive(true);
-        statusDisplay = logText.GetComponent<TextMeshProUGUI>();
-
-        statusDisplay.text = "Waiting the connection with ICP Wallet to be approved...";
+        connect.onClick.AddListener(Connect);
     }
 
-    private void SelectNft()
+    private void OnDisable()
     {
-        statusDisplay.text = "Connection made!";
+        connect.onClick.RemoveListener(Connect);
+    }
 
+    private void Connect()
+    {
+        BoomDaoUtility.Instance.Login(FinishConnecting);
+        logText.text = "Waiting the connection with ICP Wallet to be approved...";
+    }
+
+    private void FinishConnecting()
+    {
+        logText.text = "Connection made!";
         SetupNftData();
 
         var _loginDataResult = BoomDaoUtility.Instance.GetLoginData;
@@ -38,7 +36,7 @@ public class ConnectingToServer : MonoBehaviour
         DataManager.Instance.Setup();
         ChallengesManager.Instance.Setup();
         
-        lobbyUIManager.OpenNFTSelectionScreen();
+        SceneManager.Instance.LoadNftSelection();
     }
     
     private void SetupNftData()

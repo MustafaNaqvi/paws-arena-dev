@@ -1,11 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SettingsScreen : MonoBehaviour
 {
-    public LobbyUIManager uiManager;
     public CustomSlider masterVolume;
     public CustomSlider musicVolume;
     public CustomSlider sfxVolume;
@@ -21,9 +17,9 @@ public class SettingsScreen : MonoBehaviour
         GameState.gameSettings.musicVolume = musicVolume.GetValue();
         GameState.gameSettings.soundFXVolume = sfxVolume.GetValue();
         GameState.gameSettings.Apply();
-
-        uiManager.CloseSettings();
+        gameObject.SetActive(false);
     }
+    
     private void ShowSettings(GameSettings gameSettings)
     {
         masterVolume.SetValue(gameSettings.masterVolume);

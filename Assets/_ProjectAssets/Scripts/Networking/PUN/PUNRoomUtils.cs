@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PUNRoomUtils : MonoBehaviourPunCallbacks
 {
@@ -20,7 +19,7 @@ public class PUNRoomUtils : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+        SceneManager.Instance.LoadMainMenu();
     }
 
     public void AddPlayerCustomProperty(string key, string value)

@@ -260,14 +260,14 @@ public class RoomStateManager : MonoSingleton<RoomStateManager>
 
     public void SinglePlayerReturnMainMenu()
     {
-        SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+        SceneManager.Instance.LoadMainMenu();
     }
 
     public void LoadAfterGameScene(GameResolveState state)
     {
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel("AfterGame");
+            SceneManager.Instance.LoadAfterGame();
         }
         else if (!isMultiplayer)
         {

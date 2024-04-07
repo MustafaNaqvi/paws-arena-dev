@@ -9,7 +9,7 @@ public class CreateFriendlyMatch : MonoBehaviour
     [SerializeField] private TMP_InputField roomName;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button closeButton;
-    [SerializeField] private LobbyUIManager lobbyUIManager;
+    [SerializeField] private MainMenuUI mainMenuUI;
 
     private void OnEnable()
     {
@@ -49,7 +49,7 @@ public class CreateFriendlyMatch : MonoBehaviour
         }
         
         ManageInteractables(false);
-        lobbyUIManager.TryConnectToFriendlyRoom(_roomName);
+        mainMenuUI.TryConnectToFriendlyRoom(_roomName);
     }
 
     private bool ValidateName(string _roomName)
@@ -84,7 +84,7 @@ public class CreateFriendlyMatch : MonoBehaviour
 
     private void ShowConnecting()
     {
-        lobbyUIManager.GoToConnecting();
+        mainMenuUI.GoToConnecting();
     }
 
     private void ManageInteractables(bool _status)

@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Anura.ConfigurationModule.Managers;
 
 public class MainMenuScreen : MonoBehaviour
 {
-    public TMPro.TextMeshProUGUI betCoins;
     public Transform playerPlatformPosition;
     public GameObject playerPlatformPrefab;
 
@@ -13,7 +9,7 @@ public class MainMenuScreen : MonoBehaviour
 
     private void OnEnable()
     {
-        playerPlatform = GameObject.Instantiate(playerPlatformPrefab, playerPlatformPosition);
+        playerPlatform = Instantiate(playerPlatformPrefab, playerPlatformPosition);
         playerPlatform.transform.position = Vector3.zero;
     }
 
@@ -24,6 +20,4 @@ public class MainMenuScreen : MonoBehaviour
             Destroy(playerPlatform);
         }
     }
-
-
 }

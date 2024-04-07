@@ -71,7 +71,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+        SceneManager.Instance.LoadMainMenu();
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -117,11 +117,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             if (!isSinglePlayer)
             {
-                PhotonNetwork.LoadLevel("GameRoom");
+                PhotonNetwork.LoadLevel(SceneManager.GAME_ROOM);
             }
             else
             {
-                PhotonNetwork.LoadLevel("SinglePlayerGameRoom");
+                PhotonNetwork.LoadLevel(SceneManager.SINGLE_PLAYER);
             }
         }
 

@@ -290,13 +290,13 @@ public class GameMatchingScreen : MonoBehaviour
         {
             PhotonNetwork.CurrentRoom.IsOpen = PhotonNetwork.CurrentRoom.IsVisible = false;
         }
-        GetComponent<PhotonView>().RPC("StartGameRoutine", RpcTarget.All);
+        GetComponent<PhotonView>().RPC(nameof(StartGameRoutine), RpcTarget.All);
     }
 
     public void StartSinglePlayerGame()
     {
         PhotonNetwork.CurrentRoom.IsOpen = PhotonNetwork.CurrentRoom.IsVisible = false;
-        GetComponent<PhotonView>().RPC("StartSinglePlayerGameRoutine", RpcTarget.All);
+        GetComponent<PhotonView>().RPC(nameof(StartSinglePlayerGameRoutine), RpcTarget.All);
     }
 
     private void MakeRoomVisible()
@@ -307,16 +307,16 @@ public class GameMatchingScreen : MonoBehaviour
     [PunRPC]
     public void StartGameRoutine()
     {
-        StartCountdown("GameScene");
+        StartCountdown(SceneManager.GAME_SCENE);
     }
-
+    
     [PunRPC]
     public void StartSinglePlayerGameRoutine()
     {
-        StartCountdown("PlayerTest_new");
+        StartCountdown(SceneManager.SINGLE_PLAYER_GAME);
     }
 
-    private void StartCountdown(string sceneName)
+    private void StartCountdown(string _sceneName)
     {
         wheelHolder.SetActive(true);
         countdown.StartCountDown(() =>
@@ -324,20 +324,9 @@ public class GameMatchingScreen : MonoBehaviour
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 PhotonNetwork.IsMessageQueueRunning = false;
-                PhotonNetwork.LoadLevel(sceneName);
+                PhotonNetwork.LoadLevel(_sceneName);
             }
 
-            // StartCoroutine(LoadSceneAsync(sceneName));
         });
-    }
-
-    private IEnumerator LoadSceneAsync(string sceneName)
-    {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
-
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
     }
 }

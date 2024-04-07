@@ -5,9 +5,8 @@ public class UserInfoDropDown : MonoBehaviour
 {
     [SerializeField] private Button seasonButton;
     [SerializeField] private Button switchKittyButton;
-    [SerializeField] private LobbyUIManager lobbyUI;
-    [SerializeField] private LevelsPanel levelsPanel;
     [SerializeField] private RecoveryDropDown recoveryDropDown;
+    [SerializeField] private LevelsPanel levelsPanel;
 
     private float animationLength = 0.1f;
     private bool isOpen;
@@ -54,7 +53,7 @@ public class UserInfoDropDown : MonoBehaviour
     {
         GameState.nfts.Clear();
         ConnectingToServer.UpdateNfts();
-        lobbyUI.OpenNFTSelectionScreen();
+        SceneManager.Instance.LoadNftSelection();
         Close();
     }
 

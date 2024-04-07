@@ -676,7 +676,7 @@ namespace Smooth
         public override void OnEnable()
         {
             photonView.AddCallbackTarget(this);
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
             if (photonView && photonView.IsMine && photonView.ViewID > 0)
             {
                 teleportOwnedObjectFromOwner();
@@ -690,7 +690,7 @@ namespace Smooth
         public override void OnDisable()
         {
             photonView.RemoveCallbackTarget(this);
-            SceneManager.sceneLoaded -= OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
             base.OnDisable();
         }
 

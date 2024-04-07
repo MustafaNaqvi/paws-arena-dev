@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -8,17 +5,14 @@ public class LobbyPhotonConnection : MonoBehaviour
 {
     [Header("Managers")]
     public PhotonManager photonManager;
-    public LobbyUIManager lobbyUIManager;
 
     [Header("Internals")]
     public GameObject startButton;
-    public GameObject joinRoomLog;
-
+    public TextMeshProUGUI label;
 
     private void OnEnable()
     {
         Init();
-
         photonManager.OnCreatingRoom += OnCreatingRoom;
     }
 
@@ -30,29 +24,19 @@ public class LobbyPhotonConnection : MonoBehaviour
     private void Init()
     {
         startButton.SetActive(true);
-        joinRoomLog.GetComponent<TextMeshProUGUI>().text = "Finding your opponent...";
-        joinRoomLog.SetActive(false);
+        label.text = string.Empty;
     }
-
 
     public void TryJoinRoom()
     {
         startButton.SetActive(false);
-        joinRoomLog.SetActive(true);
+        label.text = string.Empty;
 
         photonManager.ConnectToRandomRoom();
     }
 
-    public void TryJoinSinglePlayerRoom()
-    {
-        startButton.SetActive(false);
-        joinRoomLog.SetActive(true);
-
-        photonManager.CreateSinglePlayerRoom();
-    }
-
     private void OnCreatingRoom()
     {
-        joinRoomLog.GetComponent<TextMeshProUGUI>().text = "No open match. Making a new one...";
+        label.text = "No open match. Making a new one...";
     }
 }

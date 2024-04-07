@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using BoomDaoWrapper;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LeaderboardUIManager : MonoBehaviour
@@ -43,7 +41,7 @@ public class LeaderboardUIManager : MonoBehaviour
     
     private void ReloadScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.Instance.Reload();
     }
 
     private void Start()
@@ -98,6 +96,6 @@ public class LeaderboardUIManager : MonoBehaviour
 
     public void GoBack()
     {
-        SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+        SceneManager.Instance.LoadMainMenu();
     }
 }

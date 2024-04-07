@@ -39,8 +39,6 @@ public class LobbyUIManager : MonoBehaviour
     [SerializeField] private Sprite normalFightSprite;
     [SerializeField] private Sprite injuredFightSprite;
 
-    [SerializeField] private GameObject noNftsMessage;
-
 
     private void OnEnable()
     {
@@ -97,14 +95,6 @@ public class LobbyUIManager : MonoBehaviour
 
     public void OpenGameMenu()
     {
-        if (GameState.selectedNFT==null)
-        {
-            if (GameState.nfts.Count==0)
-            {
-                noNftsMessage.SetActive(true);
-            }
-            return;
-        }
         loadingScreen.SetActive(false);
         connectingToServerScreen.SetActive(false);
         passwordScreen.SetActive(false);
@@ -180,21 +170,6 @@ public class LobbyUIManager : MonoBehaviour
         connectingToRoom.SetActive(true);
 
         connectingToRoomText.text = "Connecting to Multiplayer Server(" + PhotonNetwork.CloudRegion + ")...";
-    }
-    
-    public void TryConnectToTrainingRoom()
-    {
-        SceneManager.LoadScene("GameSceneTutorial", LoadSceneMode.Single);
-    }
-    
-    public void GoToSinglePlayer()
-    {
-        SceneManager.LoadScene("PlayerTest_new", LoadSceneMode.Single);
-    }
-
-    public void GoToLeaderboard()
-    {
-        SceneManager.LoadScene("Leaderboard", LoadSceneMode.Single);
     }
 
     public void OpenSettings()
