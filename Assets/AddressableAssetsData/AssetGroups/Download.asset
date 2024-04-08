@@ -1,0 +1,275 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Download
+  m_EditorClassIdentifier: 
+  m_GroupName: Download
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 20412f75bb0c7494691588a73d0acc5a
+  m_SerializeEntries:
+  - m_GUID: 90def325780eff04b824e650a86eab3e
+    m_Address: Snack
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 905486495de344203aa370f861252035
+    m_Address: XP
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 8973596adb7b4544ca6a3c3e46189e41
+    m_Address: BlueCristal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 2c35e99b80a18014db9386a56195cac5
+    m_Address: GreenCristal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: a328420e74036be489a81fd8304c0bde
+    m_Address: LimeCristal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: b5798a61abc64d040b32f98175de7e53
+    m_Address: OrangeCristal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: f01df40dcc8b6c44c9abe081fed80db3
+    m_Address: PurpleCristal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 011aae7c2311e694b83bdbd91286136e
+    m_Address: button_bg_angular
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 88ff4e3521b9cd349a9561ed84ef7c32
+    m_Address: button_fg_angular_01 1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: d613d75d4f49ec64fadeb9c8977def34
+    m_Address: ICK_game UI_menu bgs_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: aca6eb77f82259b46a66e4327dd30ea4
+    m_Address: ICK_game UI_menu elements_01
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 8eb374f05f4e1024c8a95802d609a05b
+    m_Address: GlassOfMilk
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: d8767927beb3c1946bcf5cc014a51898
+    m_Address: JugOfMilk
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 9a3231087f5de9048b7b9b0f4f03826e
+    m_Address: Bullets/Arrow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 7512ed148be88794a8d115915ddc0da6
+    m_Address: Bullets/BasicRocket
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: f27856aa2b1b76943a1c423982df6788
+    m_Address: Bullets/Cannonball
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 22db018f416a4a641bd7f383b29881c7
+    m_Address: Bullets/Flare
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 0ea1add238907d743b176cf563f25b72
+    m_Address: Bullets/GuidedMouse
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 5e51eb25aed27f546b65a1207b944ac9
+    m_Address: Player
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 76a20510169fbcb4baea50a4382c42f4
+    m_Address: Player_Bot
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 3134da00638c87b429fec23ba637362c
+    m_Address: PlayerData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 3f631740f087cba4381debb0a059a5d8
+    m_Address: SyncPlayerPlatform
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 71ac490d71b41a644bfbe6daca299a70
+    m_Address: GameRoom
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: b923f2a682a181d4c96c8eab67d2820b
+    m_Address: GameScene
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: d48f0a4b94bb49f48b380d4fdfb0f5fe
+    m_Address: AfterGame
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: fc318ab07b4ce6d4eb398e9ed8f04ca0
+    m_Address: SinglePlayerGame
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: ecce4d2c53ad9444d8f408b1b814a6a4
+    m_Address: SinglePlayerGameRoom
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 865188cf03c6c3d46961bcf120e90eca
+    m_Address: Leaderboard
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 27dbfd59c91c2fe409979a97be647286
+    m_Address: MainMenu
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: afb587139eed9dd4f808fdd289f92124
+    m_Address: NftSelection
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 1dc2671ee849b1943810925ce1eede10
+    m_Address: OldLobby
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e3e42235089a68b4ebf7120d35216bf7
+    m_Address: Tutorial
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 4ddb1708b9cc8354eb3e325c9b8e1996
+    m_Address: Widgets/ActionWidget
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 514b147c7f5c94d48a5f9e75f049578e
+    m_Address: Widgets/ActionWidgetTwo
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 2a5df92c75b649e43bc4b059c816f587
+    m_Address: Widgets/InventoryWidget
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 63b55eb2bcae5014db0a493bb633ac36
+    m_Address: Windows/BalanceWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e1da0348c9e094241b0eab6c53f2f873
+    m_Address: Windows/InfoPopupWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 50d8e804c45b95f4c949e02e3f1232a3
+    m_Address: Windows/InventoryPopupWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: a8761d4c46cdadd4eb1198a4c5da3f66
+    m_Address: Windows/InventoryWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: c07060744dbd84e449e9d4632f3605c3
+    m_Address: Windows/LoginWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 04b5496828210aa468b726699e97eb62
+    m_Address: Windows/MarketPlaceWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: d0fa2752e83e21243a70ae6d0a16e147
+    m_Address: Windows/MintTestTokensWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: ef8a57a58c3aa934c913bb55278034f1
+    m_Address: Windows/MultiplayerActionWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 50f2d8b186de12040934c7113569597f
+    m_Address: Windows/RoomsManagementWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 92ade98e2b8bb4d4187eed549e97c6a1
+    m_Address: Windows/RoomWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: a9d9d8bd683506f41961e60573ea907e
+    m_Address: Windows/ShopWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 9c3ff6ebcdc81d74cb5150ba79d15871
+    m_Address: Windows/WaitingAnimWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: f9b8da2d32d364441981a3e4b1bb0e34
+    m_Address: Windows/WorldWindow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 87826baf1de98634d8a21247575da907
+    m_Address: OkDialog
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: fc7933f96f75e8847bd0d63fb186400e
+    m_Address: YesNoDialog
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 54fc36a0dca9b5547844499774c414f6, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 277dbd5d469e78d4b9aec700ef4e78c0, type: 2}
+    - {fileID: 11400000, guid: f05870a94759e8f45b2c1b4dace49ee3, type: 2}

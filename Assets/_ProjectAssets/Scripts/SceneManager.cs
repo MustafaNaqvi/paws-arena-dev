@@ -1,16 +1,31 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class SceneManager : MonoBehaviour
 {
-    private const string NFT_SELECTION = "NftSelection";
-    private const string MAIN_MENU = "MainMenu";
-    private const string LEADERBOARD = "Leaderboard";
-    private const string TUTORIAL = "Tutorial";
-    private const string AFTER_GAME = "AfterGame";
-    public const string GAME_ROOM = "GameRoom";
-    public const string SINGLE_PLAYER = "SinglePlayerGameRoom";
-    public const string GAME_SCENE = "GameScene";
-    public const string SINGLE_PLAYER_GAME = "SinglePlayerGame";
+    // private const string LOADING = "NftSelection";
+    // private const string NFT_SELECTION = "NftSelection";
+    // private const string MAIN_MENU = "MainMenu";
+    // private const string LEADERBOARD = "Leaderboard";
+    // private const string TUTORIAL = "Tutorial";
+    // private const string AFTER_GAME = "AfterGame";
+    // public const string GAME_ROOM = "GameRoom";
+    // public const string SINGLE_PLAYER = "SinglePlayerGameRoom";
+    // public const string GAME_SCENE = "GameScene";
+    // public const string SINGLE_PLAYER_GAME = "SinglePlayerGame";
+
+    public AssetReference loginScene;
+    public AssetReference nftSelectionScene;
+    public AssetReference mainMenuScene;
+    public AssetReference leaderboardScene;
+    public AssetReference tutorialScene;
+    public AssetReference afterGameScene;
+    public AssetReference gameRoomScene;
+    public AssetReference singlePlayerScene;
+    public AssetReference gameScene;
+    public AssetReference singlePlayerGameScene;
+    private AssetReference _currentlyLoadedScene;
+    
     public static SceneManager Instance;
 
     private void Awake()
@@ -28,36 +43,38 @@ public class SceneManager : MonoBehaviour
 
     public void LoadNftSelection()
     {
-        LoadScene(NFT_SELECTION);
+        LoadScene(nftSelectionScene);
     }
 
     public void LoadLeaderboard()
     {
-        LoadScene(LEADERBOARD);
+        LoadScene(leaderboardScene);
     }
 
     public void LoadMainMenu()
     {
-        LoadScene(MAIN_MENU);
+        LoadScene(mainMenuScene);
     }
 
     public void LoadTutorial()
     {
-        LoadScene(TUTORIAL);
+        LoadScene(tutorialScene);
     }
 
     public void LoadAfterGame()
     {
-        LoadScene(AFTER_GAME);
+        LoadScene(afterGameScene);
     }
 
     public void Reload()
     {
-        LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        LoadScene(_currentlyLoadedScene);
     }
 
-    private void LoadScene(string _key)
+    public void LoadScene(AssetReference sceneInstance)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(_key);
+        // UnityEngine.SceneManagement.SceneManager.LoadScene(_key);
+        Addressables.LoadSceneAsync(sceneInstance);
+        _currentlyLoadedScene = sceneInstance;
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.AddressableAssets;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
@@ -307,16 +307,16 @@ public class GameMatchingScreen : MonoBehaviour
     [PunRPC]
     public void StartGameRoutine()
     {
-        StartCountdown(SceneManager.GAME_SCENE);
+        StartCountdown(SceneManager.Instance.gameScene);
     }
     
     [PunRPC]
     public void StartSinglePlayerGameRoutine()
     {
-        StartCountdown(SceneManager.SINGLE_PLAYER_GAME);
+        StartCountdown(SceneManager.Instance.singlePlayerGameScene);
     }
 
-    private void StartCountdown(string _sceneName)
+    private void StartCountdown(AssetReference sceneInstance)
     {
         wheelHolder.SetActive(true);
         countdown.StartCountDown(() =>
@@ -324,7 +324,7 @@ public class GameMatchingScreen : MonoBehaviour
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 PhotonNetwork.IsMessageQueueRunning = false;
-                PhotonNetwork.LoadLevel(_sceneName);
+                SceneManager.Instance.LoadScene(sceneInstance);
             }
 
         });

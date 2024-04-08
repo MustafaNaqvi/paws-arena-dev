@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: f6453759fc2875042996c1d78cde07aa
+  m_SerializeEntries:
+  - m_GUID: 65995b32c17c33b499d23d4dec1b99ac
+    m_Address: Changa-Regular
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e722af35518fe134e911781c52429037
+    m_Address: Changa-SemiBold
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e3265ab4bf004d28a9537516768c1c75
+    m_Address: LiberationSans
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e73a58f6e2794ae7b1b7e50b7fb811b0
+    m_Address: Fonts & Materials/LiberationSans SDF - Drop Shadow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 79459efec17a4d00a321bdcc27bbc385
+    m_Address: Fonts & Materials/LiberationSans SDF - Outline
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 68e6db2ebdc24f95958faec2be5558d6
+    m_Address: TMP_SDF
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: fe316513fa128584fbbbf3f09c6bea31
+    m_Address: Assets/_ProjectAssets/Art/2D/MenuUI/ICK_game UI_Welcome Screen.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 1488796e40c029d42bf1fe4a2b6ebc65
+    m_Address: Login
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e51e15f1984bd3c478d83dbc34e4f999
+    m_Address: Changa-ExtraBold
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 5214ca5c243c3954e82d9d887bc73f79
+    m_Address: Changa-Bold_shadow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 297947afae99ec24098586f0aa2e0cde
+    m_Address: Changa-Bold
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 09af8b3e1c83d174eb71b322f1fb26d6
+    m_Address: Changa-SemiBold_InnerShadow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 8f586378b4e144a9851e7b34d9b748ee
+    m_Address: LiberationSans SDF
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 2e498d1c8094910479dc3e1b768306a4
+    m_Address: LiberationSans SDF - Fallback
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: fe393ace9b354375a9cb14cdbbc28be4
+    m_Address: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 54fc36a0dca9b5547844499774c414f6, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4eaa16ea62cbdb14394bb0c598f2119d, type: 2}
+    - {fileID: 11400000, guid: c0f3ff1b7c837ee4d919eddbba09d744, type: 2}

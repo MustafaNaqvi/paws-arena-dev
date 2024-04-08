@@ -152,6 +152,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a2cffe0247f2fe428489ed458fe84f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginScene:
+    m_AssetGUID: 1488796e40c029d42bf1fe4a2b6ebc65
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  nftSelectionScene:
+    m_AssetGUID: afb587139eed9dd4f808fdd289f92124
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  mainMenuScene:
+    m_AssetGUID: 27dbfd59c91c2fe409979a97be647286
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  leaderboardScene:
+    m_AssetGUID: 865188cf03c6c3d46961bcf120e90eca
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  tutorialScene:
+    m_AssetGUID: e3e42235089a68b4ebf7120d35216bf7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  afterGameScene:
+    m_AssetGUID: d48f0a4b94bb49f48b380d4fdfb0f5fe
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  gameRoomScene:
+    m_AssetGUID: 71ac490d71b41a644bfbe6daca299a70
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  singlePlayerScene:
+    m_AssetGUID: ecce4d2c53ad9444d8f408b1b814a6a4
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  gameScene:
+    m_AssetGUID: b923f2a682a181d4c96c8eab67d2820b
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  singlePlayerGameScene:
+    m_AssetGUID: fc318ab07b4ce6d4eb398e9ed8f04ca0
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
 --- !u!4 &6938815
 Transform:
   m_ObjectHideFlags: 0
@@ -502,7 +552,6 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2389003994903128676, guid: c1b685f548a011944b47fa7be2b6daf8, type: 3}
@@ -594,7 +643,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: c1b685f548a011944b47fa7be2b6daf8, type: 3}
 --- !u!1 &603382329
 GameObject:
@@ -720,7 +768,6 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2393423864867871020, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
@@ -784,7 +831,6 @@ PrefabInstance:
       value: https://ifxbl-nyaaa-aaaap-abroa-cai.icp0.io
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: bb357f1634528a149871a2f38d213b8b, type: 3}
 --- !u!1 &1269027145
 GameObject:
@@ -999,7 +1045,6 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1537,6 +1582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}

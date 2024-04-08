@@ -117,11 +117,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             if (!isSinglePlayer)
             {
-                PhotonNetwork.LoadLevel(SceneManager.GAME_ROOM);
+                // PhotonNetwork.LoadLevel(SceneManager.GAME_ROOM);
+                SceneManager.Instance.LoadScene(SceneManager.Instance.gameRoomScene);
             }
             else
             {
-                PhotonNetwork.LoadLevel(SceneManager.SINGLE_PLAYER);
+                // PhotonNetwork.LoadLevel(SceneManager.SINGLE_PLAYER);
+                SceneManager.Instance.LoadScene(SceneManager.Instance.singlePlayerScene);
             }
         }
 

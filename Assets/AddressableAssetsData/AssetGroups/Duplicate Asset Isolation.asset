@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Duplicate Asset Isolation
+  m_EditorClassIdentifier: 
+  m_GroupName: Duplicate Asset Isolation
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 4be5b51333c17304e84b78ddaa135e68
+  m_SerializeEntries:
+  - m_GUID: ca9f5fa95ffab41fb9a615ab714db018
+    m_Address: Packages/com.unity.inputsystem/InputSystem/Plugins/PlayerInput/DefaultInputActions.inputactions
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 62606a4588f3a8d449004918bb5609eb
+    m_Address: Assets/_ProjectAssets/CatV2/2D_assets/weapons&fx/ICK_game_explosion
+      white.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: f70206992d17c6244ba054c8f8db3ef5
+    m_Address: Assets/_ProjectAssets/CatV2/2D_assets/weapons&fx/ICK_game_weapons.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: ec0e1b0a4f24e544f8994a2514b5cf86
+    m_Address: Assets/_ProjectAssets/Material/SmokeParticleMat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 13c02b14c4d048fa9653293d54f6e0e1
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/2D/Sprite-Unlit-Default.shader
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 0406db5a14f94604a8c57ccfbc9f3b46
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 36e335017ad71d54fbb10842863188ae
+    m_Address: Packages/com.unity.render-pipelines.core/Runtime/FallbackShader.shader
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: e6e9a19c3678ded42a3bc431ebef7dbd
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackError.shader
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 7bc29833b0ee49244a4e5916d169c3af
+    m_Address: Assets/_ProjectAssets/CatV2/2D_assets/cat_parts/assets_head/hats/hats_01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 90c1bafc70c9e484481f076757caf058
+    m_Address: Assets/_ProjectAssets/CatV2/2D_assets/cat_parts/assets_head/hats_no
+      ears/hats_no ears_01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 76f3948b53fccf4488c2407616db5f5f
+    m_Address: Assets/_ProjectAssets/Art/2D/InGameUI/ICK_game UI_01.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  - m_GUID: 44940260574ba4c4988d9489601a592e
+    m_Address: Assets/_ProjectAssets/Art/2D/MenuUI/ICK_game UI_main menu-win-lose.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 54fc36a0dca9b5547844499774c414f6, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 59665b7d98cae654cbdee1ee3f751f8c, type: 2}
+    - {fileID: 11400000, guid: 19cb6568389b7de4ba487ec3bbdc5bed, type: 2}

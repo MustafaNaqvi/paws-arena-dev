@@ -6,36 +6,40 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_ProjectAssets/Scenes/Addressables.unity
+    guid: 136405178c76f3a4aa4f185999766fce
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/Login.unity
     guid: 1488796e40c029d42bf1fe4a2b6ebc65
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/NftSelection.unity
     guid: afb587139eed9dd4f808fdd289f92124
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/MainMenu.unity
     guid: 27dbfd59c91c2fe409979a97be647286
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/Leaderboard.unity
     guid: 865188cf03c6c3d46961bcf120e90eca
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/OldScenes/OldLobby.unity
     guid: 1dc2671ee849b1943810925ce1eede10
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/GameScene/GameRoom.unity
     guid: 71ac490d71b41a644bfbe6daca299a70
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/GameScene/GameScene.unity
     guid: b923f2a682a181d4c96c8eab67d2820b
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/GameScene/SinglePlayerGame.unity
     guid: fc318ab07b4ce6d4eb398e9ed8f04ca0
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/GameScene/SinglePlayerGameRoom.unity
     guid: ecce4d2c53ad9444d8f408b1b814a6a4
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/GameScene/GameScene/AfterGame.unity
     guid: d48f0a4b94bb49f48b380d4fdfb0f5fe
-  - enabled: 1
+  - enabled: 0
     path: Assets/_ProjectAssets/Scenes/Tutorial.unity
     guid: e3e42235089a68b4ebf7120d35216bf7
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 8e3d2e907d933eb40898448d77a14dfd, type: 2}
